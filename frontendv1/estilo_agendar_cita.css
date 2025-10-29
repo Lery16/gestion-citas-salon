@@ -1,0 +1,385 @@
+.registro-contenedor {
+    min-height: 100vh;
+    padding-bottom: 50px;
+    background-image: url('imagenes/modelo-principal-blanca.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%;
+    margin: 0;
+    padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
+    position: relative; 
+}
+
+.flecha {
+    width: 100%;
+    padding: 10px 20px; /* Menor padding en móvil */
+    box-sizing: border-box;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    z-index: 3; 
+}
+
+.back-arrow {
+    font-size: 35px; /* Tamaño reducido para móvil */
+    font-weight: bold;
+    text-decoration: none;
+    color: #ffffff; 
+    line-height: 1; 
+}
+
+.formulario-card {
+    /* Eliminamos la posición y transformación absoluta para que fluya en el layout normal */
+    position: relative; 
+    top: auto; 
+    left: auto; 
+    transform: none; 
+    
+    /* Reducimos el padding horizontal para garantizar que no se desborde el contenido */
+    padding: 20px 10px; 
+    align-items: center;
+    text-align: center;
+    z-index: 2; 
+    width: 90%; /* Ancho más amigable para móvil */
+    max-width: 500px; /* Límite para que no se extienda demasiado en pantallas gigantes */
+    margin-top: 50px; /* Espacio debajo de la flecha y arriba */
+}
+
+.titulo {
+    font-family: 'Courgette', cursive; 
+    font-size: 30px; /* Reducción de fuente para móvil */
+    font-weight: 400; 
+    color: #fff; 
+    margin-bottom: 40px;
+}
+
+.campo {
+    background-color: #ff9985; 
+    margin-bottom: 25px; /* Reducción de margen */
+    padding: 0px 10px;
+    display: flex;
+    position: relative; 
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 2px; 
+    width: 100%; /* Ocupa el 100% del formulario-card */
+    height: 70px; /* Altura fija para ser consistente */
+    box-sizing: border-box;
+    min-width: unset; /* Reiniciar el min-width */
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    border: none;
+    background: transparent; 
+    width: 100%;
+    color: black; 
+    
+    font-family: 'Courier Prime', monospace; 
+    
+    font-size: 18px; /* Tamaño de fuente de entrada reducido */
+    outline: none; 
+    opacity: 1; 
+    /* El padding ajustado al nuevo tamaño de fuente/altura */
+    padding: 15px 0 0 5px; 
+    box-sizing: border-box;
+    z-index: 11; 
+    height: 100%; /* Ocupa la altura del campo */
+}
+
+/* Estilo de la etiqueta: Posición inicial superpuesta */
+.campo .etiqueta {
+    position: absolute;
+    left: 10px; /* Posición ajustada */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; 
+    transition: opacity 0.3s ease; 
+    
+    font-family: 'Courier Prime', monospace;
+    font-size: 25px; /* Tamaño de etiqueta reducido */
+    font-weight: 500; 
+    color: black; 
+    display: block; 
+    text-transform: capitalize;
+    z-index: 10;
+}
+
+/* Estilos de Autocompletado (Mantenidos) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #ff9985 inset !important; 
+    -webkit-text-fill-color: black !important;
+    background-color: transparent !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* REGLA DE DESAPARICIÓN */
+.campo input:focus + .etiqueta,
+.campo input:not(:placeholder-shown) + .etiqueta {
+    opacity: 0; 
+    transform: translateY(-50%); 
+}
+
+.campo input:focus {
+    background-color: transparent;
+}
+
+.boton-contenedor {
+    background-color: #ff9985; 
+    margin-top: 40px; /* Reducción de margen */
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    border-radius: 2px; 
+    text-align: center;
+    width: 100%; /* Ya está al 100% de .formulario-card, lo que debe evitar el desborde */
+    box-sizing: border-box; /* Aseguramos que padding y border estén incluidos en el width */
+}
+
+.boton-contenedor:active {
+    transform: scale(0.95);       /* Se hace un poco más pequeño */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Sombra suave al presionar */
+}
+
+.boton-agendar-cita {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Courier Prime', sans-serif;
+    font-size: 25px; /* Reducción de fuente */
+    font-weight: 500; 
+    color: black; 
+    width: 100%;
+    padding: 0;
+    line-height: 1.5; 
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* ---------------------------------------------------------------------- */
+/* MEDIA QUERY: Tabletas y Escritorios Pequeños (min-width: 641px) */
+/* ---------------------------------------------------------------------- */
+@media (min-width: 641px) {
+    .formulario-card {
+        margin-top: 100px;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .titulo {
+        font-size: 40px;
+    }
+    
+    .campo {
+        margin-bottom: 35px;
+        height: 90px;
+    }
+
+    .campo .etiqueta {
+        font-size: 35px; 
+    }
+    
+    input[type="email"],
+    input[type="tel"],
+    input[type="text"] {
+        font-size: 22px; 
+    }
+
+    .boton-agendar-cita {
+        font-size: 30px;
+    }
+    
+    .enlace-ingreso {
+        font-size: 25px;
+    }
+}
+
+/* ---------------------------------------------------------------------- */
+/* MEDIA QUERY: Escritorios Grandes (min-width: 1025px) */
+/* ---------------------------------------------------------------------- */
+@media (min-width: 1025px) {
+    .registro-contenedor {
+        height: 1200px; 
+        
+        /* Configuración de la imagen de fondo */
+        background-image: url('imagenes/modelo-principal-blanca.jpg'); 
+        background-size: cover; 
+        background-position: center; 
+        background-repeat: no-repeat;
+        
+        /* Display y posición para el overlay */
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        position: relative; 
+    }
+
+    .flecha {
+        width: 100%;
+        padding: 15px 40px; 
+        box-sizing: border-box;
+        position: absolute; 
+        justify-content: left;
+        top: 0;
+        left: 0;
+        z-index: 3; /* Asegura que la flecha esté por encima del overlay */
+    }
+
+    .back-arrow {
+        font-size: 50px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #ffffff; 
+        line-height: 1; 
+    }
+
+    .formulario-card {
+        position: absolute; 
+        top: 41%; 
+        left: 44%; 
+        transform: translate(-50%, -50%); 
+        position: absolute; 
+        padding: 10px;
+        align-items: center;
+        text-align: center;
+        z-index: 2; 
+    }
+
+    .titulo {
+        font-family: 'Courgette', cursive; 
+        font-size: 50px; 
+        font-weight: 400; 
+        color: #fff; 
+        margin-bottom: 70px;
+        width: 60vw; 
+    }
+
+    .campo {
+        background-color: #ff9985; 
+        margin-bottom: 45px;
+        padding: 0px 20px;
+        display: flex;
+        position: relative; /* CLAVE para el posicionamiento absoluto del label */
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 2px; 
+        width: 60vw; 
+        height: 15vh;
+        box-sizing: border-box;
+        min-width: 300px;
+    }
+
+    input[type="email"],
+    input[type="tel"],
+    input[type="text"] {
+        border: none;
+        background: transparent; /* Fondo inicial transparente */
+        width: 100%;
+        color: black; 
+        
+        font-family: 'Courier Prime', monospace; 
+        
+        font-size: 45px; 
+        outline: none; /* Elimina el borde de foco por defecto */
+        
+        opacity: 1; 
+        padding: 10px; 
+        box-sizing: border-box;
+        z-index: 11; 
+    }
+
+    /* Aplica un fondo transparente y elimina el color de autocompletado del navegador */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        /* Clave: Usa un color que concuerde con el contenedor padre y fuerza el cambio */
+        -webkit-box-shadow: 0 0 0px 1000px #ff9985 inset !important; 
+        
+        /* Clave: Asegura que el color de texto sea negro */
+        -webkit-text-fill-color: black !important;
+        
+        /* Asegura que el fondo normal también sea transparente (aunque ya lo estaba antes) */
+        background-color: transparent !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Estilo de la etiqueta: Posición inicial superpuesta */
+    .campo .etiqueta {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none; 
+        transition: opacity 0.3s ease; 
+        
+        font-family: 'Courier Prime', monospace;
+        font-size: 45px; 
+        font-weight: 500; 
+        color: black; 
+        display: block; 
+        text-transform: capitalize;
+        z-index: 10;
+    }
+
+    /* REGLA DE DESAPARICIÓN */
+    .campo input:focus + .etiqueta,
+    .campo input:not(:placeholder-shown) + .etiqueta {
+        opacity: 0; 
+        transform: translateY(-50%); 
+    }
+
+    /* Regla para garantizar la transparencia al enfocar */
+    .campo input:focus {
+        background-color: transparent;
+    }
+
+    .boton-contenedor {
+        background-color: #ff9985; 
+        margin-top: 90px; 
+        margin-bottom: 30px;
+        padding: 15px 20px;
+        border-radius: 2px; 
+        text-align: center;
+        width: 60vw; 
+    }
+
+    .boton-agendar-cita {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: 'Courier Prime', sans-serif;
+        font-size: 45px;
+        font-weight: 500; 
+        color: black; 
+        width: 100%;
+        padding: 0;
+        line-height: 1.5; 
+    }
+
+    .enlace-ingreso {
+        font-family: 'Courier Prime', sans-serif;
+        font-size: 50px;
+        color: #444; 
+        font-weight: 500;
+        margin-top: 65px;
+        width: 60vw; 
+    }
+
+    .ingresa-link {
+        color: #ff9985; 
+        text-decoration: none; 
+        font-weight: 600; 
+        margin-left: 5px;
+    }
+}

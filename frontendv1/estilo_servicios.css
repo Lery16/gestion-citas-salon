@@ -1,0 +1,112 @@
+/* --- Sección de Servicios --- */
+.servicios-section {
+    margin: 0 auto; /* Centrar la sección */
+    padding-top: 1.5vh; /* Espaciado interno arriba/abajo */
+    padding-bottom: 10vh;
+    box-sizing: border-box;
+    max-width: 90vw; /* Evita que la cuadrícula se pegue a los bordes del viewport */
+}
+
+/* --- Título Principal --- */
+.servicios-titulo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 68px;
+    font-weight: 500;
+    text-align: center;
+    color: #1E1E1E;
+    margin-bottom: 6vh; /* Espacio debajo del título */
+}
+
+/* --- Cuadrícula de Tarjetas --- */
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto); /* Tres columnas ajustadas al contenido */
+    column-gap: 7vh; /* 🔹 Separación horizontal entre cartas */
+    row-gap: 10.5vh;   /* 🔹 Espacio vertical entre filas */
+    justify-content: center; /* 🔹 Centra la cuadrícula en el contenedor */
+}
+
+/* --- Tarjeta de Servicio Individual --- */
+.servicio-card {
+    background-color: #FFFFFF;
+    border: 0.01vh solid #d4d4d4;
+    border-radius: 1vh;
+    width: 250px;
+    height: 290px;
+    padding-top: 4vh;
+    padding-bottom: 2vh;
+    padding-left: 3vh;
+    padding-right: 2.8vh;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* 🔹 NUEVO: Flex para empujar el texto abajo */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Efecto al pasar el ratón --- */
+.servicio-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Contenido de la Tarjeta --- */
+.servicio-card img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    margin-bottom: 20px;
+
+    display: block;      /* evita el centrado automático de inline-elements */
+    margin-left: 0;      /* asegura que quede pegado a la izquierda */
+    margin-right: auto;  /* empuja la imagen hacia la izquierda */
+}
+
+/* --- Contenedor para texto --- */
+.servicio-card-texto {
+    margin-top: auto; /* 🔹 empuja h3 y p al borde inferior */
+}
+
+.servicio-card h3 {
+    font-family: 'Instrument Serif', sans-serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    color: #1E1E1E;
+    margin-top: 0;
+    margin-bottom: 7px;
+    text-align: left;
+}
+
+.servicio-card p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: #6c757d;
+    line-height: 1.5;
+    margin: 0;
+    text-align: left;
+}
+
+/* SECCIÓN SERVICIOS RESPONSIVE */
+@media (max-width: 992px) {
+    .servicios-grid {
+        /* Cambia a 2 columnas */
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .servicios-titulo {
+        font-size: 7rem;
+    }
+}
+@media (max-width: 768px) {
+    .servicios-grid {
+        /* Cambia a 1 columna */
+        grid-template-columns: 1fr;
+    }
+    .servicios-titulo {
+        font-size: 4rem;
+    }
+    .servicios-section {
+        padding: 40px 15px;
+    }
+}
