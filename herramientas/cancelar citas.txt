@@ -1,0 +1,1179 @@
+OK ANALIZA LO SIGUIENTE:
+
+- ESTE HTML (<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas - Admin</title>
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+    <link rel="stylesheet" href="estilos/estilo_gestion_cita.css">
+    <script src="funciones/gestion_citas_fun.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img">
+                <span>Gestión de Citas</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <nav class="menu-opciones">
+                <a href="inicio.html">Ventana Principal</a>
+                <a href="inicio.html" class="logout">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+    <main class="gestion-container">
+            <div class="filtros-top">
+                <button class="btn btn-primario btn-filtro-toggle" id="toggleFiltros">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Mostrar filtros</span>
+                </button>
+                <button class="btn btn-primario btn-filtro-toggle" id="deshacerAccion">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Deshacer Acción</span>
+                </button>
+                <button class="btn btn-primario btn-filtro-toggle" id="Guardar">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+
+            <section id="filtroPanel" class="filtro-panel">
+                <div class="filtro-grid">
+                    <div class="filtro-grupo">
+                        <label for="buscarNombre">Buscar por cliente</label>
+                        <input type="text" id="buscarNombre" placeholder="Ej: Ana García...">
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="selectEstado">Estado</label>
+                        <select id="selectEstado">
+                            <option value="todos">Todos los estados</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="calendarioPicker">Fecha</label>
+                        <div id="calendarioPicker" class="calendario-custom-wrapper">
+                            <input type="text" id="fechaSeleccionada" placeholder="Selecciona una fecha" readonly class="cal-select-input">
+
+                            <div class="calendario-dropdown-panel">
+                                <div class="calendario-header">
+                                    <button class="cal-nav" id="calPrev">‹</button>
+                                    <div class="cal-selectores">
+                                        <div class="mes-dropdown-wrapper">
+                                            <div class="cal-select" id="mesSelect">Noviembre</div>
+                                            <ul class="mes-select-menu"></ul>
+                                        </div>
+                                        <div class="anio-dropdown-wrapper">
+                                            <div class="cal-select" id="anioSelect">2025</div>
+                                            <ul class="anio-select-menu"></ul>
+                                        </div>
+                                    </div>
+                                    <button class="cal-nav" id="calNext">›</button>
+                                </div>
+                                <div class="calendario-grid-header">
+                                    <div>L</div>
+                                    <div>M</div>
+                                    <div>W</div>
+                                    <div>J</div>
+                                    <div>V</div>
+                                    <div>S</div>
+                                    <div>D</div>
+                                </div>
+                                <div class="calendario-grid-dias" id="calendarioDias">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filtro-acciones">
+                    <button class="btn btn-primario" id="limpiarFiltros">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Limpiar</span>
+                    </button>
+                    <button class="btn btn-primario aplicar-filtros-btn">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Aplicar filtros</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="bulk-actions">
+                <label class="checkbox-label" for="selectAll">
+                    <input type="checkbox" id="selectAll">
+                    Seleccionar Todo
+                </label>
+                <button id="bulkCancel" class="btn btn-peligro" disabled>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>Cancelar Seleccionadas</span>
+                </button>
+            </section>
+
+            <section class="lista-citas">
+
+                <!-- MEJORA: Tarjetas de cita con iconos -->
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Elena Rodríguez">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Elena Rodríguez</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-scissors"></i>
+                            <span>Servicio: Corte y Tinte</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 15 Nov, 2025 - 10:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Carlos Solís">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Carlos Solís</div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-hand"></i>
+                            <span>Servicio: Manicura</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 15 Nov, 2025 - 11:30 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Luisa Fernanda">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Luisa Fernanda</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-spa"></i>
+                            <span>Servicio: Pedicura y Masaje</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 16 Nov, 2025 - 09:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="cita-card cancelada-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Jorge Páez" disabled>
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Jorge Páez</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-person"></i>
+                            <span>Servicio: Corte de Caballero</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 14 Nov, 2025 - 02:00 PM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-cancelada">Cancelada</span>
+                        <div class="cita-acciones">
+                            <!-- Sin acciones -->
+                        </div>
+                    </div>
+                </article>
+            </section>
+    </main>
+</body>
+</html>)
+
+- ESTE CSS (:root {
+    --color-principal: #f96c7a;
+    --color-secundario: #fce4e6;
+    --color-fondo-pagina: #f7f7f7;
+    --color-fondo-panel: rgba(78, 72, 72, 0.7);
+    --color-texto-oscuro: #333333;
+    --color-texto-claro: #ffffff;
+    --color-texto-gris: #504d4d;
+    --color-borde: #eeeeee;
+    --color-confirmar: #28a745;
+    --color-peligro: #dc3545;
+    --color-cancelada-fondo: #e9ecef;
+    --color-cancelada-texto: #6c757d;
+    --color-terciario: #6c757d;
+    --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.06);
+    --sombra-media: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-fondo-panel);
+    color: var(--color-texto-oscuro);
+    line-height: 1.6;
+    padding-top: 70px;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(255, 255, 255, 0.6)), 
+        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    padding: 0;
+    min-height: 100vh;
+}
+
+main {
+    width: 92%;
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding-bottom: 3rem;
+}
+
+.btn {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: 0.2s ease;
+}
+
+.filtros-top {
+    display: flex;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-direction: column;
+    width: 10rem;
+}
+
+.btn-primario {
+    background-color: var(--color-principal);
+    color: var(--color-texto-claro);
+}
+.btn-primario:hover {
+    /* Color de fondo ligeramente más oscuro */
+    background-color: #e96673; 
+    /* Efecto de "presión" o importancia */
+    transform: scale(1.02); 
+}
+
+.btn-peligro {
+    background-color: var(--color-principal);
+    color: var(--color-texto-claro);
+}
+.btn-peligro:hover {
+    opacity: 0.85;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+}
+.btn-peligro:disabled {
+    background-color: #ccc;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-terciario {
+    background-color: transparent;
+    color: var(--color-texto-gris);
+    border: 2px solid var(--color-borde);
+}
+.btn-terciario:hover {
+    background-color: var(--color-fondo-pagina);
+    border-color: #ccc;
+}
+
+.filtro-panel {
+    background-color: transparent;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+/* Estilo para mostrar el panel de filtros */
+.filtro-panel.active {
+    display: block;
+}
+
+
+.filtro-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+}
+
+.filtro-grupo label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--color-texto-oscuro);
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-texto-oscuro);
+    border-radius: 8px;
+    background-color: transparent;
+    font-size: 1rem;
+    transition: 0.2s;
+    color: var(--color-texto-oscuro);
+    font-family: 'Courier Prime', monospace; 
+}
+
+input::placeholder {
+    color: var(--color-texto-oscuro);
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus {
+    outline: none;
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px var(--color-secundario);
+}
+
+.filtro-acciones {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bulk-actions {
+    background-color: transparent;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30rem;
+}
+
+.bulk-actions .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bulk-actions input[type="checkbox"] {
+    width: 1.3rem;
+    height: 1.3rem;
+    accent-color: var(--color-principal);
+}
+
+#bulkCancel {
+    width: 100%;
+}
+
+/* ============================================================
+   TARJETAS DE CITAS
+   ============================================================ */
+.lista-citas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.cita-card {
+    background-color: var(--color-fondo-panel);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    transition: 0.2s ease-out;
+    color: var(--color-texto-claro);
+}
+
+.cita-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sombra-media);
+}
+
+.cita-card.cancelada-card {
+    background-color: rgba(249, 108, 122, 0.7);
+    opacity: 0.8;
+    box-shadow: none;
+    color: var(--color-texto-oscuro);
+}
+
+.cita-selector {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 0.25rem;
+}
+
+.cita-selector .cita-checkbox {
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: var(--color-principal);
+}
+
+.cita-detalles {
+    flex-grow: 1;
+}
+
+.cita-cliente {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.cita-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.cita-meta i {
+    font-size: 0.8rem;
+    width: 15px;
+    text-align: center;
+}
+
+/* Estado */
+.cita-info-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 110px;
+}
+
+.estado {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.estado-confirmada {
+    background-color: var(--color-confirmar);
+    color: var(--color-texto-claro);
+}
+
+.estado-cancelada {
+    background-color: var(--color-cancelada-fondo);
+    color: var(--color-cancelada-texto);
+}
+
+.cita-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.btn-accion {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-accion:hover {
+    opacity: 0.8;
+}
+
+.btn-cancelar {
+    background-color: var(--color-peligro);
+    color: white;
+}
+
+/* ============================================================
+   ESTILOS DE CALENDARIO PERSONALIZADO (NUEVOS)
+   ============================================================ */
+
+/* Contenedor principal para manejar el posicionamiento absoluto */
+.calendario-custom-wrapper {
+    position: relative;
+}
+
+/* Estilo del input que abre el calendario */
+.cal-select-input {
+    width: 100%;
+    cursor: pointer;
+    /* Ícono SVG de calendario (color gris) */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px !important;
+}
+
+/* Panel desplegable del Calendario */
+.calendario-dropdown-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    z-index: 100;
+    width: 305px; /* Ancho fijo para el calendario */
+    background-color: var(--color-principal); 
+    color: var(--color-texto-claro);
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    display: none; 
+    font-family: 'Lato';
+}
+
+/* Muestra el panel cuando el input está 'open' */
+.calendario-custom-wrapper.open .calendario-dropdown-panel {
+    display: block;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.cal-selectores {
+    display: flex;
+    gap: 10px;
+}
+
+.mes-dropdown-wrapper, .anio-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.cal-select {
+    border: none;
+    background-color: var(--color-principal);
+    color: white;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 8px 30px 8px 12px;
+    /* Ícono SVG de flecha hacia abajo (color blanco) */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 14px;
+}
+
+.cal-select:focus {
+    outline: 2px solid white;
+}
+
+.mes-select-menu, .anio-select-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+    z-index: 110;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 100%;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 0;
+    display: none;
+}
+
+.mes-dropdown-wrapper.open .mes-select-menu,
+.anio-dropdown-wrapper.open .anio-select-menu {
+    display: block;
+}
+
+.mes-select-menu li, .anio-select-menu li {
+    color: var(--color-texto-oscuro);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.mes-select-menu li:hover, .anio-select-menu li:hover {
+    background-color: var(--color-fondo-pagina);
+}
+
+.mes-select-menu li.selected, .anio-select-menu li.selected {
+    background-color: var(--color-principal);
+    color: white;
+    font-weight: 700;
+}
+
+.cal-nav {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cal-nav:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.cal-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.calendario-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.calendario-grid-dias {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendario-dia {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
+}
+
+.calendario-dia:hover:not(.dia-pasado):not(.otro-mes) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.calendario-dia.otro-mes {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.calendario-dia.dia-pasado {
+    opacity: 0.3;
+    /* text-decoration: line-through; No se recomienda para evitar confusión en UI */
+    cursor: not-allowed;
+}
+
+.calendario-dia.hoy {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.calendario-dia.seleccionado {
+    background-color: white;
+    color: var(--color-principal);
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   MEDIA QUERIES (Responsive)
+   ============================================================ */
+
+@media (min-width: 600px) {
+    .filtro-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .filtro-acciones {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .bulk-actions {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #bulkCancel {
+        width: auto;
+    }
+
+    .cita-acciones {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+@media (min-width: 768px) {
+    /* Diseño de encabezado y navegación (no incluido en este archivo, pero importante para el responsive) */
+    /* .menu_hamburguesa { display: none; } */
+    /* .menu-opciones { display: flex; } */
+
+    .cita-card {
+        padding: 1.5rem;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .cita-info-estado {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .cita-selector {
+        padding-top: 0;
+    }
+
+    .cita-acciones {
+        margin-top: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .lista-citas {
+        grid-template-columns: 1fr 1fr;
+    }
+})
+
+-ESTE JS (document.addEventListener('DOMContentLoaded', () => {
+
+    const toggleButton = document.getElementById('toggleFiltros');
+    const filtroPanel = document.getElementById('filtroPanel');
+    const limpiarButton = document.getElementById('limpiarFiltros');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const allCitaCheckboxes = document.querySelectorAll('.cita-checkbox:not(:disabled)');
+    const bulkCancelButton = document.getElementById('bulkCancel');
+
+    // --- Lógica de Filtros y Acciones Masivas (Combinada) ---
+
+    // Mostrar / ocultar filtros
+    if (toggleButton && filtroPanel) {
+        // Inicializa el panel de filtros como activo si deseas que esté visible por defecto, 
+        // o asegúrate de que el CSS/HTML lo maneje si empieza oculto.
+        // Aquí ajustamos el texto inicial.
+        toggleButton.addEventListener('click', () => {
+            const isVisible = filtroPanel.style.display === 'block';
+            const toggleIcon = toggleButton.querySelector('i');
+            const toggleText = toggleButton.querySelector('span');
+
+            if (isVisible) {
+                filtroPanel.style.display = 'none';
+                toggleText.textContent = 'Mostrar filtros';
+                toggleIcon.classList.remove('fa-chevron-up');
+                toggleIcon.classList.add('fa-filter');
+            } else {
+                filtroPanel.style.display = 'block';
+                toggleText.textContent = 'Ocultar filtros';
+                toggleIcon.classList.remove('fa-filter');
+                toggleIcon.classList.add('fa-chevron-up');
+            }
+        });
+    }
+
+    // Limpiar filtros (¡Actualizado para el campo de fecha personalizado!)
+    if (limpiarButton) {
+        limpiarButton.addEventListener('click', () => {
+            document.getElementById('buscarNombre').value = '';
+            document.getElementById('selectEstado').value = 'todos';
+            
+            // LIMPIA EL NUEVO CAMPO DE CALENDARIO
+            document.getElementById('fechaSeleccionada').value = '';
+            
+            console.log('Filtros limpiados');
+        });
+    }
+
+    // Actualizar estado del botón masivo
+    function updateBulkCancelButtonState() {
+        if (!bulkCancelButton) return;
+        const anyChecked = Array.from(allCitaCheckboxes).some(cb => cb.checked);
+        bulkCancelButton.disabled = !anyChecked;
+    }
+
+    // Seleccionar todos y escuchar cambios individuales
+    if (selectAllCheckbox && allCitaCheckboxes.length > 0) {
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            allCitaCheckboxes.forEach(cb => cb.checked = isChecked);
+            updateBulkCancelButtonState();
+        });
+        
+        allCitaCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                if (!cb.checked) selectAllCheckbox.checked = false;
+                const allChecked = Array.from(allCitaCheckboxes).every(c => c.checked);
+                selectAllCheckbox.checked = allChecked;
+                updateBulkCancelButtonState();
+            });
+        });
+    }
+
+    updateBulkCancelButtonState();
+
+    // Cancelar individual
+    document.querySelectorAll('.btn-cancelar').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            console.log('Cancelando cita...');
+            const card = e.target.closest('.cita-card');
+            card.classList.add('cancelada-card');
+
+            const estadoSpan = card.querySelector('.estado');
+            estadoSpan.textContent = 'Cancelada';
+            estadoSpan.className = 'estado estado-cancelada';
+
+            card.querySelector('.cita-acciones').innerHTML = '';
+
+            const checkbox = card.querySelector('.cita-checkbox');
+            if (checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            }
+
+            updateBulkCancelButtonState();
+        });
+    });
+
+    // Cancelar masivamente
+    if (bulkCancelButton) {
+        bulkCancelButton.addEventListener('click', () => {
+            console.log('Cancelando citas seleccionadas...');
+
+            allCitaCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    const card = cb.closest('.cita-card');
+                    card.classList.add('cancelada-card');
+
+                    const estadoSpan = card.querySelector('.estado');
+                    estadoSpan.textContent = 'Cancelada';
+                    estadoSpan.className = 'estado estado-cancelada';
+
+                    card.querySelector('.cita-acciones').innerHTML = '';
+
+                    cb.checked = false;
+                    cb.disabled = true;
+                }
+            });
+
+            selectAllCheckbox.checked = false;
+            updateBulkCancelButtonState();
+        });
+    }
+
+
+    // --- Lógica del Calendario Personalizado ---
+
+    const calendarioWrapper = document.getElementById('calendarioPicker');
+    const inputFecha = document.getElementById('fechaSeleccionada');
+    const panelCalendario = calendarioWrapper?.querySelector('.calendario-dropdown-panel');
+
+    const mesSelect = document.getElementById('mesSelect');
+    const anioSelect = document.getElementById('anioSelect');
+    const calPrev = document.getElementById('calPrev');
+    const calNext = document.getElementById('calNext');
+    const calendarioDiasGrid = document.getElementById('calendarioDias');
+
+    const mesDropdown = calendarioWrapper?.querySelector('.mes-select-menu');
+    const anioDropdown = calendarioWrapper?.querySelector('.anio-select-menu');
+    const mesWrapper = calendarioWrapper?.querySelector('.mes-dropdown-wrapper');
+    const anioWrapper = calendarioWrapper?.querySelector('.anio-dropdown-wrapper');
+
+    if (calendarioWrapper && inputFecha && panelCalendario) {
+        
+        let fechaActual = new Date();
+        // Inicializa fechaSeleccionada a null para evitar seleccionar hoy por defecto
+        let fechaSeleccionada = null; 
+
+        const nombresMeses = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
+
+        const minAnio = 2020;
+        const maxAnio = 2030; 
+
+        // --- Funciones de Renderizado ---
+
+        function renderMesDropdown() {
+            if (!mesDropdown) return;
+            mesDropdown.innerHTML = '';
+            nombresMeses.forEach((nombre, index) => {
+                const li = document.createElement('li');
+                li.textContent = nombre;
+                li.dataset.mes = index;
+                li.classList.toggle('selected', index === fechaActual.getMonth());
+                mesDropdown.appendChild(li);
+            });
+            mesSelect.textContent = nombresMeses[fechaActual.getMonth()];
+        }
+
+        function renderAnioDropdown() {
+            if (!anioDropdown) return;
+            anioDropdown.innerHTML = '';
+            for (let anio = minAnio; anio <= maxAnio; anio++) {
+                const li = document.createElement('li');
+                li.textContent = anio;
+                li.dataset.anio = anio;
+                li.classList.toggle('selected', anio === fechaActual.getFullYear());
+                anioDropdown.appendChild(li);
+            }
+            anioSelect.textContent = fechaActual.getFullYear();
+        }
+
+        function crearDiaElemento(dia, clase, esClickeable) {
+            const div = document.createElement('div');
+            div.classList.add('calendario-dia');
+            if (clase) {
+                div.classList.add(...clase.split(' '));
+            }
+            div.textContent = dia;
+            if (!esClickeable) {
+                div.style.cursor = 'default';
+            }
+            return div;
+        }
+
+        function renderCalendario() {
+            if (!calendarioDiasGrid) return;
+            calendarioDiasGrid.innerHTML = '';
+
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            const primerDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
+            const ultimoDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0);
+
+            // Ajustar el inicio de la semana a Lunes (1=Lun, ..., 7=Dom)
+            let diaInicio = primerDiaDelMes.getDay(); // 0=Dom, 1=Lun, ..., 6=Sáb
+            if (diaInicio === 0) diaInicio = 7; // Convertir Domingo (0) a 7
+            let diaDeLaSemanaInicio = diaInicio - 1; // Número de celdas vacías al inicio (0-6)
+
+            // Rellenar días del mes anterior
+            const mesAnteriorUltimoDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 0).getDate();
+            for (let i = diaDeLaSemanaInicio; i > 0; i--) {
+                const diaNum = mesAnteriorUltimoDia - i + 1;
+                const diaEl = crearDiaElemento(diaNum, 'otro-mes', false);
+                calendarioDiasGrid.appendChild(diaEl);
+            }
+
+            // Días del mes actual
+            for (let dia = 1; dia <= ultimoDiaDelMes.getDate(); dia++) {
+                const fechaDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), dia);
+                fechaDia.setHours(0, 0, 0, 0);
+
+                const clases = [];
+                let isPast = fechaDia < hoy && fechaDia.getTime() !== hoy.getTime();
+                
+                // Compara solo si hay una fecha seleccionada
+                let isSelected = fechaSeleccionada && fechaSeleccionada.getTime() === fechaDia.getTime();
+
+                if (fechaDia.getTime() === hoy.getTime()) {
+                    clases.push('hoy');
+                }
+                if (isPast) {
+                    clases.push('dia-pasado');
+                }
+                if (isSelected) {
+                    clases.push('seleccionado');
+                }
+
+                const diaEl = crearDiaElemento(dia, clases.join(' '), !isPast);
+                diaEl.dataset.fullDate = fechaDia.toISOString().split('T')[0];
+                calendarioDiasGrid.appendChild(diaEl);
+            }
+
+            // Rellenar días del mes siguiente
+            const diasTotales = diaDeLaSemanaInicio + ultimoDiaDelMes.getDate();
+            const diasRestantes = 42 - diasTotales; // Máximo de 6 filas (6*7=42)
+            for (let i = 1; i <= diasRestantes; i++) {
+                const diaEl = crearDiaElemento(i, 'otro-mes', false);
+                calendarioDiasGrid.appendChild(diaEl);
+            }
+        }
+
+        // --- Funciones de Manejo de Eventos ---
+
+        function actualizarVista() {
+            renderMesDropdown();
+            renderAnioDropdown();
+            renderCalendario();
+        }
+
+        // Navegación (Prev/Next)
+        calPrev?.addEventListener('click', () => {
+            fechaActual.setMonth(fechaActual.getMonth() - 1);
+            actualizarVista();
+        });
+
+        calNext?.addEventListener('click', () => {
+            fechaActual.setMonth(fechaActual.getMonth() + 1);
+            actualizarVista();
+        });
+
+        // Toggle de Dropdowns
+        mesSelect?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            anioWrapper?.classList.remove('open');
+            mesWrapper?.classList.toggle('open');
+        });
+
+        anioSelect?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mesWrapper?.classList.remove('open');
+            anioWrapper?.classList.toggle('open');
+        });
+
+        // Selección de Mes
+        mesDropdown?.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI' && e.target.dataset.mes !== undefined) {
+                fechaActual.setMonth(parseInt(e.target.dataset.mes));
+                mesWrapper?.classList.remove('open');
+                actualizarVista();
+            }
+        });
+
+        // Selección de Año
+        anioDropdown?.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI' && e.target.dataset.anio !== undefined) {
+                fechaActual.setFullYear(parseInt(e.target.dataset.anio));
+                anioWrapper?.classList.remove('open');
+                actualizarVista();
+            }
+        });
+
+        // Selección de Día
+        calendarioDiasGrid?.addEventListener('click', (e) => {
+            const diaEl = e.target.closest('.calendario-dia');
+            if (diaEl && diaEl.dataset.fullDate && !diaEl.classList.contains('dia-pasado') && !diaEl.classList.contains('otro-mes')) {
+                
+                const [year, month, day] = diaEl.dataset.fullDate.split('-').map(Number);
+                // Crea la fecha para la comparación (mes es 0-index)
+                fechaSeleccionada = new Date(year, month - 1, day); 
+                fechaSeleccionada.setHours(0, 0, 0, 0);
+
+                // Formato de salida para el input (DD/MM/YYYY)
+                const diaStr = String(day).padStart(2, '0');
+                const mesStr = String(month).padStart(2, '0');
+                inputFecha.value = `${diaStr}/${mesStr}/${year}`;
+
+                // Cierra el calendario
+                calendarioWrapper.classList.remove('open');
+                
+                // Re-renderiza para actualizar la selección visual
+                renderCalendario(); 
+            }
+        });
+
+        // Toggle del Calendario al hacer click en el input
+        inputFecha.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarioWrapper.classList.toggle('open');
+            // Asegúrate de que los selectores internos estén cerrados al abrir el calendario
+            mesWrapper?.classList.remove('open');
+            anioWrapper?.classList.remove('open');
+        });
+        
+        // Cierra todos los menús si se hace click fuera
+        document.addEventListener('click', (e) => {
+            if (!calendarioWrapper.contains(e.target)) {
+                calendarioWrapper.classList.remove('open');
+                mesWrapper?.classList.remove('open');
+                anioWrapper?.classList.remove('open');
+            } else if (!mesWrapper?.contains(e.target) && !anioWrapper?.contains(e.target)) {
+                // Cierra selectores internos si se hace clic dentro del panel pero no en ellos
+                mesWrapper?.classList.remove('open');
+                anioWrapper?.classList.remove('open');
+            }
+        });
+
+        // Inicialización del Calendario
+        actualizarVista();
+    }
+});)
+
+ENTONCES COMO VES TAMB EN LA IMAGEN Q TE ENVIÉ ASI QUEDÓ EL DISEÑO... AHORA VIENE LO COMPLEJO NECESITO QUE COMPLETES EL JS, ES DECIR, EL JS SE ENCARGARÁ DE:
+
+1. CARGAR LOS DATOS DE LA BASE DE DATOS AL TOCAR EL BOTÓN DE APLICAR FILTROS YA SEA CON ESTAS COMBINACIONES DE FILTROS (Nombre, Estado, Fecha, Nombre + Estado, Nombre + Fecha, Estado + Fecha, Nombre + Estado + Fecha).
+
+2. UNA VEZ TENEMOS CLARO CUÁL DE LAS 7 COMBINACIONES TENEMOS MANDAR A BACKEND LA CONSULTA.
+
+3. LUEGO RECIBIR DE BACKEND LOS DATOS DE LA CONSULTA Y EN BASE A ELLOS PONER LAS CARTAS DE ACUERDO A UN COLO SI ES CANCELADA (ROSADO) Y OTRO SI ESTA CONFIRMADA (BLANCO). LOS COLORES DETERMINADOS POR ESTADO YA ESTA PROGRAMADO EN EL CSS.
+
+4. QUIERO QUE SE CARGUEN EN ESAS CARTAS LOS TODOS LOS DATOS ENCONTRADOS...
+
+5. LUEGO SE PODRÁ CANCELAR UNA O VARIAS CITAS ESO ESTÁ EN JS. SI EL USUARIO SE ARREPIENTE PUEDE DARLE CLIC A DESHACER ACCIÓN Y LA PÁGINA SE RECARGA CON LOS VIEJOS DATOS TOMADOS EN EL PASO 4.
+
+6. DESPUÉS SE DEBE GUARDAR DANDOLE CLIC AL BOTON GUARDAR LOS CAMBIOS DE CITAS CANCELADAS EN LA BASE DE DATOS.
+
+7. SE DEBE PODER LIMPIAR Y REALIZAR MÁS CONSULTAS DANDOLE CLIC AL BOTON DE APLICAR FILTROS.
+
+CONSIDERA QUE MI BACKEND ESTÁ USANDO EXPRESS, NODE.JS Y JS. DAME EL JS COMPLETO CON TODO, LO VIEJO QUE SE PUEDA DEJAR Y LO NUEVO QUE PEDÍ. ASI QUE DEDICATE UN TIEMPO A ANALIZAR EL FLUJO DE LA INFORMACIÓN. PORQUE MI JS EL DE FRONTEND.
+
+ENTONCES... DEBES ANALIZA EL CÓDIGO PARA TI A MI NO ME DIGAS NADA Y LUEGO ME DAS DE SALIDA EL JS COMPLETO SOLO ESO, PERO EN LA HERRAMIENTA CANVAS.

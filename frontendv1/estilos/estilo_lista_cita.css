@@ -1,0 +1,362 @@
+:root {
+    /* Variables corregidas: 3 es inválido, usamos 0.8 de opacidad */
+    --date-selector-font: 'Poppins', sans-serif; 
+    --overlay-color: rgba(0, 0, 0, 0.45); 
+    --highlight-color: #ff8888; /* Color de acento (rojo claro) */
+    --table-row-border: rgba(255, 255, 255, 0.8); 
+    --header-background: rgba(0, 0, 0, 0.7); 
+    --table-max-height: 400px; 
+    --fade-height: 20px; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif; 
+    color: white; 
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Contenedor Principal */
+.container {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('../imagenes/modelo-principal.jpg') no-repeat center center fixed;
+    background-size: cover;
+    padding-bottom: 50px; 
+}
+
+.background-overlay {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-color);
+    z-index: 1;
+}
+
+/* Contenido de la Página */
+.content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 95%; 
+    max-width: 1400px; 
+    margin: 30px auto 0; 
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+/* Perfil del Trabajador */
+.perfil-trabajador {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre la imagen y el nombre */
+    position: absolute; /* Para que quede en la esquina superior izquierda */
+    top: 20px; 
+    left: 20px; 
+    z-index: 5; /* Encima del overlay y contenido */
+}
+
+.perfil-trabajador .perfil-img {
+    width: 60px; 
+    height: 60px;
+    border-radius: 50%; 
+    object-fit: cover;
+    border: 2px solid white; 
+}
+
+.perfil-trabajador .nombre-trabajador {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+/* Selector de Día y Botón */
+.header-content-wrapper {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+.selector-dia-wrapper {
+    max-width: 500px; 
+    margin: 0 auto 30px; 
+}
+
+.contenedor-dia {
+    display: flex;
+    gap: 10px; 
+    justify-content: center; 
+    height: 5vh;
+    background-color: transparent; 
+    padding: 0; 
+    border-radius: 10px;
+}
+
+input[type="text"] {
+    font-family: var(--date-selector-font);
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 1em;
+    outline: none;
+    background-color: transparent; 
+    transition: all 0.3s ease;
+    filter: invert(60%) sepia(80%) saturate(500%) hue-rotate(310deg); 
+    width: 200px;
+}
+
+input[type="text"]:focus {
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 10px rgba(255, 136, 136, 0.5);
+}
+
+/* Mantener estilo de tu input para Flatpickr */
+.flatpickr-input {
+    font-family: var(--date-selector-font);
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 1em;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    transition: all 0.3s ease;
+    filter: invert(60%) sepia(80%) saturate(500%) hue-rotate(310deg);
+    width: 200px;
+}
+
+.flatpickr-input:focus {
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 10px rgba(255, 136, 136, 0.5);
+}
+
+/* Calendario */
+.flatpickr-calendar {
+    font-family: var(--date-selector-font);
+    background-color: rgba(0,0,0,0.85);
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+.flatpickr-months, .flatpickr-weekdays {
+    color: var(--highlight-color);
+}
+
+.flatpickr-day:hover {
+    background-color: var(--highlight-color);
+    color: #333;
+}
+
+.btn-buscar {
+    font-family: var(--date-selector-font);
+    background-color: var(--highlight-color);
+    color: #333; 
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px; 
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    outline: none;
+}
+
+.btn-buscar:hover {
+    background-color: #ffaaaa; 
+    transform: translateY(-1px); 
+}
+
+.btn-buscar:active {
+    transform: translateY(0); 
+    background-color: #e07a7a; 
+}
+
+/* Título de la Página Web */
+h1 {
+    font-family: 'Courgette', cursive;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 2.5em;
+    color: white;
+    margin-top: 80px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* ---------------- Tablas ---------------- */
+.table-header-wrapper table,
+.table-scroll-container table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    table-layout: fixed; 
+}
+
+/* Contenedor de la cabecera */
+.table-header-wrapper {
+    width: 100%;
+    background-color: transparent; 
+    border-radius: 8px 8px 0 0; 
+    position: relative; 
+    z-index: 3; 
+}
+
+.table-header-wrapper thead th {
+    font-weight: bold;
+    font-size: 1.4rem;
+    padding: 15px 10px 20px 20px; 
+    color: var(--highlight-color); 
+    border: none;
+    border-bottom: 1px solid var(--table-row-border);
+    position: static; 
+}
+
+/* Contenedor de scroll para el cuerpo */
+.table-scroll-container {
+    max-height: var(--table-max-height); 
+    overflow-y: auto;
+    background-color: transparent; 
+    position: relative;
+    z-index: 2; 
+    border-radius: 0 0 8px 8px; 
+    
+    mask-image: linear-gradient(to bottom, transparent 0, black var(--fade-height));
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black var(--fade-height));
+}
+
+/* Celdas del body */
+.table-scroll-container tbody td {
+    padding: 25px 10px; 
+    padding-left: 20px;
+    color: white;
+    border-bottom: 1px solid var(--table-row-border);
+    font-size: 1.4rem;
+    font-weight: 300;
+}
+
+.table-scroll-container tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Scrollbars */
+.table-container-responsive::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-container-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-container-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.6); 
+    border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.6); 
+    border-radius: 4px;
+}
+
+/* ---------------- Media Queries ---------------- */
+@media (max-width: 768px) {
+    .perfil-trabajador {
+        top: 10px;
+        left: 10px;
+        gap: 8px;
+    }
+    
+    .perfil-trabajador .perfil-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .perfil-trabajador .nombre-trabajador {
+        font-size: 1rem;
+    }
+
+    .content {
+        overflow-x: hidden; 
+        width: 100%; 
+        padding: 0px; 
+        margin: 20px auto 0; 
+    }
+    
+    .table-container-responsive {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .table-header-wrapper,
+    .table-scroll-container {
+        min-width: 650px;
+        width: 100%; 
+    }
+    
+    .selector-dia-wrapper {
+        width: 90%; 
+        max-width: none; 
+        margin: 20px auto; 
+    }
+
+    .contenedor-dia {
+        flex-direction: column;
+        align-items: center;
+        height: auto; 
+    }
+
+    input[type="date"], .btn-buscar {
+        width: 100%;
+        max-width: 300px; 
+        margin-bottom: 5px; 
+        padding: 10px 15px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+
+    .col-num { 
+        width: 10%; 
+    } 
+    .col-nombre { 
+        width: 35%; 
+    } 
+    
+    .table-header-wrapper thead th {
+        font-size: 1.1rem;
+        padding: 10px 5px 15px 10px;
+    }
+    
+    .table-scroll-container tbody td {
+        font-size: 0.9em;
+        padding: 15px 5px 15px 10px;
+    }
+
+    .flatpickr-calendar {
+        font-size: 0.9em;
+    }
+}

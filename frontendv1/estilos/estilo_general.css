@@ -1,0 +1,421 @@
+body { 
+    margin: 0; 
+    background-color: #FDD3D0; 
+    width: 100%; 
+}
+
+header { 
+    display: flex; 
+    width: 100%;
+    height: 10.55vh; 
+    background-color: #FCB3AD; 
+    align-items: center; 
+    justify-content: space-between; 
+    font-family: sans-serif; 
+    font-size: 2.3vh;
+    padding-left: 5vh;
+    padding-right: 5vh;
+    box-sizing: border-box;
+    overflow: hidden; /* evita que algo sobresalga horizontalmente */
+}
+
+.menu_hamburguesa {
+    display: none;
+}
+
+.logo img { 
+    display: flex; 
+    height: 7vh; 
+} 
+
+header .menu-opciones { 
+    display: flex; 
+    align-items: center; 
+    gap: 5vh; 
+} 
+
+nav ul { 
+    list-style-type: none; 
+    display: flex; 
+    gap: 5vh; 
+    justify-content: flex-end; 
+    padding: 0; 
+    margin: 0; 
+} 
+
+nav a { 
+    text-decoration: none; 
+    color: #333; 
+    position: relative; 
+    font-family: sans-serif; 
+    padding: 0.5vh 0vh; 
+    transition: color 0.3s ease; 
+} 
+
+/* Animación subrayado */
+nav a::after { 
+    content: ""; 
+    position: absolute; 
+    width: 0; 
+    height: 0.42vh; 
+    bottom: 0; 
+    left: 50%; 
+    background-color:#333; 
+    transition: all 0.3s ease; 
+} 
+
+nav a:hover::after { 
+    width: 100%; 
+    left: 0vh; 
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.5rem; 
+}
+
+.header-buttons button {
+    padding: 0.5rem 1rem;
+    border-radius: 2vh;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 2.2vh;
+    transition: all 0.3s ease; 
+    text-decoration: none;
+}
+
+/* Botones específicos */
+.header-buttons .signin {
+    background-color: #fff;
+    border: 0.4vh solid #c2c2c2;
+    color: #333;
+}
+
+.header-buttons .register {
+    background-color: #333;
+    border: 0.4vh solid #0f0f0f;
+    color: #fff;
+}
+
+/* Efecto brillo botones */
+.header-buttons button.fx-neon:hover {
+    background: #ffd5d1;
+    color: #000;
+    box-shadow: 0 0 0.5vh #ffd5d1, 0 0 0.5vh #ffd5d1;
+}
+
+/*SECCIÓN DE IMÁGEN PRINCIPAL*/
+.hero-section {
+    height: 83.5vh;  /* ocupa toda la pantalla */
+    overflow: hidden;
+    background-image: url("../imagenes/modelo-principal.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/*SECCIÓN DE TESTIMONIOS*/
+.testimonials-section {
+    background-color: #ffcbc7;
+    padding-top: 4.1%;
+    padding-bottom: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: auto;
+}
+
+.testimonials-section titulo-testimonio {
+    display: block;       /* Hace que el elemento sea block */
+    font-family: 'Playfair Display', 'Arial', sans-serif;
+    font-style: italic;
+    font-size: 10.5vh;
+    font-weight: 400;
+    color: #1E1E1E;
+    text-align: left;    /* Centra el texto */
+}
+
+.testimonials-section p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 3.7vh;
+    padding-left: 1vh;
+    color: #3b3b3b;
+    text-align: left;
+}
+
+.testimonials-container {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 4vh;
+    text-align: center; 
+    flex-wrap: wrap;
+    padding-top: 4vh;
+    padding-bottom: 2vh;
+}
+
+.testimonial {
+    background: #fff;
+    padding: 5vh;
+    border-radius: 3.5%; /* Bordes más redondeados como en la imagen */
+    box-sizing: border-box;
+    text-align: left; /* Alinea el texto a la izquierda dentro de la tarjeta */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: sans-serif;
+    width: 54vh;
+    height: 34vh;
+}
+
+.testimonial footer {
+    display: flex;
+    align-items: center; /* Centra verticalmente la imagen con el texto */
+    justify-content: flex-start;
+    gap: 3vh; /* Espacio entre la imagen y el nombre */
+    margin-top: auto; /* Empuja el footer al final de la tarjeta */
+}
+
+.testimonial-avatar {
+    width: 8vh;
+    height: 8vh;
+    border-radius: 50%; /* Esto la hace circular */
+    object-fit: cover; /* Evita que la imagen se deforme */
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial .author {
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 3vh;
+}
+
+.testimonial .title {
+    color: #777;
+    font-weight: normal;
+    font-size: 2.45vh;
+}
+
+.testimonial {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* SECCIÓN FOOTER */
+.pie_de_pagina {
+    background-color: #FDD3D0;
+    color:  #333;
+    height: 30vh;
+}
+
+.logo-footer-img {
+    display: flex; 
+    height: 7vh; 
+    margin-left: 0.4vh;
+    justify-content: center;
+}
+
+.footer-container {
+    padding: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Para adaptabilidad en pantallas pequeñas */
+}
+
+.footer-logo-social {
+    display: flex;
+    flex-direction: column;
+    margin-right: 40vh; /* Espacio entre las columnas */
+}
+
+.social-icons a {
+    color: #333;
+    font-size: 0.5vh;
+    margin: 0 2vh;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-info {
+    text-align: left;
+    font-family: 'Instrument Serif', 'Arial', sans-serif;
+    font-size: 2.2vh;
+    font-weight: bold;
+    padding-top: 0.4vh;
+}
+
+.footer-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 3.5vh;
+    margin-top: 0;
+    margin-bottom: 0.4vh;
+    padding-top: 2vh;
+}
+
+.footer-info p {
+    margin: 1vh 0;
+    display: flex;
+    align-items: center;
+    padding-right: 8vh;
+    font-size: 115%;
+}
+
+/*RESPONSIVE HEADER*/
+@media (max-width: 912px) {
+    header { 
+        padding-left: 2vh;
+        padding-right: 2vh;
+    }
+
+    .menu_hamburguesa {
+        display: block;
+        font-size: 5vh;
+        cursor: pointer;
+        position: relative;
+        top: 0.1vh;
+        left: 0vh;
+        z-index: 101;
+        color: black;
+    }
+
+    .menu-opciones nav ul {
+        display: none; /* oculto por defecto en móvil */
+        flex-direction: column;
+        gap: 2vh;
+        background: #FCB3AD;
+        padding: 2vh;
+        position: absolute;
+        top: 10vh;
+        left: 2vh;
+        box-shadow: 0 2vh 5vh rgba(0,0,0,0.1);
+        border-radius: 2vh;
+        z-index: 100;
+    }
+
+    /* Mostrar cuando se haga click */
+    .menu-opciones nav ul.active {
+        display: flex;
+    }
+
+    .header-buttons {
+        width: auto;
+    }
+
+    .header-buttons button {
+        padding: 0.5rem 0.5rem;
+        border-radius: 2vh;
+        cursor: pointer;
+        font-family: sans-serif;
+        font-size: 2.2vh;
+        transition: all 0.3s ease; /* transición suave al pasar el mouse */
+    }
+
+    /* Botones específicos */
+    .header-buttons .signin {
+        background-color: #fff;
+        border: 0.4vh solid #c2c2c2;
+        color: #333;
+    }
+
+    .header-buttons .register {
+        background-color: #333;
+        border: 0.4vh solid #0f0f0f;
+        color: #fff;
+    }
+}
+
+/*RESPONSIVE FOOTER*/
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column; /* Apila verticalmente */
+        align-items: center;    /* Centra horizontalmente todo */
+        text-align: center;     /* Centra el texto */
+        padding-right: 6%;
+        padding-left: 5%;
+        padding-bottom: 5%;
+        padding-top: 5%;
+    }
+
+    .footer-logo-social {
+        margin: 0 0 2vh 0;      /* Elimina margen derecho y agrega espacio inferior */
+        align-items: center;    /* Centra logo y redes */
+        justify-content: center; /* Asegura que logo y redes queden centrados */
+    }
+
+    .social-icons {
+        display: flex;
+        justify-content: center; /* Centra los iconos */
+        gap: 2vh;                /* Espaciado uniforme */
+    }
+
+    .social-icons a {
+        font-size: 2.5vh; /* Ajusta tamaño de iconos */
+        margin: 0 1vh;    /* Ajusta separación */
+    }
+
+    .footer-info {
+        padding-top: 1vh;
+        font-size: 2.5vh; /* Ajusta tamaño de texto */
+        text-align: center; /* Centra los párrafos de info */
+    }
+
+    .footer-info p {
+        justify-content: center; /* Centra los items horizontalmente */
+        padding-right: 0;
+        margin: 0.8vh 0;
+    }
+
+    .footer-title {
+        font-size: 4vh; /* Ajusta tamaño del título */
+        padding-top: 1vh;
+        margin-bottom: 1vh;
+    }
+
+    .logo-footer-img {
+        margin: 0 auto 1vh auto; /* Centra el logo */
+        height: 8vh;
+    }
+}
+
+/*RESPONSIVE TESTIMONIOS*/
+@media (max-width: 849px) {
+    .testimonials-section titulo-testimonio {
+        font-size: 9.4vh;
+        padding-top: 5vh;
+    }
+}
+@media (max-width: 648px) {
+    .testimonials-section titulo-testimonio {
+        font-size: 9.2vh;
+    }
+}
+@media (max-width: 535px) {
+    .testimonials-section titulo-testimonio {
+        font-size: 9.1vh;
+    }
+
+    .testimonials-section p{
+        font-size: 5vh;
+    }
+}
+@media (max-width: 500px) {
+    .testimonials-section titulo-testimonio {
+        font-size: 8vh;
+    }
+    .testimonials-section p {
+        font-size: 3.1vh;
+        width: auto;
+    }
+}

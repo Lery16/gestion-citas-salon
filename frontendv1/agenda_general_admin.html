@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salón de Belleza - Agenda</title>
+    <link rel="stylesheet" href="estilos/estilo_agenda_general.css">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <script src="funciones/agenda_general_admin_fun.js"></script>
+    <header>
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+                Citas 
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="menu-opciones">
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+    <main class="agenda-container">
+        <section class="fecha-calendario">
+            <div class="info-fecha">
+                <span class="dia-grande">24</span>
+                <div class="texto-fecha">
+                    <span class="dia-semana">Miércoles</span>
+                    <span class="mes-anio">Marzo</span>
+                </div>
+            </div>
+            
+            <button class="boton-calendario">2025</button>
+            
+            <div class="calendario-popup" style="display: none;">
+                <div class="calendario-header">
+                    <button class="cal-nav prev-mes">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    
+                    <div class="cal-selectores">
+                        
+                        <div class="mes-dropdown-wrapper">
+                            <div class="mes-select-btn cal-select" data-current-val="">Noviembre</div> 
+                            <ul class="mes-select-menu">
+                                </ul>
+                        </div>
+
+                        <div class="anio-dropdown-wrapper">
+                            <div class="anio-select-btn cal-select" data-current-val="">2025</div>
+                            <ul class="anio-select-menu">
+                                </ul>
+                        </div>
+                    </div>
+                    <button class="cal-nav next-mes">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+                
+                <div class="calendario-grid-header"></div>
+                <div class="calendario-grid-dias"></div>
+            </div>
+
+            <div class="dias-semana-tira">
+                <div class="dia" data-fecha="2025-03-21">
+                    <span class="letra">D</span>
+                    <span class="numero">21</span>
+                </div>
+                <div class="dia" data-fecha="2025-03-22">
+                    <span class="letra">L</span>
+                    <span class="numero">22</span>
+                </div>
+                <div class="dia" data-fecha="2025-03-23">
+                    <span class="letra">M</span>
+                    <span class="numero">23</span>
+                </div>
+                <div class="dia dia-activo" data-fecha="2025-03-24">
+                    <span class="letra">W</span>
+                    <span class="numero">24</span>
+                </div>
+                <div class="dia" data-fecha="2025-03-25">
+                    <span class="letra">J</span>
+                    <span class="numero">25</span>
+                </div>
+                <div class="dia" data-fecha="2025-03-26">
+                    <span class="letra">V</span>
+                    <span class="numero">26</span>
+                </div>
+                <div class="dia" data-fecha="2025-03-27">
+                    <span class="letra">S</span>
+                    <span class="numero">27</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="agenda-citas">
+            <table class="tabla-agenda">
+                <thead>
+                    <tr>
+                        <th class="columna-hora-header">Hora</th>
+                        <th class="columna-servicio-header">Servicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="celda-hora">
+                            <div class="espacio-hora-tabla">
+                                <span class="hora-inicio">11:35</span>
+                                <span class="hora-fin">13:05</span>
+                            </div>
+                        </td>
+                        <td class="celda-servicio">
+                            <div class="cita cita-clara">
+                                <div class="indicador"></div>
+                                <div class="cita-contenido">
+                                    <div class="info-servicio">
+                                        <span class="servicio-nombre">Servicio 1</span>
+                                        <span class="servicio-categoria">Categoria 1</span>
+                                        <div class="info-persona">
+                                            <img src="https://placehold.co/30x30/f0b4bb/4a4a4a?text=C1" alt="Cliente 1" class="cliente-img">
+                                            <span class="nombre-persona">Cliente 1</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-asesor">
+                                        <img src="https://placehold.co/30x30/f0b4bb/4a4a4a?text=A1" alt="Asesor 1" class="asesor-img">
+                                        <span class="nombre-persona">Asesor 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="celda-hora">
+                            <div class="espacio-hora-tabla">
+                                <span class="hora-inicio">11:35</span>
+                                <span class="hora-fin">13:05</span>
+                            </div>
+                        </td>
+                        <td class="celda-servicio">
+                            <div class="cita cita-oscura">
+                                <div class="indicador"></div>
+                                <div class="cita-contenido">
+                                    <div class="info-servicio">
+                                        <span class="servicio-nombre">Servicio 1</span>
+                                        <span class="servicio-categoria">Categoria 1</span>
+                                        <div class="info-persona">
+                                            <img src="https://placehold.co/30x30/f7f7f7/f96c7a?text=C3" alt="Cliente 3" class="cliente-img border-white">
+                                            <span class="nombre-persona">Cliente 3</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-asesor">
+                                        <img src="https://placehold.co/30x30/f7f7f7/f96c7a?text=A2" alt="Asesor 2" class="asesor-img border-white">
+                                        <span class="nombre-persona">Asesor 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="celda-hora">
+                            <div class="espacio-hora-tabla">
+                                <span class="hora-inicio">13:15</span>
+                                <span class="hora-fin">14:45</span>
+                            </div>
+                        </td>
+                        <td class="celda-servicio">
+                            <div class="cita cita-clara">
+                                <div class="indicador"></div>
+                                <div class="cita-contenido">
+                                    <div class="info-servicio">
+                                        <span class="servicio-nombre">Servicio 2</span>
+                                        <span class="servicio-categoria">Categoria 2</span>
+                                        <div class="info-persona">
+                                            <img src="https://placehold.co/30x30/f0b4bb/4a4a4a?text=C2" alt="Cliente 2" class="cliente-img">
+                                            <span class="nombre-persona">Cliente 2</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-asesor">
+                                        <img src="https://placehold.co/30x30/f0b4bb/4a4a4a?text=A1" alt="Asesor 1" class="asesor-img">
+                                        <span class="nombre-persona">Asesor 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="celda-hora">
+                            <div class="espacio-hora-tabla">
+                                <span class="hora-inicio">15:10</span>
+                                <span class="hora-fin">16:40</span>
+                            </div>
+                        </td>
+                        <td class="celda-servicio">
+                            <div class="cita cita-oscura">
+                                <div class="indicador"></div>
+                                <div class="cita-contenido">
+                                    <div class="info-servicio">
+                                        <span class="servicio-nombre">Servicio 1</span>
+                                        <span class="servicio-categoria">Categoria 1</span>
+                                        <div class="info-persona">
+                                            <img src="https://placehold.co/30x30/f7f7f7/f96c7a?text=C3" alt="Cliente 3" class="cliente-img border-white">
+                                            <span class="nombre-persona">Cliente 3</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-asesor">
+                                        <img src="https://placehold.co/30x30/f7f7f7/f96c7a?text=A2" alt="Asesor 2" class="asesor-img border-white">
+                                        <span class="nombre-persona">Asesor 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</body>
+</html>

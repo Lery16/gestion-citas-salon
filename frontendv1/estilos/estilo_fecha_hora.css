@@ -1,0 +1,829 @@
+:root {
+    --color-primary: #f06a77; /* Agotado */
+    --color-available: #000000; /* Disponible */
+    --color-closed: #ffffff; /* Cerrado */
+    --color-text-light: #ffffff;
+    --color-text-dark: #000000;
+    --color-dark-bg: rgba(0, 0, 0, 0.7); 
+
+    --scrollbar-track-color: rgba(0, 0, 0, 0.2);
+    --scrollbar-thumb-color: var(--color-primary);
+}
+
+.contenedorpagina {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    height: 120vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+    overflow: hidden;
+}
+
+.contenedor-fondo {
+    position: absolute;
+    width: 100%;
+    height: 120vh;
+    overflow: hidden;
+}
+
+.imagen-fondo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-principal.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.contenedor-contenido-agenda {
+    position: relative;
+    z-index: 2; 
+    width: 95%; 
+    max-width: 1000px;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.leyenda-estados {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-bottom: 20px;
+    color: var(--color-text-light);
+    font-weight: 600;
+}
+
+.item-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.punto-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.cerrado { background-color: var(--color-closed); }
+.disponible { background-color: var(--color-available); }
+.agotado { background-color: var(--color-primary); }
+
+.area-principal-reserva {
+    display: flex;
+    gap: 50px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.panel-calendario {
+    flex: 0 0 350px; 
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-dark-bg); 
+    padding: 2vh; 
+    border-radius: 5px;
+    height: 68vh;
+}
+
+.selector-anio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1vh;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+.anio-actual {
+    font-size: 1rem;
+    color: var(--color-text-light);
+}
+
+.btn-cambiar-anio {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: color 0.2s;
+}
+
+.btn-cambiar-anio:hover {
+    color: var(--color-text-light);
+}
+
+.selector-mes-actual {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 5px;
+    color: var(--color-text-light);
+    font-size: 18px;
+    height: 100%;
+}
+
+.contenedor-selector-mes {
+    background-color: var(--color-primary);
+    padding: 18px 15px;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+    overflow: visible;
+    height: auto;
+}
+
+.flecha-desplegable-mes {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid var(--color-text-light);
+    border-bottom: 2px solid var(--color-text-light);
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-right: 5px;
+}
+
+.flecha-desplegable-mes.abierto {
+    transform: rotate(-135deg);
+    margin-top: 5px;
+}
+
+
+.lista-meses-desplegable {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background-color: var(--color-primary);
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    overflow-y: scroll;
+    max-height: 250px;
+    z-index: 30;
+}
+
+.lista-meses-desplegable.oculto {
+    display: none;
+}
+
+.item-mes {
+    padding: 12px 15px;
+    color: var(--color-text-light);
+    font-size: 18px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.item-mes:hover:not(.seleccionado) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.item-mes.seleccionado {
+    color: rgba(255, 255, 255, 0.5);
+    background-color: transparent;
+    cursor: default;
+}
+
+.controles-navegacion-citas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-text-light);
+}
+
+.titulo-lista {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+.cuadricula-calendario {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px; 
+    padding-top: 1.2vh;
+}
+
+.nombre-dia {
+    text-align: center;
+    color: white; 
+    font-weight: 400;
+    padding: 8px 0;
+}
+
+.dia {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+    height: 45px;
+    width: 45px;
+    margin: 2px; 
+}
+
+.dia-mes-anterior, 
+.dia-mes-siguiente {
+    color: #707070 !important; 
+    cursor: default;
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+
+.dia:not(.dia-mes-anterior):not(.dia-mes-siguiente):not([class*="estado-"]):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dia.estado-cerrado {
+    background-color: var(--color-closed);
+    color: var(--color-text-dark);
+    cursor: not-allowed;
+}
+
+.dia.estado-disponible {
+    background-color: var(--color-available);
+    color: var(--color-text-light);
+    cursor: pointer;
+}
+
+.dia.estado-disponible:hover {
+     background-color: #333;
+}
+
+.dia.estado-agotado {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    cursor: not-allowed;
+}
+
+.dia.seleccionado {
+    border: 1px solid var(--color-text-light);
+    box-sizing: content-box; 
+}
+
+.desplegable-estilista {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--color-dark-bg);
+    color: var(--color-text-light);
+    border: 1px solid var(--color-available);
+    padding: 10px 15px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.desplegable-estilista:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.contenedor-selectores-agenda {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 15px;
+    padding: 0 10px;
+}
+
+.panel-selector-estilista {
+    padding: 0;
+}
+
+.panel-selector-hora {
+    padding: 0;
+}
+
+.titulo-selector-estilista {
+    color: #000000; 
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
+
+.titulo-selector-hora {
+    color: #000000; 
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.contenedor-desplegable-hora {
+    position: relative;
+}
+
+.desplegable-hora {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--color-dark-bg);
+    color: var(--color-text-light);
+    border: 1px solid var(--color-available);
+    padding: 10px 15px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.desplegable-hora:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.flecha-desplegable-hora {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid var(--color-text-light);
+    border-bottom: 2px solid var(--color-text-light);
+    pointer-events: none;
+    margin-top: -3px; 
+}
+
+.panel-citas {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.contenedor-lista-citas {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-dark-bg); 
+    border-radius: 5px;
+    overflow: hidden; 
+}
+
+.contenedor-cabecera-tabla {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1); 
+    flex-shrink: 0;
+}
+
+.contenedor-scroll-tabla {
+    overflow-y: auto;
+    flex-grow: 0; 
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    color: var(--color-text-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+th {
+    font-weight: 700;
+    color: #aaa; 
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.col-num { width: 10%; text-align: left; }
+.col-nombre { width: 30%; }
+.col-servicio { width: 35%; }
+.col-horario { width: 25%; }
+
+.btn-agendar {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    padding: 15px 0;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s;
+}
+
+.btn-agendar:active {
+    transform: scale(0.99);
+}
+
+.contenedor-scroll-tabla::-webkit-scrollbar {
+    width: 8px; 
+}
+
+.contenedor-scroll-tabla::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-color);
+}
+
+.contenedor-scroll-tabla::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-color);
+    border-radius: 4px;
+}
+
+@media (max-width: 965px) {
+    .contenedorpagina {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 5%;
+        font-family: 'Montserrat', sans-serif;
+        width: 100%;
+        /* Permitir scroll vertical */
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Alinear contenido arriba */
+        background: 
+            linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)),
+            url('../imagenes/modelo-principal-dispositivos.jpg') no-repeat center center;
+        background-size: cover;
+        overflow-x: hidden; /* Evitar scroll horizontal */
+    }
+
+    .contenedor-fondo {
+        position: fixed; /* Fijo al viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto; /* Ocupa 100% de la pantalla */
+        overflow: hidden;
+        z-index: 0; /* Detrás del contenido */
+    }
+
+    .contenedor-contenido-agenda {
+        position: relative; /* Para que pueda hacer scroll */
+        z-index: 2; /* Encima del fondo */
+        width: 95%; /* Ancho para móvil */
+        height: auto; /* Altura automática para scroll */
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
+    .leyenda-estados {
+        display: flex;
+        /* Apilado vertical y a la izquierda */
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 15px;
+        color: var(--color-text-light);
+        font-weight: 600;
+    }
+
+    .item-leyenda {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .punto-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .cerrado { background-color: var(--color-closed); }
+    .disponible { background-color: var(--color-available); }
+    .agotado { background-color: var(--color-primary); }
+
+    /* --- Layout Principal --- */
+    .area-principal-reserva {
+        display: flex;
+        /* Apilado verticalmente */
+        flex-direction: column;
+        gap: 30px;
+        overflow: visible;
+        flex-grow: 1;
+    }
+
+    .panel-calendario {
+        /* Ocupa todo el ancho, altura automática */
+        flex-basis: auto;
+        height: auto;
+        width: 92%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel-citas {
+        /* Ocupa todo el ancho */
+        flex-basis: auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* --- Calendario y Selectores --- */
+
+    .flecha-desplegable-mes {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-right: 2px solid var(--color-text-light);
+        border-bottom: 2px solid var(--color-text-light);
+        transform: rotate(45deg);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        box-sizing: border-box;
+        margin-right: 5px;
+    }
+
+    .flecha-desplegable-mes.abierto {
+        transform: rotate(-135deg);
+        margin-top: 5px;
+    }
+
+    .lista-meses-desplegable {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: 5px;
+        background-color: var(--color-primary);
+        border-radius: 5px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        overflow-y: scroll;
+        max-height: 250px;
+        z-index: 30;
+    }
+
+    .lista-meses-desplegable.oculto {
+        display: none;
+    }
+
+    .item-mes {
+        padding: 12px 15px;
+        color: var(--color-text-light);
+        font-size: 16px;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    .item-mes.seleccionado {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: default;
+    }
+
+    .nombre-dia {
+        text-align: center;
+        color: white; 
+        font-weight: 400;
+        padding: 8px 0;
+    }
+
+    .dia {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1 / 1;
+        /* Días más pequeños para móvil */
+        font-size: auto;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: background-color 0.2s, color 0.2s;
+        height: auto;
+        width: auto;
+        margin: 2px; 
+    }
+
+    /* --- Selectores de Estilista/Hora --- */
+    .desplegable-estilista,
+    .desplegable-hora {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-color: var(--color-dark-bg);
+        color: var(--color-text-light);
+        border: 1px solid var(--color-available);
+        padding: 10px 15px;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .desplegable-estilista:disabled,
+    .desplegable-hora:disabled {
+        background-color: #555;
+        color: #888;
+        cursor: not-allowed;
+    }
+
+    .contenedor-selectores-agenda {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 15px;
+        padding: 0 10px;
+    }
+
+    .panel-selector-estilista,
+    .panel-selector-hora {
+        padding: 0;
+    }
+
+    .titulo-selector-estilista,
+    .titulo-selector-hora {
+        color: var(--color-text-light); 
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .titulo-selector-estilista { padding-top: 10px; }
+
+
+    .contenedor-desplegable-hora {
+        position: relative;
+    }
+
+    .flecha-desplegable-hora {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        width: 6px;
+        height: 6px;
+        border-right: 2px solid var(--color-text-light);
+        border-bottom: 2px solid var(--color-text-light);
+        pointer-events: none;
+        margin-top: -3px; 
+    }
+
+    /* --- Panel de Citas y Tabla --- */
+    .controles-navegacion-citas {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--color-text-light);
+    }
+
+    .titulo-lista {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-text-light);
+    }
+
+    .contenedor-lista-citas {
+        flex-grow: 1; 
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-dark-bg); 
+        border-radius: 5px;
+        overflow: hidden; 
+    }
+
+    .contenedor-cabecera-tabla {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.1); 
+        flex-shrink: 0;
+    }
+
+    .contenedor-scroll-tabla {
+        overflow-y: auto;
+        flex-grow: 0; 
+        width: 100%;
+    }
+
+    /* --- Botón Agendar --- */
+    .btn-agendar {
+        width: 100%;
+        background-color: var(--color-primary);
+        color: var(--color-text-light);
+        /* Botón más pequeño para móvil */
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        border: none;
+        padding: 12px 0;
+        margin-top: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* --- Scrollbar --- */
+    .contenedor-scroll-tabla::-webkit-scrollbar {
+        width: 8px; 
+    }
+    .contenedor-scroll-tabla::-webkit-scrollbar-track {
+        background: var(--scrollbar-track-color);
+    }
+    .contenedor-scroll-tabla::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+    }
+
+    /* 1. Ocultamos la cabecera original */
+    table thead {
+        display: none;
+    }
+
+    /* 2. Hacemos que todo se comporte como bloques */
+    table, 
+    table tbody, 
+    table tr, 
+    table td {
+        display: block;
+        width: 100%;
+    }
+
+    th {
+        /* Estilos de cabecera que usaremos en ::before */
+        font-weight: 700;
+        color: #aaa; 
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    /* 3. Damos a cada fila (tr) un look de "tarjeta" */
+    table tr {
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    /* 4. Ajustamos las celdas (td) */
+    table td {
+        padding: 8px 10px;
+        text-align: left; /* Alineamos el contenido a la derecha */
+        position: relative; 
+        border-bottom: none; /* Quitamos la línea de abajo */
+        white-space: normal; /* Permitimos que el texto largo se parta */
+        color: var(--color-text-light);
+    }
+
+    /* 5. (Magia) Usamos ::before para insertar el título de la columna */
+    table td::before {
+        position: absolute;
+        left: 10px;
+        text-align: left;
+        font-weight: 600;
+        color: #aaa; 
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    /* 6. Asignamos los textos a cada 'data-label' */
+    .col-num::before { content: "#:"; }
+    .col-nombre::before { content: "Nombre:"; }
+    .col-servicio::before { content: "Servicio:"; }
+    .col-horario::before { content: "Horario:"; }
+
+    /* 7. Nos aseguramos que todas las columnas ocupen el 100% */
+    .col-num, 
+    .col-nombre, 
+    .col-servicio, 
+    .col-horario {
+        width: 100%;
+        text-align: right;
+    }   
+}

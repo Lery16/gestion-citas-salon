@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas - Admin</title>
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+    <link rel="stylesheet" href="estilos/estilo_gestion_cita.css">
+    <script src="funciones/gestion_citas_fun.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img">
+                <span>Gestión de Citas</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <nav class="menu-opciones">
+                <a href="inicio.html">Ventana Principal</a>
+                <a href="inicio.html" class="logout">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+    <main class="gestion-container">
+            <div class="filtros-top">
+                <button class="btn btn-primario btn-filtro-toggle" id="toggleFiltros">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Mostrar filtros</span>
+                </button>
+                <button class="btn btn-primario btn-filtro-toggle" id="deshacerAccion">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Deshacer Acción</span>
+                </button>
+                <button class="btn btn-primario btn-filtro-toggle" id="Guardar">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+
+            <section id="filtroPanel" class="filtro-panel">
+                <div class="filtro-grid">
+                    <div class="filtro-grupo">
+                        <label for="buscarNombre">Buscar por cliente</label>
+                        <input type="text" id="buscarNombre" placeholder="Ej: Ana García...">
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="selectEstado">Estado</label>
+                        <select id="selectEstado">
+                            <option value="todos">Todos los estados</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="calendarioPicker">Fecha</label>
+                        <div id="calendarioPicker" class="calendario-custom-wrapper">
+                            <input type="text" id="fechaSeleccionada" placeholder="Selecciona una fecha" readonly class="cal-select-input">
+
+                            <div class="calendario-dropdown-panel">
+                                <div class="calendario-header">
+                                    <button class="cal-nav" id="calPrev">‹</button>
+                                    <div class="cal-selectores">
+                                        <div class="mes-dropdown-wrapper">
+                                            <div class="cal-select" id="mesSelect">Noviembre</div>
+                                            <ul class="mes-select-menu"></ul>
+                                        </div>
+                                        <div class="anio-dropdown-wrapper">
+                                            <div class="cal-select" id="anioSelect">2025</div>
+                                            <ul class="anio-select-menu"></ul>
+                                        </div>
+                                    </div>
+                                    <button class="cal-nav" id="calNext">›</button>
+                                </div>
+                                <div class="calendario-grid-header">
+                                    <div>L</div>
+                                    <div>M</div>
+                                    <div>W</div>
+                                    <div>J</div>
+                                    <div>V</div>
+                                    <div>S</div>
+                                    <div>D</div>
+                                </div>
+                                <div class="calendario-grid-dias" id="calendarioDias">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filtro-acciones">
+                    <button class="btn btn-primario" id="limpiarFiltros">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Limpiar</span>
+                    </button>
+                    <button class="btn btn-primario aplicar-filtros-btn">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Aplicar filtros</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="bulk-actions">
+                <label class="checkbox-label" for="selectAll">
+                    <input type="checkbox" id="selectAll">
+                    Seleccionar Todo
+                </label>
+                <button id="bulkCancel" class="btn btn-peligro" disabled>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>Cancelar Seleccionadas</span>
+                </button>
+            </section>
+
+            <section class="lista-citas">
+
+                <!-- MEJORA: Tarjetas de cita con iconos -->
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Elena Rodríguez">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Elena Rodríguez</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-scissors"></i>
+                            <span>Servicio: Corte y Tinte</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 15 Nov, 2025 - 10:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Carlos Solís">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Carlos Solís</div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-hand"></i>
+                            <span>Servicio: Manicura</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 15 Nov, 2025 - 11:30 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cita-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Luisa Fernanda">
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Luisa Fernanda</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-spa"></i>
+                            <span>Servicio: Pedicura y Masaje</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 16 Nov, 2025 - 09:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-confirmada">Confirmada</span>
+                        <div class="cita-acciones">
+                            <button class="btn-accion btn-cancelar">🛇<i class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="cita-card cancelada-card">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Jorge Páez" disabled>
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">Jorge Páez</div>
+                        <div class="cita-meta">
+                            <i class="fa-solid fa-person"></i>
+                            <span>Servicio: Corte de Caballero</span>
+                        </div>
+                        <div class="cita-meta">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Fecha: 14 Nov, 2025 - 02:00 PM</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-cancelada">Cancelada</span>
+                        <div class="cita-acciones">
+                            <!-- Sin acciones -->
+                        </div>
+                    </div>
+                </article>
+            </section>
+    </main>
+</body>
+</html>

@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamiento de Citas</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="estilo_fecha_hora.css">
-    <link rel="stylesheet" href="estilo_general.css">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_fecha_hora.css">
+    <link rel="stylesheet" href="estilos/estilo_general.css">
 </head>
 <body>
-    <script src="header_fun.js"></script>
-    <script src="fecha_hora_fun.js"></script>
+    <script src="funciones/header_fun.js"></script>
+    <script src="funciones/fecha_hora_fun.js"></script>
     <header>
         <div class="menu_hamburguesa">☰</div>
         <div class="logo">
@@ -30,8 +31,7 @@
     </header>
     <div class="contenedorpagina">
         <div class="contenedor-fondo">
-            <div class="superposicion-blanca"></div>
-            <img src="imagenes/modelo-principal.jpg" alt="Fondo de Salón de Belleza" class="imagen-fondo">
+            <div class="imagen-fondo"></div>
         </div>
 
         <div class="contenedor-contenido-agenda">
@@ -43,34 +43,21 @@
             </div>
 
             <div class="area-principal-reserva">
-                
-                <div class="panel-calendario">
-                    
+                <div class="panel-calendario">    
+                    <div class="selector-anio">
+                        <div id="btn-anio-anterior" class="btn-cambiar-anio">&lt;</div>
+                        <span id="anio-actual" class="anio-actual">2025</span>
+                        <div id="btn-anio-siguiente" class="btn-cambiar-anio">&gt;</div>
+                    </div>
+
                     <div class="contenedor-selector-mes">
-                        <select id="desplegable-mes" class="desplegable-mes">
-                            <option value="0">Enero</option>
-                            <option value="1">Febrero</option>
-                            <option value="2">Marzo</option>
-                            <option value="3">Abril</option>
-                            <option value="4">Mayo</option>
-                            <option value="5">Junio</option>
-                            <option value="6">Julio</option>
-                            <option value="7">Agosto</option>
-                            <option value="8">Septiembre</option>
-                            <option value="9" selected>Octubre</option>
-                            <option value="10">Noviembre</option>
-                            <option value="11">Diciembre</option>
-                        </select>
-                        <div class="flecha-visual-desplegable-mes"></div>
+                        <div id="selector-mes-actual" class="selector-mes-actual">
+                            <span id="mes-seleccionado">MES</span>
+                            <span id="flecha-mes-desplegable" class="flecha-desplegable-mes">
+                            </span>
+                        </div>
                         
-                        <div id="selector-mes-expandido" class="selector-mes-expandido">
-                            <span class="mes-expandido">ENE</span>
-                            <span class="mes-expandido">FEB</span>
-                            <span class="mes-expandido">MAR</span>
-                            <span class="mes-expandido">ABR</span>
-                            <span class="mes-expandido">MAY</span>
-                            <span class="mes-expandido">JUN</span>
-                            <div class="barra-scroll-expandida"></div>
+                        <div id="lista-meses-desplegable" class="lista-meses-desplegable oculto">
                         </div>
                     </div>
 
@@ -84,13 +71,24 @@
                         <div class="nombre-dia">S</div>
                     </div>
 
-                    <div id="panel-selector-hora" class="panel-selector-hora">
-                        <h4 class="titulo-selector-hora">Seleccione Hora</h4>
-                        <div class="contenedor-desplegable-hora">
-                            <select id="desplegable-hora" class="desplegable-hora" disabled>
-                                <option value="">Seleccione un día</option>
-                            </select>
-                            <div class="flecha-desplegable-hora"></div>
+                    <div id="contenedor-selectores-agenda" class="contenedor-selectores-agenda">
+                        <div id="panel-selector-estilista" class="panel-selector-estilista">
+                            <h4 class="titulo-selector-estilista">Seleccione Estilista</h4>
+                            <div class="contenedor-desplegable-hora">
+                                <select id="desplegable-estilista" class="desplegable-estilista" disabled>
+                                    <option value="">Seleccione un día</option>
+                                </select>
+                                <div class="flecha-desplegable-hora"></div>
+                            </div>
+                        </div>
+                        <div id="panel-selector-hora" class="panel-selector-hora">
+                            <h4 class="titulo-selector-hora">Seleccione Hora</h4>
+                            <div class="contenedor-desplegable-hora">
+                                <select id="desplegable-hora" class="desplegable-hora" disabled>
+                                    <option value="">Seleccione un estilista</option>
+                                </select>
+                                <div class="flecha-desplegable-hora"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

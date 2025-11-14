@@ -1,0 +1,77 @@
+BD: puerto 5433
+contraseña: 1234
+
+APACHE port: 8080
+
+FUNCIONALIDADES PARA EL ADMINISTRADOR (INTERNO DEL SALÓN)
+
+1. GESTIÓN DE CITAS
+
+Consulta de Citas Agendadas:
+Puede consultar y ver todas las citas que han sido reservadas por los clientes.
+
+Gestión de Estados:
+Puede cambiar el estado de las citas, lo que incluye confirmarlas o cancelarlas. Puede cancelar una a la vez o varias a la vez.
+
+2. CONFIGURACIÓN Y GESTIÓN DEL NEGOCIO
+
+Configuración de Horarios de Atención:
+Puede definir y configurar los horarios en los que el salón estará disponible para recibir clientes.
+
+Gestión de Empleados:
+Puede gestionar la información de los empleados.
+
+3. OPERACIONES DEL SISTEMA (BACKEND / BASE DE DATOS)
+
+Respaldo de la Base de Datos:
+Es parte de las buenas prácticas que el sistema realice respaldos periódicos de la base de datos.
+
+---
+
+
+FUNCIONALIDADES DEL ADMINISTRADOR RELACIONADAS CON LOS EMPLEADOS
+
+El Administrador (quien gestiona el sistema en nombre del salón) es responsable de la parte interna del negocio, incluyendo la gestión de los empleados.
+
+1. GESTIÓN DE HORARIOS Y DISPONIBILIDAD
+
+* Gestión de Empleados:
+  El Administrador tiene la capacidad de gestionar a los empleados dentro del sistema.
+
+* Definición de Disponibilidad:
+  El Administrador debe configurar y gestionar los horarios de atención, lo que implica definir qué empleados están disponibles en qué momentos.
+  (La entidad "Disponibilidad" se relaciona con la entidad "Empleado").
+
+2. RELACIÓN CITA - EMPLEADO
+
+* Asignación de Empleado a Cita:
+  El sistema registra y almacena las citas, y el modelo de datos establece una relación de muchas a uno (N:1) entre "Cita" y "Empleado".
+  Esto significa que el Administrador puede:
+
+  * Ver qué empleado está asignado a cada cita.
+  * Gestionar la asignación de un empleado a una cita específica (implícito en el registro de la cita).
+
+3. GESTIÓN DE SERVICIOS POR EMPLEADO
+
+* Asociación Servicio - Empleado:
+  El modelo de datos establece una relación de muchos a muchos (N:N) entre "Servicio" y "Empleado".
+  Esto permite al Administrador:
+
+  * Definir qué servicios puede realizar cada empleado.
+    (Por ejemplo, el empleado X solo hace manicuras, y el empleado Y hace cortes y tintes).
+
+---
+
+TAREAS DE UN EMPLEADO (INFERENCIA DEL ROL)
+
+Dado que no hay un "Panel del Trabajador", el empleado del salón usaría el sistema de la siguiente manera:
+
+* Consulta su Horario:
+  El empleado consultaría el Panel Administrativo (o una vista de él) para saber las citas que tiene asignadas para el día.
+  El sistema registra la cita con el servicio, la fecha, la hora y el empleado asignado.
+
+* Actualiza el Estado de la Cita:
+  Es probable que el empleado (o el administrador) actualice el estado de la cita en el Panel Administrativo a "Completada" una vez que el servicio haya terminado.
+  (El módulo de gestión de citas permite actualizar estados: pendiente, confirmada, completada).
+
+El Administrador es quien tiene las herramientas de configuración y control, mientras que el Empleado es el usuario final que trabaja bajo la estructura definida por el Administrador.
