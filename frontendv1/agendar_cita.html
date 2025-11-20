@@ -6,8 +6,7 @@
     <title>Agendar Cita</title>
     
     <link rel="stylesheet" href="estilos/estilo_general.css">
-    <link rel="stylesheet" href="estilos/estilo_agendar_cita.css"> 
-
+    <link rel="stylesheet" href="estilos/estilo_agendar_cita.css">
     <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -34,7 +33,7 @@
     <div class="registro-contenedor">
         
         <div class="flecha">
-            <a href="#" class="back-arrow">&#8592;</a> 
+            <a href="#" class="back-arrow" onclick="history.back(); return false;">&#8592;</a>
         </div>
 
         <main class="formulario-card">
@@ -60,6 +59,25 @@
                 <div class="campo">
                     <input type="text" id="apellido" name="apellido" required placeholder=" ">
                     <label for="apellido" class="etiqueta">Apellido</label>
+                </div>
+
+                <div class="campo">
+                    <select id="servicios" name="servicios" required>
+                        <option value="" disabled selected data-default-option></option>
+                        <option value="corte-peinado">Corte y Peinado</option>
+                        <option value="coloracion-mechas">Coloración y Mechas</option>
+                        <option value="manicure-spa">Manicure Spa</option>
+                        <option value="pedicure-spa">Pedicure Spa</option>
+                        <option value="maquillaje-profesional">Maquillaje Profesional</option>
+                        <option value="tratamientos-capilares">Tratamientos Capilares</option>
+                        <option value="corte">Corte</option>
+                        <option value="peinado">Peinado</option>
+                        <option value="coloracion-cabello">Coloración de Cabello</option>
+                        <option value="mechas">Mechas</option>
+                        <option value="corte-caballero">Corte de Caballero</option>
+                        <option value="depilacion-cejas">Depilación de Cejas</option>
+                    </select>
+                    <label for="servicios" class="etiqueta">Servicio</label>
                 </div>
 
                 <div class="boton-contenedor">

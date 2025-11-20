@@ -367,7 +367,7 @@ nav a:hover::after {
 
     .footer-info {
         padding-top: 1vh;
-        font-size: 2.5vh; /* Ajusta tamaño de texto */
+        font-size: 2.2vh; /* Ajusta tamaño de texto */
         text-align: center; /* Centra los párrafos de info */
     }
 

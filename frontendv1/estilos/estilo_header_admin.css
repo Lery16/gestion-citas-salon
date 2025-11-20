@@ -1,24 +1,12 @@
-:root {
-    --color-principal: #f96c7a;
-    --color-secundario: #fce4e6;
-    --color-fondo-pagina: #f7f7f7;
-    --color-fondo-panel: #ffffff;
-    --color-texto-oscuro: #333333;
-    --color-texto-claro: #ffffff;
-    --color-texto-gris: #504d4d;
-    --color-hoy: #FADBD8;
-}
-
-/* 1. ESTILOS DEL HEADER (personalizado) */
 header {
-    background-color: var(--color-principal); /* Se cambió a var(--color-principal) para consistencia */
+    background-color: #f96c7a;
     height: 60px;
     padding: 5vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-} 
+}
 
 .header-left, .header-right {
     display: flex;
@@ -29,11 +17,10 @@ header {
     display: none;
 }
 
-/* Estilo para el texto "Salón de Belleza" */
 .logo {
     font-size: 1.15rem;
     font-weight: 500;
-    color: var(--color-texto-oscuro); /* Se usa claro para el header principal, que es rojo */
+    color: #333333;
     display: flex;
     align-items: center;
 }
@@ -75,7 +62,7 @@ header {
 .nombre-administrador {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--color-texto-oscuro);
+    color: #333333;
     transition: color 0.3s ease;
 }
 
@@ -101,7 +88,7 @@ nav ul {
 
 nav a { 
     text-decoration: none; 
-    color: var(--color-texto-oscuro); /* Se cambia a claro para el header principal */
+    color: #333333;
     position: relative; 
     font-family: sans-serif; 
     padding: 0.5vh 0vh; 
@@ -113,10 +100,10 @@ nav a::after {
     content: ""; 
     position: absolute; 
     width: 0; 
-    height: 0.42vh; 
+    height: 0.38vh; 
     bottom: 0; 
     left: 50%; 
-    background-color: var(--color-texto-oscuro); /* Se cambia a claro para el header principal */
+    background-color: #333333;
     transition: all 0.3s ease; 
 } 
 
@@ -133,7 +120,7 @@ nav a:hover::after {
     }
 
     .perfil-administrador .nombre-administrador {
-        color: var(--color-texto-oscuro);
+        color: #333333;
     }
 }
 
@@ -146,7 +133,7 @@ nav a:hover::after {
         display: flex;
         cursor: pointer;
         font-size: 1.8rem;
-        color: var(--color-texto-oscuro); /* Se cambia a claro para el header principal */
+        color: #333333;
         z-index: 101;
     }
 
@@ -155,14 +142,14 @@ nav a:hover::after {
         top: 60px;
         left: 0;
         width: 170px;
-        background-color: var(--color-fondo-panel);
+        background-color: #ffffff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         z-index: 99;
         display: none;
         flex-direction: column;
         text-align: left;
         padding: 0;
-        background-color: var(--color-principal);
+        background-color: #f96c7a;
         gap: 1vh;
     }
 
@@ -179,29 +166,22 @@ nav a:hover::after {
     }
 
     .menu-opciones a {
-        color: var(--color-texto-oscuro); /* Se cambia a claro para el menú móvil */
+        color: #333333;
         padding: 10px;
         display: block;
     }
 
     nav a {
-        /* Opcional: Quitar la transición de color si también quieres que sea instantáneo */
         transition: none; 
     }
 
     nav a::after {
-        /* 1. Anula la creación del subrayado (lo más importante) */
         content: none; 
-        
-        /* 2. Asegura que no haya altura (fallback si content:none falla) */
         height: 0; 
-        
-        /* 3. Asegura que no haya transición en caso de que algún estilo persista */
         transition: none;
     }
 
     nav a:hover::after {
-        /* 4. Anula el efecto hover */
         width: 0;
     }
 

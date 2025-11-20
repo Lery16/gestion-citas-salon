@@ -1,14 +1,17 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    font-family: 'Lato', sans-serif;
+}
+
+
 .registro-contenedor {
-    min-height: 100vh; /* Usar altura mínima de viewport para adaptación */
-    padding-bottom: 50px; /* Espacio para el contenido debajo del formulario */
-    
-    /* Configuración de la imagen de fondo */
-    background-image: url('frontendv1/imagenes/modelo-principal-blanca.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat;
-    /* background-attachment: fixed; <-- ELIMINADO para que la imagen se mueva con el scroll */
-    
+    height: 100%;
+    padding-bottom: 50px;
     display: flex;
     flex-direction: column;
     align-items: center; 
@@ -16,6 +19,10 @@
     margin: 0;
     padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
     position: relative; 
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva-2.jpg') no-repeat center center;
+    background-size: cover;
 }
 
 .flecha {
@@ -42,8 +49,6 @@
     top: auto; 
     left: auto; 
     transform: none; 
-    
-    /* Reducimos el padding horizontal para garantizar que no se desborde el contenido */
     padding: 20px 10px; 
     align-items: center;
     text-align: center;
@@ -55,14 +60,14 @@
 
 .titulo {
     font-family: 'Courgette', cursive; 
-    font-size: 30px; /* Reducción de fuente para móvil */
+    font-size: 40px; /* Reducción de fuente para móvil */
     font-weight: 400; 
     color: #fff; 
     margin-bottom: 40px;
 }
 
 .campo {
-    background-color: #ff9985; 
+    background-color: #f96c7a; 
     margin-bottom: 25px; /* Reducción de margen */
     padding: 0px 10px;
     display: flex;
@@ -78,15 +83,14 @@
 
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+input[type="tel"]{
     border: none;
     background: transparent; 
     width: 100%;
-    color: black; 
-    
+    color: black;     
     font-family: 'Courier Prime', monospace; 
-    
-    font-size: 18px; /* Tamaño de fuente de entrada reducido */
+    font-size: 3vh; /* Tamaño de fuente de entrada reducido */
     outline: none; 
     opacity: 1; 
     /* El padding ajustado al nuevo tamaño de fuente/altura */
@@ -104,9 +108,9 @@ input[type="text"] {
     transform: translateY(-50%);
     pointer-events: none; 
     transition: opacity 0.3s ease; 
-    
+    background: transparent;
     font-family: 'Courier Prime', monospace;
-    font-size: 25px; /* Tamaño de etiqueta reducido */
+    font-size: 3vh; /* Tamaño de etiqueta reducido */
     font-weight: 500; 
     color: black; 
     display: block; 
@@ -119,25 +123,69 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0px 1000px #ff9985 inset !important; 
-    -webkit-text-fill-color: black !important;
-    background-color: transparent !important;
+    background-color: #ff9985;
     transition: background-color 5000s ease-in-out 0s;
 }
 
 /* REGLA DE DESAPARICIÓN */
 .campo input:focus + .etiqueta,
-.campo input:not(:placeholder-shown) + .etiqueta {
-    opacity: 0; 
-    transform: translateY(-50%); 
+.campo input:not(:placeholder-shown) + .etiqueta,
+.campo select:valid + .etiqueta { /* NUEVA REGLA PARA OCULTAR ETIQUETA CUANDO SELECT TIENE VALOR */
+    opacity: 0;
+    transform: translateY(-50%);
 }
 
-.campo input:focus {
+.campo input:focus,
+.campo select:focus {
+    background-color: #ff9985;
+}
+
+.campo select {
+    /* Mantiene el diseño base de los inputs */
+    border: none;
+    background: transparent;
+    width: 100%;
+    color: black;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.5rem;
+    outline: none;
+    opacity: 1;
+    padding: 5px 0 0 5px;
+    box-sizing: border-box;
+    z-index: 11;
+    height: 100%;
+    /* Estilos específicos para el select */
+    appearance: none; /* Oculta el estilo de flecha por defecto del navegador */
+    cursor: pointer;
+}
+
+/* Estilo para la opción de placeholder ("Selecciona el Rol") */
+.campo select option:first-of-type {
+    color: #000000; /* Color para que sea visible */
+    background-color: #f96c7a; /* Color de fondo del campo */
+    font-size: 0;
+}
+
+/* Estilo de las opciones normales */
+.campo select option {
+    background-color: #f96c7a;
+    color: black;
+    font-size: 1.5rem; /* Ajuste más estándar para opciones de lista */
+}
+
+/* Mantiene el color de fondo del campo cuando se enfoca */
+.campo select:focus {
     background-color: transparent;
 }
 
+/* Regla para ocultar la etiqueta cuando un valor es seleccionado */
+.campo select:valid + .etiqueta {
+    opacity: 0;
+    transform: translateY(-50%);
+}
+
 .boton-contenedor {
-    background-color: #ff9985; 
+    background-color: #f96c7a;
     margin-top: 40px; /* Reducción de margen */
     margin-bottom: 20px;
     padding: 10px 15px;
@@ -152,12 +200,12 @@ input:-webkit-autofill:active {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Sombra suave al presionar */
 }
 
-.boton-crear-cuenta {
+.boton-anadir-trabajador {
     background: transparent;
     border: none;
     cursor: pointer;
     font-family: 'Courier Prime', sans-serif;
-    font-size: 25px; /* Reducción de fuente */
+    font-size: 3vh; /* Reducción de fuente */
     font-weight: 500; 
     color: black; 
     width: 100%;
@@ -166,28 +214,11 @@ input:-webkit-autofill:active {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.enlace-ingreso {
-    font-family: 'Courier Prime', sans-serif;
-    font-size: 20px; /* Reducción de fuente */
-    color: #444; 
-    font-weight: 500;
-    margin-top: 30px;
-}
-
-.ingresa-link {
-    color: #ff9985; 
-    text-decoration: none; 
-    font-weight: 600; 
-    margin-left: 5px;
-}
-
-
 /* ---------------------------------------------------------------------- */
 /* MEDIA QUERY: Tabletas y Escritorios Pequeños (min-width: 641px) */
 /* ---------------------------------------------------------------------- */
 @media (min-width: 641px) {
     .formulario-card {
-        margin-top: 100px;
         width: 80%;
         max-width: 600px;
     }
@@ -206,17 +237,14 @@ input:-webkit-autofill:active {
     }
     
     input[type="email"],
-    input[type="password"],
-    input[type="text"] {
+    input[type="tel"],
+    input[type="text"],
+    select {
         font-size: 22px; 
     }
-
-    .boton-crear-cuenta {
-        font-size: 30px;
-    }
     
-    .enlace-ingreso {
-        font-size: 25px;
+    .boton-anadir-trabajador {
+        font-size: 30px;
     }
 }
 
@@ -225,20 +253,11 @@ input:-webkit-autofill:active {
 /* ---------------------------------------------------------------------- */
 @media (min-width: 1025px) {
     .registro-contenedor {
-        height: 1500px; 
-        
-        /* Configuración de la imagen de fondo */
-        background-image: url('../imagenes/modelo-principal-blanca.jpg'); 
-        background-size: cover; 
-        background-position: center; 
-        background-repeat: no-repeat;
-        
-        /* Display y posición para el overlay */
+        height: 1400px;         
         display: flex;
         flex-direction: column;
         align-items: center; 
         width: 100%;
-        margin: 0;
         padding: 0;
         position: relative; 
     }
@@ -264,11 +283,12 @@ input:-webkit-autofill:active {
 
     .formulario-card {
         position: absolute; 
-        top: 41%; 
+        top: 45%; 
         left: 44%; 
         transform: translate(-50%, -50%); 
         position: absolute; 
         padding: 10px;
+        padding-top: 80px;
         align-items: center;
         text-align: center;
         z-index: 2; 
@@ -284,7 +304,7 @@ input:-webkit-autofill:active {
     }
 
     .campo {
-        background-color: #ff9985; 
+        background-color: #f96c7a; 
         margin-bottom: 45px;
         padding: 0px 20px;
         display: flex;
@@ -299,9 +319,8 @@ input:-webkit-autofill:active {
     }
 
     input[type="email"],
-    input[type="password"],
-    input[type="text"],
-    input[type="tel"] {
+    input[type="tel"],
+    input[type="text"] {
         border: none;
         background: transparent; /* Fondo inicial transparente */
         width: 100%;
@@ -316,6 +335,20 @@ input:-webkit-autofill:active {
         padding: 10px; 
         box-sizing: border-box;
         z-index: 11; 
+    }
+
+    .campo select {
+        border: none;
+        background: transparent;
+        width: 100%;
+        color: black;
+        font-family: 'Courier Prime', monospace;
+        font-size: 45px;
+        outline: none;
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 11;
+        appearance: none;
     }
 
     /* Aplica un fondo transparente y elimina el color de autocompletado del navegador */
@@ -349,6 +382,7 @@ input:-webkit-autofill:active {
         color: black; 
         display: block; 
         text-transform: capitalize;
+        background-color: transparent;
         z-index: 10;
     }
 
@@ -360,12 +394,13 @@ input:-webkit-autofill:active {
     }
 
     /* Regla para garantizar la transparencia al enfocar */
-    .campo input:focus {
+    .campo input:focus,
+    .campo select:focus {
         background-color: transparent;
     }
 
     .boton-contenedor {
-        background-color: #ff9985; 
+        background-color: #f96c7a;
         margin-top: 90px; 
         margin-bottom: 30px;
         padding: 15px 20px;
@@ -374,7 +409,7 @@ input:-webkit-autofill:active {
         width: 60vw; 
     }
 
-    .boton-crear-cuenta {
+    .boton-anadir-trabajador {
         background: transparent;
         border: none;
         cursor: pointer;
@@ -385,21 +420,5 @@ input:-webkit-autofill:active {
         width: 100%;
         padding: 0;
         line-height: 1.5; 
-    }
-
-    .enlace-ingreso {
-        font-family: 'Courier Prime', sans-serif;
-        font-size: 50px;
-        color: #444; 
-        font-weight: 500;
-        margin-top: 65px;
-        width: 60vw; 
-    }
-
-    .ingresa-link {
-        color: #ff9985; 
-        text-decoration: none; 
-        font-weight: 600; 
-        margin-left: 5px;
     }
 }

@@ -4,7 +4,7 @@
     --color-closed: #ffffff; /* Cerrado */
     --color-text-light: #ffffff;
     --color-text-dark: #000000;
-    --color-dark-bg: rgba(0, 0, 0, 0.7); 
+    --color-dark-bg: rgba(0, 0, 0, 0.6); 
 
     --scrollbar-track-color: rgba(0, 0, 0, 0.2);
     --scrollbar-thumb-color: var(--color-primary);

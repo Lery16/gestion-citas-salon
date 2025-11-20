@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Horarios del Salón</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_horarios_atencion.css">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+</head>
+<body>
+    <script src="funciones/horarios_atencion_admin_fun.js"></script>
+    <script src="funciones/header_admin_fun.js"></script>
+    <header>
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+                Configuración de Horarios de Atención 
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="menu-opciones">
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+
+    <div class="contenedor-principal">
+        <div class="contenedor-flex">
+            <div class="columna">
+                <div class="tarjeta">
+                    <h2 class="tarjeta-titulo">Horario Semanal</h2>
+
+                    <div id="lista-dias-semana">
+                        <!-- Lunes -->
+                        <div class="dia-semana" data-abierto="true" data-dia="lunes">
+                            <div class="control-dia">
+                                <label for="lunes-abierto">Lunes</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="lunes-abierto" class="toggle-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="lunes-apertura">Apertura</label>
+                                    <input type="time" id="lunes-apertura" value="08:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="lunes-cierre">Cierre</label>
+                                    <input type="time" id="lunes-cierre" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Martes -->
+                        <div class="dia-semana" data-abierto="true" data-dia="martes">
+                            <div class="control-dia">
+                                <label for="martes-abierto">Martes</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="martes-abierto" class="toggle-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="martes-apertura">Apertura</label>
+                                    <input type="time" id="martes-apertura" value="08:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="martes-cierre">Cierre</label>
+                                    <input type="time" id="martes-cierre" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Miércoles -->
+                        <div class="dia-semana" data-abierto="true" data-dia="miercoles">
+                            <div class="control-dia">
+                                <label for="miercoles-abierto">Miércoles</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="miercoles-abierto" class="toggle-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="miercoles-apertura">Apertura</label>
+                                    <input type="time" id="miercoles-apertura" value="08:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="miercoles-cierre">Cierre</label>
+                                    <input type="time" id="miercoles-cierre" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Jueves -->
+                        <div class="dia-semana" data-abierto="true" data-dia="jueves">
+                            <div class="control-dia">
+                                <label for="jueves-abierto">Jueves</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="jueves-abierto" class="toggle-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="jueves-apertura">Apertura</label>
+                                    <input type="time" id="jueves-apertura" value="08:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="jueves-cierre">Cierre</label>
+                                    <input type="time" id="jueves-cierre" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Viernes -->
+                        <div class="dia-semana" data-abierto="true" data-dia="viernes">
+                            <div class="control-dia">
+                                <label for="viernes-abierto">Viernes</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="viernes-abierto" class="toggle-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="viernes-apertura">Apertura</label>
+                                    <input type="time" id="viernes-apertura" value="08:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="viernes-cierre">Cierre</label>
+                                    <input type="time" id="viernes-cierre" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sábado -->
+                        <div class="dia-semana" data-abierto="false" data-dia="sabado">
+                            <div class="control-dia">
+                                <label for="sabado-abierto">Sábado</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="sabado-abierto" class="toggle-dia">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="sabado-apertura">Apertura</sabel>
+                                    <input type="time" id="sabado-apertura" value="09:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="sabado-cierre">Cierre</label>
+                                    <input type="time" id="sabado-cierre" value="14:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Domingo -->
+                        <div class="dia-semana" data-abierto="false" data-dia="domingo">
+                            <div class="control-dia">
+                                <label for="domingo-abierto">Domingo</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="domingo-abierto" class="toggle-dia">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="controles-hora">
+                                <div class="grupo-input">
+                                    <label for="domingo-apertura">Apertura</sabel>
+                                    <input type="time" id="domingo-apertura" value="09:00">
+                                </div>
+                                <div class="grupo-input">
+                                    <label for="domingo-cierre">Cierre</label>
+                                    <input type="time" id="domingo-cierre" value="14:00">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Excepciones (Calendario y Entrada Manual) -->
+            <div class="columna">
+                <div class="tarjeta">
+                    <h2 class="tarjeta-titulo">Horario por Día</h2>
+
+                    <div class="seccion-manual">
+                        <div class="grupo-input">
+                            <!-- ETIQUETA MODIFICADA para DD-MM-YYYY -->
+                            <label for="input-fechas-manual">Ingreso Manual de Fechas (Día-Mes-Año):</label>
+                            <!-- PLACEHOLDER MODIFICADO -->
+                            <textarea id="input-fechas-manual" rows="2" placeholder="Ej: 25-11-2025, 24-12-2025"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="calendario-wrapper">
+                        <div class="calendario-contenedor">
+                            <div class="calendario-header">
+                                <button class="calendario-nav" id="nav-mes-anterior">&lt;</button>
+                                <div class="calendario-mes-ano" id="mes-ano-actual">Noviembre 2025</div>
+                                <button class="calendario-nav" id="nav-mes-siguiente">&gt;</button>
+                            </div>
+                            <div class="calendario-dias-header">
+                                <div>D</div>
+                                <div>L</div>
+                                <div>M</div>
+                                <div>M</div>
+                                <div>J</div>
+                                <div>V</div>
+                                <div>S</div>
+                            </div>
+                            <div class="calendario-grid" id="calendario-grid-dias">
+                                <!-- Los días se generarán con JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controles-excepcion">
+                        <button class="boton boton-primario" id="btn-marcar-cerrado">Marcar Cerrado</button>
+                        <button class="boton boton-primario" id="btn-marcar-abierto">Marcar Abierto</button>
+                        <button class="boton boton-primario" id="btn-limpiar-excepcion">Quitar Marca</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="boton-guardar-contenedor">
+            <button class="boton boton-primario boton-guardar" id="btn-guardar-todo">Guardar Todos los Cambios</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -7,12 +7,12 @@ const HORAS_ESTILISTA_ENDPOINT = '/api/horasEstilista';
 
 document.addEventListener('DOMContentLoaded', () => {
     let datosPersonales = {};
-    let servicioSeleccionado = null;
     let diaSeleccionado = null;
     let estilistaSeleccionado = null;
 
     const cuerpoTablaCitas = document.getElementById('cuerpo-tabla-citas');
 
+    // 1. Carga los datos del cliente, que ahora se espera que incluyan el 'servicioId'
     const datosClienteJSON = localStorage.getItem('datosCliente');
     if (datosClienteJSON) {
         try {
@@ -29,13 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    servicioSeleccionado = localStorage.getItem('servicioSeleccionadoId');
-    if (!servicioSeleccionado) {
-        alert('No se encontró ningún servicio seleccionado. Por favor, elija uno.');
-        window.location.href = 'servicios.html';
-        return;
-    }
-    
     const selectorMesActual = document.getElementById('selector-mes-actual');
     const listaMesesDesplegable = document.getElementById('lista-meses-desplegable');
     const mesSeleccionadoSpan = document.getElementById('mes-seleccionado');
@@ -221,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const respuesta = await fetch(`${DISPONIBILIDAD_ENDPOINT}?anio=${anio}&mes=${mes + 1}&servicio=${servicioSeleccionado}`, {
+            const respuesta = await fetch(`${DISPONIBILIDAD_ENDPOINT}?anio=${anio}&mes=${mes + 1}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -250,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         desplegableHora.disabled = true;
 
         try {
-            const respuesta = await fetch(`${ESTILISTAS_DIA_ENDPOINT}?fecha=${fecha}&servicio=${servicioSeleccionado}`, {
+            const respuesta = await fetch(`${ESTILISTAS_DIA_ENDPOINT}?fecha=${fecha}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -288,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         desplegableHora.disabled = true;
         
         try {
-            const respuesta = await fetch(`${HORAS_ESTILISTA_ENDPOINT}?fecha=${fecha}&estilistaId=${idEstilista}&servicio=${servicioSeleccionado}`, {
+            const respuesta = await fetch(`${HORAS_ESTILISTA_ENDPOINT}?fecha=${fecha}&estilistaId=${idEstilista}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -482,8 +475,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const diaNumero = diaSeleccionado ? diaSeleccionado.dataset.day : null;
         const fechaCompleta = diaNumero ? formatearFecha(diaNumero) : null;
         
-        if (!fechaCompleta || !horaSeleccionada || !estilistaSeleccionado) {
-            alert('Por favor, seleccione una fecha, un estilista y una hora.');
+        // **Ajuste clave aquí:** Se usa el servicioId almacenado en datosPersonales.
+        // Si datosPersonales fue cargado correctamente, datosPersonales.servicioId debe existir.
+        const servicioId = datosPersonales.servicioId; 
+        
+        if (!fechaCompleta || !horaSeleccionada || !estilistaSeleccionado || !servicioId) {
+            alert('Por favor, seleccione una fecha, un estilista y una hora. Asegúrese de que el servicio esté cargado.');
             return;
         }
 
@@ -491,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cliente: datosPersonales.nombre,
             telefono: datosPersonales.telefono,
             correo: datosPersonales.correo,
-            servicioId: servicioSeleccionado,
+            servicioId: servicioId, // Utiliza la variable obtenida de datosPersonales
             fecha: fechaCompleta,
             hora: horaSeleccionada,
             estilistaId: estilistaSeleccionado
@@ -509,7 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (respuesta.ok) {
                 alert('¡Cita agendada con éxito!');
                 localStorage.removeItem('datosCliente');
-                localStorage.removeItem('servicioSeleccionadoId');
                 window.location.href = 'confirmacion.html';
             } else {
                 const errorData = await respuesta.json();

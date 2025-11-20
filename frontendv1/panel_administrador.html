@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Salón de Belleza</title>
+    <!-- Vinculación a la hoja de estilos -->
+    <link rel="stylesheet" href="estilos/panel_admin_estilo.css">
+    <!-- Fuentes de Google Fonts para el estilo Coquette/Elegante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <!-- Iconos para los botones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="header-admin">
+        <div class="logo-container">
+            <i class="fa-solid fa-spa logo-icon"></i>
+            <h1>Panel de Control</h1>
+        </div>
+        <p class="bienvenido-texto">Bienvenido, Administrador</p>
+    </header>
+
+    <main class="dashboard-container">
+        
+        <!-- Grid de Navegación -->
+        <nav class="dashboard-grid">
+            
+            <!-- Tarjeta 1: Agenda General -->
+            <a href="agenda_general_admin.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-regular fa-calendar-check"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Agenda General</h2>
+                    <p>Visualiza la agenda del día y citas programadas.</p>
+                </div>
+            </a>
+
+            <!-- Tarjeta 2: Gestión de Citas -->
+            <a href="gestion_citas_admin.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Gestión de Citas</h2>
+                    <p>Filtrar, cancelar y administrar reservas.</p>
+                </div>
+            </a>
+
+            <!-- Tarjeta 3: Gestión de Trabajadores -->
+            <a href="gestion_trabajador_admin.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Personal</h2>
+                    <p>Gestionar equipo y añadir nuevos empleados.</p>
+                </div>
+            </a>
+
+            <!-- Tarjeta 4: Horarios de Atención -->
+            <a href="horarios_atencion_admin.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-regular fa-clock"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Horarios</h2>
+                    <p>Configurar aperturas, cierres y días especiales.</p>
+                </div>
+            </a>
+
+        </nav>
+    </main>
+</body>
+</html>

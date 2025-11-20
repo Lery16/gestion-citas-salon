@@ -1,0 +1,317 @@
+:root {
+	--color-acento: #f96c7a;
+	--color-fondo-tarjeta: rgba(78, 72, 72, 0.4);
+	--color-texto: #333333;
+	--color-texto-suave: #6c757d;
+	--color-exito: #28a745;
+	--color-peligro: #dc3545;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+	font-family: 'Lato', sans-serif;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: top;
+	min-height: 100vh;
+	max-height: 100%;
+}
+
+.contenedor {
+	max-width: 1200px;
+	margin: 40px 60px;
+}
+
+.tarjeta {
+	background-color: transparent;
+	overflow: hidden;
+}
+
+.barra-herramientas {
+	padding: 15px;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	gap: 15px;
+	align-content: flex-end;
+}
+
+.contenedor-busqueda {
+	position: relative;
+	width: 100%;
+	max-width: 300px;
+	height: 100%;
+}
+
+.entrada-busqueda {
+	font-size: 1rem;
+	font-family: 'Courier Prime', monospace;
+	width: 100%;
+	padding: 10px;
+	padding-left: 40px;
+	border: 1px solid var(--color-borde);
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	background-color: var(--color-fondo-tarjeta);
+	color: white;
+}
+
+.entrada-busqueda::placeholder {
+	color: rgb(196, 196, 196);
+}
+
+.entrada-busqueda:focus {
+	border-color: var(--color-acento);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(247, 112, 115, 0.2);
+}
+
+.icono-busqueda {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+	height: 18px;
+	color: white;
+}
+
+.btn-primario {
+	font-size: 1rem;
+	display: flex;
+	font-family: 'Courier Prime', monospace; 
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
+	background-color: var(--color-acento);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.2s ease, transform 0.2s ease;
+	box-shadow: 0 4px 10px rgba(247, 112, 115, 0.3);
+}
+
+.btn-primario:hover {
+	background-color: #da5764;
+	transform: translateY(-1px);
+}
+
+.contenedor-tabla {
+	overflow-x: auto;
+	background-color: var(--color-fondo-tarjeta);
+	border-radius: 12px;
+	color: #ffffff;
+	height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.tabla-empleados {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+	scrollbar-width: thin;
+}
+
+.tabla-empleados th,
+.tabla-empleados td {
+	padding: 18px 20px;
+	text-align: left;
+	border-bottom: 1px solid var(--color-borde);
+}
+
+.tabla-empleados th {
+	background-color: rgba(249, 108, 122, 0.4);
+	font-size: 1.5rem;
+	font-weight: 500;
+	font-family: 'Instrument Serif', sans-serif;
+	position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tabla-empleados tbody tr:hover {
+	background-color: rgba(249, 108, 122, 0.3) !important;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(249, 108, 122, 0.6); /* Rosa de tu tabla */
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(249, 108, 122, 0.8); 
+}
+
+.etiqueta-rol {
+	padding: 4px 10px;
+	border-radius: 20px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	display: inline-block;
+}
+
+.rol-admin {
+	background-color: #e2e6ea;
+	color: var(--color-acento);
+}
+
+.rol-trabajador {
+	background-color: #e2e6ea;
+	color: #495057;
+}
+
+.indicador-estado {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.punto-estado {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+}
+
+.estado-disponible .punto-estado {
+	background-color: var(--color-exito);
+}
+
+.estado-ocupado .punto-estado {
+	background-color: var(--color-peligro);
+}
+
+.celda-acciones {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.btn-accion {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 8px;
+	margin-left: 5px;
+	border-radius: 50%;
+	transition: background-color 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.btn-accion:hover {
+	background-color: rgba(0, 0, 0, 0.15);
+}
+
+.icono-editar {
+	color: white;
+}
+
+.icono-eliminar {
+	color: var(--color-peligro);
+}
+
+.icono-contraseña,
+.texto-contraseña {
+	color: white;
+}
+
+/* 5. RESPONSIVE MÓVIL */
+@media (max-width: 768px) {
+	.contenedor {
+		padding: 0 10px;
+		margin: 2%;
+	}
+
+	.barra-herramientas {
+		flex-direction: column;
+	}
+
+	.btn-primario {
+		width: 100%;
+	}
+
+	.contenedor-busqueda {
+		max-width: 100%;
+	}
+
+	.tabla-empleados {
+		border: none;
+	}
+
+	.tabla-empleados thead {
+		display: none;
+	}
+
+	.tabla-empleados,
+	.tabla-empleados tbody,
+	.tabla-empleados tr {
+		display: block;
+		width: 100%;
+	}
+
+	.tabla-empleados tr {
+		margin-bottom: 15px;
+		border: 1px solid var(--color-borde);
+		border-radius: 8px;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		padding: 5px 0;
+	}
+
+	.tabla-empleados td {
+		display: block;
+		text-align: left;
+		padding: 12px 20px 12px 50%;
+		position: relative;
+		border-bottom: 1px solid var(--color-borde);
+	}
+
+	.tabla-empleados tr td:last-child {
+		border-bottom: none;
+	}
+
+	.tabla-empleados td::before {
+		content: attr(data-label);
+		position: absolute;
+		left: 20px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+		text-align: left;
+		font-weight: 600;
+		color: var(--color-texto);
+	}
+
+	.celda-acciones {
+		text-align: left;
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+
+	/* Ajuste contraseña */
+	.tabla-empleados td:nth-child(7) {
+		text-align: left;
+	}
+}

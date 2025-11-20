@@ -1,17 +1,15 @@
 .registro-contenedor {
-    height: 90vh;
+    height: auto;
     padding-bottom: 50px;
     background-image: url('../imagenes/modelo-principal-blanca.jpg');
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
-    
     display: flex;
     flex-direction: column;
     align-items: center; 
     width: 100%;
     margin: 0;
-    padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
     position: relative; 
 }
 
@@ -47,7 +45,6 @@
     z-index: 2; 
     width: 90%; /* Ancho más amigable para móvil */
     max-width: 500px; /* Límite para que no se extienda demasiado en pantallas gigantes */
-    margin-top: 50px; /* Espacio debajo de la flecha y arriba */
 }
 
 .titulo {
@@ -56,6 +53,7 @@
     font-weight: 400; 
     color: #fff; 
     margin-bottom: 40px;
+    margin-top: 100px;
 }
 
 .campo {
@@ -130,10 +128,51 @@ input:-webkit-autofill:active {
     background-color: #ff9985;
 }
 
+/* SELECT (ROL) */
+.campo select {
+    border: none;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    color: black;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.5rem;
+    outline: none;
+    padding: 5px 0 0 5px;
+    box-sizing: border-box;
+    appearance: none; /* Sin flecha nativa */
+    cursor: pointer;
+    z-index: 11;
+}
+
+/* PLACEHOLDER */
+.campo select option:first-of-type {
+    color: #000000;
+    background-color: #ff9985;
+    font-size: 0; /* Oculta el texto del placeholder en lista */
+}
+
+/* OPCIONES */
+.campo select option {
+    background-color: #ff9985;
+    color: black;
+    font-size: 1.5rem;
+}
+
+/* OCULTAR ETIQUETA CUANDO HAY VALOR */
+.campo select:valid + .etiqueta {
+    opacity: 0;
+    transform: translateY(-50%);
+}
+
+/* FOCUS */
+.campo select:focus {
+    background-color: transparent;
+}
+
 .boton-contenedor {
     background-color: #ff9985; 
     margin-top: 40px; /* Reducción de margen */
-    margin-bottom: 20px;
     padding: 10px 15px;
     border-radius: 2px; 
     text-align: center;
@@ -148,6 +187,7 @@ input:-webkit-autofill:active {
 
 .boton-agendar-cita {
     background: transparent;
+    height: 50px; 
     border: none;
     cursor: pointer;
     font-family: 'Courier Prime', sans-serif;
@@ -192,9 +232,13 @@ input:-webkit-autofill:active {
     .boton-agendar-cita {
         font-size: 30px;
     }
-    
-    .enlace-ingreso {
-        font-size: 25px;
+
+    .campo .etiqueta {
+        font-size: 35px;
+    }
+
+    .campo select {
+        font-size: 22px;
     }
 }
 
@@ -203,7 +247,7 @@ input:-webkit-autofill:active {
 /* ---------------------------------------------------------------------- */
 @media (min-width: 1025px) {
     .registro-contenedor {
-        height: 1200px; 
+        height: 1300px; 
         
         /* Configuración de la imagen de fondo */
         background-image: url('../imagenes/modelo-principal-blanca.jpg'); 
@@ -362,21 +406,20 @@ input:-webkit-autofill:active {
         width: 100%;
         padding: 0;
         line-height: 1.5; 
+        height: 70px; 
     }
 
-    .enlace-ingreso {
-        font-family: 'Courier Prime', sans-serif;
-        font-size: 50px;
-        color: #444; 
-        font-weight: 500;
-        margin-top: 65px;
-        width: 60vw; 
+    .campo select {
+        font-size: 45px;
+        padding: 10px;
     }
 
-    .ingresa-link {
-        color: #ff9985; 
-        text-decoration: none; 
-        font-weight: 600; 
-        margin-left: 5px;
+    .campo .etiqueta {
+        left: 20px;
+        font-size: 45px;
+    }
+
+    .campo select:focus {
+        background-color: transparent;
     }
 }

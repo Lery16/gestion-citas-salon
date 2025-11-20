@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Añadir Trabajador</title>
+    
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+    <link rel="stylesheet" href="estilos/estilo_agregar_trabajador.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <script src="funciones/header_admin_fun.js"></script>
+    <script src="funciones/"></script>
+    <header>
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+                Añadir Trabajador
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="menu-opciones">
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="registro-contenedor">
+        
+        <div class="flecha">
+            <a href="#" class="back-arrow">&#8592;</a> 
+        </div>
+
+        <main class="formulario-card">
+            <h1 class="titulo">Añadir Trabajador</h1>
+            
+            <form id="registroForm" action="#" method="POST">
+                
+                <div class="campo">
+                    <input type="email" id="email" name="email" required placeholder=" ">
+                    <label for="email" class="etiqueta">Email</label>
+                </div>
+
+                <div class="campo">
+                    <input type="password" id="contrasena" name="contrasena" required placeholder=" ">
+                    <label for="contrasena" class="etiqueta">Contraseña</label>
+                </div>
+                
+                <div class="campo">
+                    <input type="text" id="nombre" name="nombre" required placeholder=" ">
+                    <label for="nombre" class="etiqueta">Nombre</label>
+                </div>
+
+                <div class="campo">
+                    <input type="text" id="apellido" name="apellido" required placeholder=" ">
+                    <label for="apellido" class="etiqueta">Apellido</label>
+                </div>
+
+                <div class="campo">
+                    <input type="tel" name="celular" placeholder=" " pattern="\+?\d{8,15}" maxlength="15" required>
+                    <label for="celular" class="etiqueta">Celular</label>
+                </div>
+
+                <div class="campo">
+                    <select id="rol" name="rol" required>
+                        <option value="" disabled selected data-default-option></option> 
+                        <option value="Admin" class="">Administrador</option>
+                        <option value="Trabajador">Trabajador</option>
+                    </select>
+                    <label for="rol" class="etiqueta">Rol</label>
+                </div>
+
+                <div class="boton-contenedor">
+                    <button type="submit" class="boton-anadir-trabajador">
+                        Añadir Trabajador
+                    </button>
+                </div>
+                
+            </form>
+        </main>
+        
+    </div>
+</body>
+</html>

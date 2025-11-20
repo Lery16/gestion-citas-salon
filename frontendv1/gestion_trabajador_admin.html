@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empleados - Salón de Belleza</title>
+    <script type="module" src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_gestion_trabajador.css">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+</head>
+<body>
+    <script src="funciones/header_admin_fun.js"></script>
+    <header>
+        <div class="header-left">
+            <div class="menu_hamburguesa">☰</div>
+            <div class="logo">
+                <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+                Gestión de Empleados
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="menu-opciones">
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <ul>
+                        <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+
+    <div class="contenedor">
+
+        <!-- Tarjeta de Contenido Principal -->
+        <div class="tarjeta">
+            <div class="barra-herramientas">
+                
+                <!-- Botón para Agregar Nuevo Empleado -->
+                <button class="btn-primario">
+                    <i data-lucide="user-plus" class="lucide-icon" style="width: 20px; height: 20px;"></i>
+                    <span>Añadir Empleado</span>
+                </button>
+
+                <!-- Campo de Búsqueda -->
+                <div class="contenedor-busqueda">
+                    <input type="text" placeholder="Nombre y Apellido" class="entrada-busqueda">
+                    <i data-lucide="search" class="icono-busqueda"></i>
+                </div>
+            </div>
+
+            <!-- Tabla de Empleados -->
+            <div class="contenedor-tabla">
+                <table class="tabla-empleados">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Contraseña</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="ID">001</td>
+                            <td data-label="Nombre">Ana Herrera</td>
+                            <td data-label="Correo">ana.herrera@salon.com</td>
+                            <td data-label="Rol"><span class="etiqueta-rol rol-admin">Admin</span></td>
+                            <td data-label="Teléfono">+507 1234-5678</td>
+                            <td data-label="Estado"><div class="indicador-estado estado-disponible"><span class="punto-estado"></span>Disponible</div></td>
+                            <td data-label="Contraseña">
+                                <i data-lucide="lock" class="icono-contraseña" style="width: 16px; height: 16px;"></i>
+                                <span class="texto-contraseña">******</span>
+                            </td>
+                            <td data-label="Acciones" class="celda-acciones">
+                                <button class="btn-accion" title="Editar">
+                                    <i data-lucide="pencil" class="icono-editar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <button class="btn-accion" title="Eliminar">
+                                    <i data-lucide="trash-2" class="icono-eliminar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Fila de ejemplo 2 (Trabajador - Ocupado) -->
+                        <tr>
+                            <td data-label="ID">002</td>
+                            <td data-label="Nombre">Roberto Salas</td>
+                            <td data-label="Correo">roberto.salas@salon.com</td>
+                            <td data-label="Rol"><span class="etiqueta-rol rol-trabajador">Trabajador</span></td>
+                            <td data-label="Teléfono">N/A</td>
+                            <td data-label="Estado"><div class="indicador-estado estado-ocupado"><span class="punto-estado"></span>Ocupado</div></td>
+                            <td data-label="Contraseña">
+                                <i data-lucide="lock" class="icono-contraseña" style="width: 16px; height: 16px;"></i>
+                                <span class="texto-contraseña">******</span>
+                            </td>
+                            <td data-label="Acciones" class="celda-acciones">
+                                <button class="btn-accion" title="Editar">
+                                    <i data-lucide="pencil" class="icono-editar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <button class="btn-accion" title="Eliminar">
+                                    <i data-lucide="trash-2" class="icono-eliminar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td data-label="ID">003</td>
+                            <td data-label="Nombre">Carla Soto</td>
+                            <td data-label="Correo">carla.soto@salon.com</td>
+                            <td data-label="Rol"><span class="etiqueta-rol rol-trabajador">Trabajador</span></td>
+                            <td data-label="Teléfono">+507 9876-5432</td>
+                            <td data-label="Estado"><div class="indicador-estado estado-disponible"><span class="punto-estado"></span>Disponible</div></td>
+                            <td data-label="Contraseña">
+                                <i data-lucide="lock" class="icono-contraseña" style="width: 16px; height: 16px;"></i>
+                                <span class="texto-contraseña">******</span>
+                            </td>
+                            <td data-label="Acciones" class="celda-acciones">
+                                <button class="btn-accion" title="Editar">
+                                    <i data-lucide="pencil" class="icono-editar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <button class="btn-accion" title="Eliminar">
+                                    <i data-lucide="trash-2" class="icono-eliminar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td data-label="ID">003</td>
+                            <td data-label="Nombre">Carla Soto</td>
+                            <td data-label="Correo">carla.soto@salon.com</td>
+                            <td data-label="Rol"><span class="etiqueta-rol rol-trabajador">Trabajador</span></td>
+                            <td data-label="Teléfono">+507 9876-5432</td>
+                            <td data-label="Estado"><div class="indicador-estado estado-disponible"><span class="punto-estado"></span>Disponible</div></td>
+                            <td data-label="Contraseña">
+                                <i data-lucide="lock" class="icono-contraseña" style="width: 16px; height: 16px;"></i>
+                                <span class="texto-contraseña">******</span>
+                            </td>
+                            <td data-label="Acciones" class="celda-acciones">
+                                <button class="btn-accion" title="Editar">
+                                    <i data-lucide="pencil" class="icono-editar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <button class="btn-accion" title="Eliminar">
+                                    <i data-lucide="trash-2" class="icono-eliminar" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar los íconos de Lucide
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>

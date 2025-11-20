@@ -69,8 +69,8 @@ body {
 }
 
 .perfil-trabajador .perfil-img {
-    width: 60px; 
-    height: 60px;
+    width: 40px; 
+    height: 40px;
     border-radius: 50%; 
     object-fit: cover;
     border: 2px solid white; 
@@ -78,9 +78,8 @@ body {
 
 .perfil-trabajador .nombre-trabajador {
     font-family: 'Inter', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: white;
-    font-weight: 600;
 }
 
 /* Selector de Día y Botón */

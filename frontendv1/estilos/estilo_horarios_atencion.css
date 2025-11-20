@@ -1,0 +1,521 @@
+:root {
+    --color-fondo: rgba(78, 72, 72, 0.5); /* Rosa muy pálido */
+    --color-primario: #f96c7a; /* Rosa fuerte (acentos) */
+    --color-tarjeta: rgba(78, 72, 72, 0.2);
+    --color-texto: #333333;
+    --color-texto-claro: #333333;
+    --color-cerrado: #F8A0A0; /* Rojo pálido */
+    --color-abierto: #A0F8A0; /* Verde pálido */
+    --color-seleccion: #f96c7a;
+    --color-input-borde: #333333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(255, 255, 255, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+.contenedor-principal {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+/* --- Estructura de Columnas (Mobile-First) --- */
+.contenedor-flex {
+    display: flex;
+    flex-direction: column; 
+    gap: 1.5rem;
+    padding: 1rem auto;
+}
+
+.columna {
+    flex: 1;
+    min-width: 0; 
+}
+
+/* --- Estilo de Tarjeta --- */
+.tarjeta {
+    border-radius: 40px;
+    padding: 2rem 1.5rem; /* Ajustar padding para móvil */
+    margin-bottom: 1.5rem;
+    background-color: var(--color-tarjeta); /* Añadir fondo de tarjeta para visibilidad */
+}
+
+.tarjeta-titulo {
+    font-size: 1.5rem;
+    background-color: rgba(249, 108, 122, 0.5);
+    color: #333333;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem; /* Ajustar padding del título */
+    text-align: center;
+    font-family: 'Courgette', cursive; 
+    font-weight: lighter;
+    border-radius: 20px;
+}
+
+/* --- Estilo de Input --- */
+.grupo-input input,
+.grupo-input textarea {
+    border: 1px solid var(--color-input-borde);
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-family: 'Courier Prime', monospace; 
+    width: 100%;
+    background: transparent;
+    color: #333333;
+}
+
+.grupo-input textarea {
+    border: 1px solid var(--color-input-borde);
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-family: 'Courier Prime', monospace; 
+    width: 100%;
+    background: transparent;
+    color: #333333;
+    font-size: 1rem;
+}
+
+.grupo-input textarea::placeholder {
+    color: #5e5e5e;
+}
+
+/* --- Componente: Horarios Regulares --- */
+.dia-semana {
+    display: flex;
+    flex-direction: column; /* Columna para móvil */
+    gap: 1rem;
+    padding: 1.25rem 0.5rem;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.1); /* Separador entre días */
+}
+
+.dia-semana:last-child {
+    border-bottom: none;
+}
+
+.dia-semana:hover {
+    background-color: var(--color-fondo);
+}
+
+.control-dia {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; 
+    margin-bottom: 1rem; /* Espacio debajo del día y el switch */
+}
+
+.control-dia label {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333333;
+    font-family: 'Instrument Serif', sans-serif;
+}
+
+/* Estilo del Toggle Switch (igual al anterior) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #6d6d6d;
+    transition: 0.4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--color-primario);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.controles-hora {
+    display: flex;
+    flex-direction: row; /* Mantener en fila los inputs de hora */
+    gap: 1rem;
+    width: 100%; 
+    justify-content: space-around; /* Distribuir uniformemente */
+    align-items: center;
+    padding: 0; /* Eliminar padding-left aquí */
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1; /* Para que cada grupo ocupe su espacio */
+    min-width: 0; /* Permite que el input se reduzca */
+}
+
+.grupo-input label {
+    font-size: 0.9rem; /* Un poco más grande para mejor lectura */
+    color: var(--color-texto-claro);
+    text-align: center;
+}
+
+.grupo-input input[type="time"] {
+    border-radius: 6px;
+    padding: 0.5rem;
+    width: 100%;
+    background: transparent;
+    font-family: 'Courier Prime', monospace; 
+    letter-spacing: normal; /* Normalizar letter-spacing para legibilidad */
+    text-align: center;
+}
+
+/* Estado deshabilitado para horarios */
+.dia-semana[data-abierto="false"] .controles-hora {
+    opacity: 0.7;
+    pointer-events: none;
+    border-left-color: #ccc;
+}
+
+.dia-semana[data-abierto="false"] input[type="time"] {
+    background: transparent;
+}
+
+/* --- Componente: Calendario de Excepciones --- */
+.calendario-wrapper {
+    max-width: 380px;
+    margin: 0 auto 3rem auto;
+}
+
+.calendario-contenedor {
+    padding: 1rem;
+    background-color:rgba(78, 72, 72, 0.7);
+    border-radius: 8px;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendario-mes-ano {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-primario);
+}
+
+.calendario-nav {
+    border: none;
+    background-color: transparent;
+    color: var(--color-primario);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.calendario-nav:hover {
+    background-color: rgba(249, 108, 122, 0.2)
+}
+
+.calendario-grid,
+.calendario-dias-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendario-dias-header div {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: black;
+    padding-bottom: 2vh;
+}
+
+.dia-calendario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.2rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.dia-calendario.otro-mes {
+    color: #ccc;
+    cursor: default;
+}
+
+.dia-calendario:not(.otro-mes):hover {
+    background-color: rgba(249, 108, 122, 0.4);
+}
+
+.dia-calendario.seleccionado {
+    background-color: var(--color-seleccion);
+    color: white;
+    font-weight: 700;
+    border-color: var(--color-primario);
+}
+
+/* Estados de excepción */
+.dia-calendario.excepcion-cerrado {
+    background-color: var(--color-cerrado);
+    color: #5D0000;
+    border-color: var(--color-cerrado);
+}
+
+.dia-calendario.excepcion-abierto {
+    background-color: var(--color-abierto);
+    color: #004D00;
+    border-color: var(--color-abierto);
+}
+
+.dia-calendario.excepcion-cerrado.seleccionado,
+.dia-calendario.excepcion-abierto.seleccionado {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--color-seleccion);
+}
+
+/* --- Controles de Excepción (Botones y Campo Manual) --- */
+.seccion-manual {
+    margin: 1.5rem;
+    padding: 1.5rem;
+}
+
+.controles-excepcion {
+    display: flex;
+    flex-direction: column; 
+    gap: 0.75rem;
+    margin-bottom: 2vh;
+}
+
+.boton {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%; 
+}
+
+.boton-primario {
+    background-color: var(--color-primario);
+    color: white;
+    font-family: 'Courier Prime', monospace;
+    font-weight: lighter;
+}
+
+.boton-primario:hover {
+    background-color: #B93A7A;
+}
+
+.boton-secundario {
+    background-color: var(--color-fondo);
+    color: var(--color-primario);
+}
+
+.boton-secundario:hover {
+    color: white;
+}
+
+.boton-terciario {
+    background-color: transparent;
+    color: var(--color-texto-claro);
+    border: 2px solid #ccc;
+}
+
+.boton-terciario:hover {
+    background-color: #f4f4f4;
+    border-color: #aaa;
+}
+
+.boton-guardar-contenedor {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.boton-guardar {
+    width: 100%; 
+    max-width: 400px;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+/* ------------------------------------------------ */
+/* --- Media Queries para TABLET/Escritorio Menor --- */
+/* ------------------------------------------------ */
+@media (min-width: 768px) {
+    /* Header */
+    header {
+        padding: 5vh; /* Restaurar padding original para desktop */
+    }
+    .header-left {
+        gap: 2vh;
+    }
+    .menu_hamburguesa {
+        display: none; /* Ocultar hamburguesa en desktop */
+    }
+    .logo {
+        font-size: 1.15rem;
+        max-width: none; /* Eliminar restricción de ancho */
+    }
+    .perfil-administrador {
+        display: flex; /* Mostrar perfil en desktop */
+        padding: 2vh 5vh;
+    }
+    .menu-opciones { 
+        display: flex; /* Mostrar menú de opciones en desktop */
+        align-items: center; 
+        gap: 5vh;
+        border-radius: 10%; 
+    } 
+    nav ul { 
+        list-style-type: none; 
+        display: flex; 
+        gap: 5vh; 
+        justify-content: flex-end; 
+        padding: 0; 
+        margin: 0; 
+    } 
+    nav a { 
+        text-decoration: none; 
+        color: #333333;
+        position: relative; 
+        font-family: sans-serif; 
+        padding: 0.5vh 0vh; 
+        transition: color 0.3s ease; 
+    } 
+    nav a::after { 
+        content: ""; 
+        position: absolute; 
+        width: 0; 
+        height: 0.42vh; 
+        bottom: 0; 
+        left: 50%; 
+        background-color: #333333;
+        transition: all 0.3s ease; 
+    } 
+    nav a:hover::after { 
+        width: 100%; 
+        left: 0vh; 
+    }
+    
+    /* Horarios Regulares */
+    .dia-semana {
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0; /* Eliminar margen extra */
+        border-bottom: 1px solid rgba(0,0,0,0.1); /* Mantener separador */
+    }
+    .control-dia {
+        width: auto;
+        flex-basis: 180px; 
+        margin-bottom: 0;
+    }
+    .controles-hora {
+        width: auto;
+        flex: 1; 
+        padding-left: 1.5rem;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+    .grupo-input label {
+        text-align: left; /* Alinear etiquetas a la izquierda en desktop */
+    }
+    .grupo-input input[type="time"] {
+        letter-spacing: -2px; /* Restaurar letter-spacing para desktop si es necesario */
+        text-align: left;
+    }
+    
+    /* Controles de Excepción (Botones) */
+    .controles-excepcion {
+        flex-direction: row; 
+        justify-content: space-between;
+    }
+    .boton {
+        flex: 1;
+        width: auto;
+    }
+    .controles-excepcion .boton {
+        max-width: 32%; 
+    }
+    
+    /* Botón Guardar */
+    .boton-guardar {
+        width: auto;
+    }
+
+    /* Tarjeta */
+    .tarjeta {
+        padding: 3rem; /* Restaurar padding original de tarjeta */
+    }
+}
+
+/* ------------------------------------------------ */
+/* --- Media Queries para Escritorio Mayor --- */
+/* ------------------------------------------------ */
+@media (min-width: 1024px) {
+    .contenedor-flex {
+        flex-direction: row; 
+        align-items: flex-start; 
+        gap: 5%;
+        padding: 2%;
+    }
+    .columna {
+        flex-basis: 50%;
+    }
+    .tarjeta-titulo {
+        font-size: 2rem;
+    }
+
+    .control-dia label {
+        font-size: 1.8rem;
+    }
+}

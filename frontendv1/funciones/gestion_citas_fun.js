@@ -1,8 +1,3 @@
-// gestion_citas_frontend.js
-// Nuevo archivo JS completo que conserva la mayor parte del código antiguo
-// y añade la lógica de comunicación con el backend (Express/Node) y manejo
-// de filtros, renderizado dinámico, deshacer y guardado.
-
 /*
 Estrategia de endpoints (ajusta si tu backend usa rutas diferentes):
 - POST /api/citas/search    -> { nombre, estado, fecha }  => devuelve array de citas
@@ -42,9 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let originalCitas = []; // Copia del resultado para deshacer
     let canceledIds = new Set(); // IDs cancelados localmente desde la UI
 
-    // ----------------- CALENDARIO -----------------
-    // Conservamos el calendario que ya tenías. (Se asume que ya funciona.)
-    // Código de calendario (idéntico al provisto) -------------------------------------------------
+    // Calendario
     const panelCalendario = calendarioWrapper?.querySelector('.calendario-dropdown-panel');
     const mesSelect = document.getElementById('mesSelect');
     const anioSelect = document.getElementById('anioSelect');

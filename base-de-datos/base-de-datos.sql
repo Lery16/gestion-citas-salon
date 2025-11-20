@@ -317,7 +317,7 @@ INSERT INTO Empleado (nombre, apellido, rol, telefono, correo, estado, contrase�
 ('Andrés', 'Guzmán', 'trabajador', '5551000006', 'andres.guzman@salon.com', 'disponible', ENCODE(DIGEST('contraseña6', 'sha256'), 'hex')),
 ('Fernanda', 'Lira', 'trabajador', '5551000007', 'fernanda.lira@salon.com', 'disponible', ENCODE(DIGEST('contraseña7', 'sha256'), 'hex')),
 ('Ricardo', 'Paz', 'trabajador', '5551000008', 'ricardo.paz@salon.com', 'disponible', ENCODE(DIGEST('contraseña8', 'sha256'), 'hex')),
-('Valeria', 'Cruz', 'trabajador', '5551000009', 'valeria.cruz@salon.com', 'ocupado', ENCODE(DIGEST('contraseña9', 'sha256'), 'hex')),
+('Valeria', 'Cruz', 'trabajador', '5551000009', 'valeria.cruz@salon.com', 'vacaciones', ENCODE(DIGEST('contraseña9', 'sha256'), 'hex')),
 ('Jorge', 'Nieto', 'trabajador', '5551000010', 'jorge.nieto@salon.com', 'disponible', ENCODE(DIGEST('contraseña10', 'sha256'), 'hex'));
 
 INSERT INTO Tipo_Servicio (nombre_servicio, duracion_horas, precio, estado) VALUES

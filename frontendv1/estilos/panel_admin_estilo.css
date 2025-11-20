@@ -1,0 +1,174 @@
+/* Variables de color basadas en la imagen (Estilo Coquette/Soft) */
+:root {
+    --bg-pink: rgba(249, 108, 122, 0.5);       /* Tono salmón/rosa suave del fondo */
+    --card-white: rgba(78, 72, 72, 0.3);    /* Blanco puro para contraste */
+    --text-muted: rgb(228, 211, 211);      /* Gris suave para descripciones */
+    --text-dark: #333333;
+    --accent-gold: #BFA48D;    /* Tono dorado/tierra suave para iconos */
+    --hover-pink: #FFEEE9;     /* Rosa muy pálido para hover */
+    --shadow-soft: 0 10px 25px rgba(163, 99, 90, 0.15); /* Sombra suave rojiza rgba(119, 55, 57, 0.4);*/
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(255, 255, 255, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header-admin {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+}
+
+.header-admin h1 {
+    font-family: 'Courgette', cursive;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-dark);
+    text-shadow: 0 2px 15px rgba(249, 108, 122);
+}
+
+.bienvenido-texto {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    opacity: 0.8;
+    font-weight: 300;
+    margin-top: 5px;
+}
+
+/* Contenedor Principal */
+.dashboard-container {
+    flex: 1;
+    padding: 0 1.5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Grid System - Mobile First */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Una columna en móvil */
+    gap: 1.5rem;
+}
+
+/* Tarjetas */
+.dashboard-card {
+    background-color: var(--card-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(163, 99, 90, 0.25);
+    background-color: rgba(249, 108, 122, 0.5); 
+}
+
+.card-icon {
+    background-color: rgba(202, 87, 99, 0.5); 
+    min-width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+
+.card-info {
+    flex: 1;
+}
+
+.card-info h2 {
+    font-family: 'Instrument Serif', cursive; ;
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
+    color: var(--text-dark);
+}
+
+.card-info p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    font-family: 'Courier Prime', sans-serif;
+}
+
+/* Media Queries para Tablet y Desktop */
+@media (min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas en tablet */
+        gap: 2rem;
+    }
+    
+    .header-admin {
+        padding: 3rem 2rem;
+    }
+
+    .header-admin h1 {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Mantenemos 2 columnas pero más ancho maximo */
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .dashboard-card {
+        padding: 2rem;
+        flex-direction: column; /* Icono arriba en pantallas grandes para estilo tarjeta */
+        text-align: center;
+    }
+
+    .card-icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
+    }
+
+    .card-icon i {
+        font-size: 2rem;
+    }
+}

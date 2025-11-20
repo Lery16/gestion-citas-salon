@@ -1,3 +1,4 @@
+Odalys...
 BD: puerto 5433
 contraseña: 1234
 
@@ -18,8 +19,36 @@ Puede cambiar el estado de las citas, lo que incluye confirmarlas o cancelarlas.
 Configuración de Horarios de Atención:
 Puede definir y configurar los horarios en los que el salón estará disponible para recibir clientes.
 
-Gestión de Empleados:
-Puede gestionar la información de los empleados.
+Gestión de Empleados
+
+El sistema permite administrar toda la información relacionada con los empleados del salón.
+Desde esta sección, el administrador puede crear, editar, actualizar o eliminar empleados, así como consultar su estado actual.
+
+Atributos del Empleado
+
+id_empleado
+Identificador único del empleado. Se genera automáticamente y no se repite.
+
+nombre
+Nombre del empleado.
+
+apellido
+Apellido del empleado.
+
+rol
+Rol que cumple dentro del salón (por ejemplo, admin o trabajador).
+
+telefono
+Número telefónico del empleado.
+
+correo
+Correo electrónico único para cada empleado. No puede repetirse.
+
+estado
+Indica si el empleado está disponible o ocupado.
+
+contraseña
+Contraseña protegida y almacenada de forma encriptada por seguridad.
 
 3. OPERACIONES DEL SISTEMA (BACKEND / BASE DE DATOS)
 

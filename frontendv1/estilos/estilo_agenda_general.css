@@ -62,9 +62,9 @@ body {
 }
 
 .dia-semana {
-    font-weight: 600;
+    font-weight: bolder;
     color: var(--color-texto-claro);
-    font-size: calc(0.9rem + 4px);
+    font-size: calc(1.2rem + 4px);
 }
 
 .mes-anio {
@@ -214,9 +214,6 @@ body {
     padding-right: 30px;
 }
 
-.celda-servicio {
-}
-
 .espacio-hora-tabla {
     height: 100%;
     display: flex;
@@ -297,8 +294,9 @@ body {
 }
 
 .servicio-nombre {
-    font-size: calc(1.1rem + 3px);
+    font-size: calc(1.2rem + 3px);
     font-weight: 600;
+    font-family: 'Instrument Serif', sans-serif;
 }
 
 .servicio-categoria {
