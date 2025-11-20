@@ -1,7 +1,6 @@
--- Configuración inicial: Asegúrate de tener instalada la extensión pgcrypto
--- CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;  -- ACTIVAR EXTENSIÓN (Necesaria para contraseñas)
 
--- 1. LIMPIEZA DE TRIGGERS, TIPOS Y TABLAS EXISTENTES
+-- 1. LIMPIEZA TOTAL
 DROP TRIGGER IF EXISTS tr_cita_before_insert ON Cita;
 DROP TRIGGER IF EXISTS tr_cita_after_insert ON Cita;
 DROP TRIGGER IF EXISTS tr_cita_after_update ON Cita;
@@ -10,8 +9,7 @@ DROP FUNCTION IF EXISTS tr_cita_before_insert_func();
 DROP FUNCTION IF EXISTS tr_cita_after_insert_func();
 DROP FUNCTION IF EXISTS tr_cita_after_update_func();
 
--- La tabla Cita_Dia_Salon_Contador no existía en el script MySQL, se omite.
-
+DROP TABLE IF EXISTS Horario_Semanal_Empleado CASCADE;
 DROP TABLE IF EXISTS Empleado_Servicio CASCADE;
 DROP TABLE IF EXISTS Disponibilidad_Diaria_Empleado CASCADE;
 DROP TABLE IF EXISTS Cita CASCADE;
@@ -21,21 +19,20 @@ DROP TABLE IF EXISTS Tipo_Servicio CASCADE;
 DROP TABLE IF EXISTS Empleado CASCADE;
 DROP TABLE IF EXISTS Cliente CASCADE;
 
--- Eliminación de tipos ENUM personalizados de PostgreSQL
-DROP TYPE IF EXISTS estado_empleado_enum;
-DROP TYPE IF EXISTS estado_servicio_enum;
-DROP TYPE IF EXISTS estado_dia_enum;
-DROP TYPE IF EXISTS estado_cita_enum;
+DROP TYPE IF EXISTS estado_empleado_enum CASCADE;
+DROP TYPE IF EXISTS estado_servicio_enum CASCADE;
+DROP TYPE IF EXISTS estado_dia_enum CASCADE;
+DROP TYPE IF EXISTS estado_cita_enum CASCADE;
+DROP TYPE IF EXISTS dia_semana_enum CASCADE;
 
--- 2. DEFINICIÓN DE TIPOS ENUM DE POSTGRESQL
-
-CREATE TYPE estado_empleado_enum AS ENUM ('ocupado', 'disponible');
+-- 2. DEFINICIÓN DE TIPOS (ENUMS)
+CREATE TYPE estado_empleado_enum AS ENUM ('ocupado', 'disponible', 'vacaciones');
 CREATE TYPE estado_servicio_enum AS ENUM ('activo', 'inactivo');
 CREATE TYPE estado_dia_enum AS ENUM ('abierto', 'cerrado');
-CREATE TYPE estado_cita_enum AS ENUM ('confirmada', 'cancelada');
+CREATE TYPE estado_cita_enum AS ENUM ('pendiente', 'confirmada', 'cancelada', 'completada');
+CREATE TYPE dia_semana_enum AS ENUM ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo');
 
--- 3. CREACIÓN DE TABLAS (SINTAXIS LIMPIA)
-
+-- 3. CREACIÓN DE TABLAS
 CREATE TABLE Cliente (
     id_cliente SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -43,25 +40,19 @@ CREATE TABLE Cliente (
     telefono VARCHAR(20) NULL,
     correo VARCHAR(255) UNIQUE
 );
-
--- Nota: PostgreSQL no usa ALTER TABLE para setear un valor inicial de SERIAL (ya que el valor es manejado por la secuencia)
--- Sin embargo, si quieres asegurar que el primer ID sea 11:
 ALTER SEQUENCE cliente_id_cliente_seq RESTART WITH 11;
-
 
 CREATE TABLE Empleado (
     id_empleado SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOTG NULL,
+    apellido VARCHAR(100) NOT NULL,
     rol VARCHAR(50) NOT NULL,
     telefono VARCHAR(20) NULL,
     correo VARCHAR(255) UNIQUE,
     estado estado_empleado_enum NOT NULL DEFAULT 'disponible',
     contraseña VARCHAR(255) NOT NULL
 );
-
 ALTER SEQUENCE empleado_id_empleado_seq RESTART WITH 21;
-
 
 CREATE TABLE Tipo_Servicio (
     id_servicio SERIAL PRIMARY KEY,
@@ -70,9 +61,7 @@ CREATE TABLE Tipo_Servicio (
     precio DECIMAL(6, 2) NOT NULL,
     estado estado_servicio_enum NOT NULL DEFAULT 'activo'
 );
-
 ALTER SEQUENCE tipo_servicio_id_servicio_seq RESTART WITH 31;
-
 
 CREATE TABLE Dia_Salon_Estado (
     fecha DATE NOT NULL PRIMARY KEY,
@@ -80,7 +69,6 @@ CREATE TABLE Dia_Salon_Estado (
     hora_cierre TIME NOT NULL DEFAULT '17:00:00',
     estado_dia estado_dia_enum NOT NULL DEFAULT 'abierto'
 );
-
 
 CREATE TABLE Disponibilidad_Diaria_Empleado (
     id_empleado INTEGER NOT NULL,
@@ -94,7 +82,6 @@ CREATE TABLE Disponibilidad_Diaria_Empleado (
         ON UPDATE CASCADE
 );
 
-
 CREATE TABLE Cita (
     id_cita SERIAL PRIMARY KEY,
     id_cliente INTEGER NOT NULL,
@@ -104,31 +91,15 @@ CREATE TABLE Cita (
     hora TIME NOT NULL,
     estado estado_cita_enum NOT NULL DEFAULT 'confirmada',
     
-    -- Los índices se crean implícitamente en las restricciones de clave foránea en PostgreSQL,
-    -- pero para coincidir con la intención de MySQL (INDEX) se definen:
-    INDEX fk_cita_cliente_idx (id_cliente),
-    INDEX fk_cita_tipo_servicio_idx (id_servicio),
-    INDEX fk_cita_empleado_idx (id_empleado),
-    
-    CONSTRAINT fk_Cita_Cliente
-        FOREIGN KEY (id_cliente)
-        REFERENCES Cliente (id_cliente)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    CONSTRAINT fk_Cita_Tipo_Servicio
-        FOREIGN KEY (id_servicio)
-        REFERENCES Tipo_Servicio (id_servicio)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    CONSTRAINT fk_Cita_Empleado
-        FOREIGN KEY (id_empleado)
-        REFERENCES Empleado (id_empleado)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE
+    CONSTRAINT fk_Cita_Cliente FOREIGN KEY (id_cliente) REFERENCES Cliente (id_cliente) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_Cita_Tipo_Servicio FOREIGN KEY (id_servicio) REFERENCES Tipo_Servicio (id_servicio) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_Cita_Empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
+-- Índices creados por separado para PostgreSQL
+CREATE INDEX fk_cita_cliente_idx ON Cita(id_cliente);
+CREATE INDEX fk_cita_tipo_servicio_idx ON Cita(id_servicio);
+CREATE INDEX fk_cita_empleado_idx ON Cita(id_empleado);
 ALTER SEQUENCE cita_id_cita_seq RESTART WITH 41;
-
 
 CREATE TABLE Disponibilidad (
     id_disponibilidad SERIAL PRIMARY KEY,
@@ -136,37 +107,35 @@ CREATE TABLE Disponibilidad (
     fecha_disponible DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
-    INDEX fk_disponibilidad_empleado_idx (id_empleado),
-    CONSTRAINT fk_Disponibilidad_Empleado
-        FOREIGN KEY (id_empleado)
-        REFERENCES Empleado (id_empleado)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    CONSTRAINT fk_Disponibilidad_Empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+CREATE INDEX fk_disponibilidad_empleado_idx ON Disponibilidad(id_empleado);
 ALTER SEQUENCE disponibilidad_id_disponibilidad_seq RESTART WITH 51;
-
 
 CREATE TABLE Empleado_Servicio (
     id_empleado INTEGER NOT NULL,
     id_servicio INTEGER NOT NULL,
     PRIMARY KEY (id_empleado, id_servicio),
-    INDEX fk_empleado_servicio_servicio_idx (id_servicio),
-    CONSTRAINT fk_Empleado_Servicio_Empleado
-        FOREIGN KEY (id_empleado)
-        REFERENCES Empleado (id_empleado)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    CONSTRAINT fk_Empleado_Servicio_Servicio
-        FOREIGN KEY (id_servicio)
-        REFERENCES Tipo_Servicio (id_servicio)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    CONSTRAINT fk_Empleado_Servicio_Empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Empleado_Servicio_Servicio FOREIGN KEY (id_servicio) REFERENCES Tipo_Servicio (id_servicio) ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE INDEX fk_empleado_servicio_servicio_idx ON Empleado_Servicio(id_servicio);
 
--- 4. FUNCIONES Y TRIGGERS (PL/pgSQL)
+-- Tabla de Horario Semanal (Normalización 3FN)
+CREATE TABLE Horario_Semanal_Empleado (
+    id_horario SERIAL PRIMARY KEY,
+    id_empleado INTEGER NOT NULL,
+    dia dia_semana_enum NOT NULL,
+    hora_apertura TIME NOT NULL,
+    hora_cierre TIME NOT NULL,
+    CONSTRAINT fk_Horario_Semanal_Empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT chk_horario_logico CHECK (hora_cierre > hora_apertura),
+    UNIQUE (id_empleado, dia) 
+);
+CREATE INDEX idx_horario_empleado ON Horario_Semanal_Empleado(id_empleado);
 
--- Función para el trigger BEFORE INSERT en Cita
+-- 4. FUNCIONES Y TRIGGERS
+-- Trigger BEFORE INSERT (Validaciones)
 CREATE OR REPLACE FUNCTION tr_cita_before_insert_func()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -177,11 +146,10 @@ DECLARE
     hora_cierre_salon TIME;
     hora_fin_cita TIME;
 BEGIN
-    -- 1. Obtener duración del servicio
     SELECT duracion_horas INTO duracion FROM Tipo_Servicio WHERE id_servicio = NEW.id_servicio;
 
-    -- 2. Obtener estado y horario del salón para la fecha
-    SELECT
+    -- Obtener horario del salón, usando valores por defecto si no existe la fecha
+    SELECT 
         COALESCE(estado_dia, 'cerrado'::estado_dia_enum),
         COALESCE(hora_apertura, '08:00:00'::TIME),
         COALESCE(hora_cierre, '17:00:00'::TIME)
@@ -189,113 +157,95 @@ BEGIN
     FROM Dia_Salon_Estado
     WHERE fecha = NEW.fecha;
 
-    -- LÓGICA 1: DÍA CERRADO
     IF salon_abierto = 'cerrado' THEN
         RAISE EXCEPTION 'El salón está CERRADO para citas en esta fecha.';
     END IF;
 
-    -- LÓGICA 2: HORARIO DEL SALÓN (8 AM a 5 PM)
+    -- Validación de hora de inicio
     IF NEW.hora < hora_apertura_salon OR NEW.hora >= hora_cierre_salon THEN
         RAISE EXCEPTION 'La cita debe iniciar entre % y antes de %.', hora_apertura_salon, hora_cierre_salon;
     END IF;
 
-    -- Verificar que la hora de FIN de la cita no exceda el horario de cierre (5 PM)
+    -- Validación de hora de fin (AQUÍ ESTABA EL ERROR DE DATOS)
     hora_fin_cita := NEW.hora + (duracion * INTERVAL '1 hour');
     IF hora_fin_cita > hora_cierre_salon THEN
-        RAISE EXCEPTION 'La duración del servicio (%) excede el horario de cierre del salón (%).', duracion, hora_cierre_salon;
+        RAISE EXCEPTION 'La duración del servicio (%) excede el horario de cierre (%).', duracion, hora_cierre_salon;
     END IF;
 
-    -- LÓGICA 3: DISPONIBILIDAD HORARIA DEL EMPLEADO (9 horas/día)
-    -- Si no existe un registro, se asume 9.00 horas.
+    -- Validación de disponibilidad del empleado (Horas restantes)
     SELECT COALESCE(horas_disponibles_restantes, 9.00) INTO horas_restantes
     FROM Disponibilidad_Diaria_Empleado
     WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
 
     IF horas_restantes < duracion THEN
-        RAISE EXCEPTION 'El empleado % no tiene las % horas disponibles restantes para la cita en la fecha %.', NEW.id_empleado, duracion, NEW.fecha;
+        RAISE EXCEPTION 'El empleado % no tiene suficiente tiempo (% horas necesarias).', NEW.id_empleado, duracion;
     END IF;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger BEFORE INSERT en Cita
 CREATE TRIGGER tr_cita_before_insert
 BEFORE INSERT ON Cita
-FOR EACH ROW
-EXECUTE FUNCTION tr_cita_before_insert_func();
+FOR EACH ROW EXECUTE FUNCTION tr_cita_before_insert_func();
 
----
-
--- Función para el trigger AFTER INSERT en Cita
+-- Trigger AFTER INSERT (Actualizar disponibilidad)
 CREATE OR REPLACE FUNCTION tr_cita_after_insert_func()
 RETURNS TRIGGER AS $$
 DECLARE
     duracion DECIMAL(6,2);
 BEGIN
-    -- Asegura que el registro de estado del día exista (UPSERT en Dia_Salon_Estado)
-    INSERT INTO Dia_Salon_Estado (fecha)
-    VALUES (NEW.fecha)
-    ON CONFLICT (fecha) DO NOTHING; -- Si la fecha ya existe, no hace nada
+    -- Asegurar que la fecha exista en Dia_Salon_Estado antes de usarla
+    INSERT INTO Dia_Salon_Estado (fecha) VALUES (NEW.fecha) ON CONFLICT (fecha) DO NOTHING;
     
     IF NEW.estado = 'confirmada' THEN
         SELECT duracion_horas INTO duracion FROM Tipo_Servicio WHERE id_servicio = NEW.id_servicio;
         
-        -- Inicializa (9.00 - duracion) o actualiza (resta duracion) las horas restantes (UPSERT en Disponibilidad_Diaria_Empleado)
+        -- Actualizar o insertar la disponibilidad diaria del empleado
         INSERT INTO Disponibilidad_Diaria_Empleado (id_empleado, fecha, horas_disponibles_restantes)
         VALUES (NEW.id_empleado, NEW.fecha, 9.00 - duracion)
         ON CONFLICT (id_empleado, fecha) 
         DO UPDATE SET horas_disponibles_restantes = Disponibilidad_Diaria_Empleado.horas_disponibles_restantes - duracion;
     END IF;
-    
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger AFTER INSERT en Cita
 CREATE TRIGGER tr_cita_after_insert
 AFTER INSERT ON Cita
-FOR EACH ROW
-EXECUTE FUNCTION tr_cita_after_insert_func();
+FOR EACH ROW EXECUTE FUNCTION tr_cita_after_insert_func();
 
----
-
--- Función para el trigger AFTER UPDATE en Cita
+-- Trigger AFTER UPDATE (Cambio de estados)
 CREATE OR REPLACE FUNCTION tr_cita_after_update_func()
 RETURNS TRIGGER AS $$
 DECLARE
     duracion DECIMAL(6,2);
 BEGIN
-    -- Este trigger solo debe actuar si el empleado o la fecha no han cambiado (solo el estado)
     IF OLD.id_empleado = NEW.id_empleado AND OLD.fecha = NEW.fecha THEN
         SELECT duracion_horas INTO duracion FROM Tipo_Servicio WHERE id_servicio = NEW.id_servicio;
 
-        -- De confirmada a cancelada: suma las horas
         IF OLD.estado = 'confirmada'::estado_cita_enum AND NEW.estado = 'cancelada'::estado_cita_enum THEN
+            -- Si se cancela, se libera el tiempo del empleado
             UPDATE Disponibilidad_Diaria_Empleado
             SET horas_disponibles_restantes = horas_disponibles_restantes + duracion
             WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
         
-        -- De cancelada a confirmada: resta las horas
         ELSEIF OLD.estado = 'cancelada'::estado_cita_enum AND NEW.estado = 'confirmada'::estado_cita_enum THEN
+            -- Si se reconfirma, se vuelve a restar el tiempo
             UPDATE Disponibilidad_Diaria_Empleado
             SET horas_disponibles_restantes = horas_disponibles_restantes - duracion
             WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
         END IF;
     END IF;
-    
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger AFTER UPDATE en Cita
 CREATE TRIGGER tr_cita_after_update
 AFTER UPDATE ON Cita
-FOR EACH ROW
-EXECUTE FUNCTION tr_cita_after_update_func();
+FOR EACH ROW EXECUTE FUNCTION tr_cita_after_update_func();
 
 -- 5. INSERCIÓN DE DATOS
-
 INSERT INTO Cliente (nombre, apellido, telefono, correo) VALUES
 ('Ana', 'García', '5551234567', 'ana.garcia@mail.com'),
 ('Benito', 'López', '5559876543', 'benito.lopez@mail.com'),
@@ -360,15 +310,10 @@ INSERT INTO Disponibilidad (id_empleado, fecha_disponible, hora_inicio, hora_fin
 (22, '2025-11-03', '10:00:00', '18:00:00'),
 (24, '2025-11-03', '11:00:00', '19:00:00');
 
--- Insertar estados de día (para que los triggers puedan consultarlos)
--- Nota: La inserción en Cita activa el trigger after_insert que también maneja esto,
--- pero se incluyen para asegurar la existencia de los registros antes de las citas
+-- Precarga de días para triggers
 INSERT INTO Dia_Salon_Estado (fecha) VALUES
-('2025-11-01'),
-('2025-11-02'),
-('2025-11-03');
+('2025-11-01'), ('2025-11-02'), ('2025-11-03');
 
--- La inserción de datos en Cita activará los Triggers de disponibilidad
 INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado) VALUES
 (11, 31, 21, '2025-11-01', '09:00:00', 'confirmada'),
 (12, 32, 22, '2025-11-01', '10:00:00', 'confirmada'),
@@ -386,11 +331,14 @@ INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado) VAL
 (14, 36, 24, '2025-11-03', '16:00:00', 'confirmada'),
 (15, 37, 28, '2025-11-03', '13:00:00', 'confirmada'),
 (16, 38, 21, '2025-11-02', '14:00:00', 'confirmada'),
-(17, 39, 23, '2025-11-01', '15:00:00', 'cancelada'),
+-- LÍNEA CORREGIDA: Cambiado de 15:00:00 a 14:30:00 (14:30 + 2.5h = 17:00, justo a la hora de cierre)
+(17, 39, 23, '2025-11-01', '14:30:00', 'cancelada'), 
 (18, 40, 23, '2025-11-01', '10:30:00', 'confirmada'),
 (19, 31, 21, '2025-11-01', '13:30:00', 'confirmada'),
 (20, 32, 22, '2025-11-01', '16:00:00', 'confirmada');
 
--- 6. Limpieza de secuencias (Opcional, pero se mantiene la estructura de PostgreSQL)
--- Ninguna variable de sesión de MySQL necesita ser restaurada en PostgreSQL de esta manera.
--- Las secuencias se mantienen para futuros INSERTs.
+-- Datos de Horario Semanal
+INSERT INTO Horario_Semanal_Empleado (id_empleado, dia, hora_apertura, hora_cierre) VALUES
+(21, 'Lunes', '09:00', '17:00'), (21, 'Martes', '09:00', '17:00'), (21, 'Miércoles', '09:00', '17:00'), (21, 'Jueves', '09:00', '17:00'), (21, 'Viernes', '09:00', '17:00'),
+(22, 'Martes', '10:00', '19:00'), (22, 'Miércoles', '10:00', '19:00'), (22, 'Jueves', '10:00', '19:00'), (22, 'Viernes', '10:00', '19:00'), (22, 'Sábado', '09:00', '14:00'),
+(23, 'Lunes', '08:00', '14:00'), (23, 'Martes', '08:00', '14:00'), (23, 'Miércoles', '08:00', '14:00'), (23, 'Jueves', '08:00', '14:00'), (23, 'Viernes', '08:00', '14:00'), (23, 'Sábado', '08:00', '13:00');
