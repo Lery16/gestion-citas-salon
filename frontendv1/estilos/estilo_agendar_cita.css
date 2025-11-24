@@ -11,6 +11,7 @@
     width: 100%;
     margin: 0;
     position: relative; 
+    user-select: none;
 }
 
 .flecha {
@@ -52,8 +53,15 @@
     font-size: 40px; /* Reducción de fuente para móvil */
     font-weight: 400; 
     color: #fff; 
-    margin-bottom: 40px;
     margin-top: 100px;
+}
+
+.subtitulo {
+    font-family: 'Playfair Display', sans-serif; 
+    font-size: 20px; /* Reducción de fuente para móvil */
+    font-weight: 400; 
+    color: #fff; 
+    margin-bottom: 40px;
 }
 
 .campo {
@@ -299,7 +307,13 @@ input:-webkit-autofill:active {
     .titulo {
         font-family: 'Courgette', cursive; 
         font-size: 50px; 
-        font-weight: 400; 
+        color: #fff; 
+        width: 60vw; 
+    }
+
+    .subtitulo {
+        font-family: 'Playfair Display', sans-serif; 
+        font-size: 20px; /* Reducción de fuente para móvil */
         color: #fff; 
         margin-bottom: 70px;
         width: 60vw; 

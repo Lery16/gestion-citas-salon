@@ -6,11 +6,15 @@
 
 body { 
     font-family: 'Lato', sans-serif;
+    user-select: none;
 }
 
-
 .registro-contenedor {
-    height: 100%;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva-2.jpg') no-repeat center center;
+    background-size: cover;
+    height: auto;
     padding-bottom: 50px;
     display: flex;
     flex-direction: column;
@@ -19,10 +23,6 @@ body {
     margin: 0;
     padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
     position: relative; 
-    background: 
-        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
-        url('../imagenes/modelo-nueva-2.jpg') no-repeat center center;
-    background-size: cover;
 }
 
 .flecha {
@@ -123,7 +123,7 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    background-color: #ff9985;
+    background-color: #ff9985; 
     transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -137,13 +137,13 @@ input:-webkit-autofill:active {
 
 .campo input:focus,
 .campo select:focus {
-    background-color: #ff9985;
+    background-color: #f96c7a;
 }
 
 .campo select {
     /* Mantiene el diseño base de los inputs */
     border: none;
-    background: transparent;
+    background: #ff9985; 
     width: 100%;
     color: black;
     font-family: 'Courier Prime', monospace;
@@ -214,6 +214,69 @@ input:-webkit-autofill:active {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.boton-agregar-servicio-contenedor {
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.boton-anadir-otro-servicio {
+    background: none;
+    border: 1px solid #f96c7a; /* Color de acento de sus opciones */
+    color: #f96c7a;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, color 0.3s;
+    font-family: 'Courier Prime', monospace; /* Para mantener la coherencia */
+    background-color: #f96c7a;
+    color: white;
+}
+
+.boton-anadir-otro-servicio:hover {
+    background-color: transparent;
+}
+
+/* Estilo para los campos de servicio adicionales (opcional) */
+/* Estilo para el contenedor de los campos de servicio adicionales */
+.campo.servicio-adicional {
+    position: relative; /* Necesario para posicionar el botón de eliminar */
+    margin-top: 10px; /* Separación entre campos */
+    padding-right: 40px; /* Espacio para el botón de eliminar */
+}
+
+/* Estilo para el botón de eliminar servicio */
+.boton-eliminar-servicio {
+    position: absolute; /* Posicionamiento absoluto dentro del .campo */
+    top: 50%; /* Centrar verticalmente */
+    right: 10px; /* A la derecha del campo */
+    transform: translateY(-50%); /* Ajuste fino para centrar */
+    background: none;
+    border: none;
+    color: #ff4d4d; /* Un rojo para indicar eliminación */
+    font-size: 2.2rem; /* Tamaño de la 'X' */
+    cursor: pointer;
+    line-height: 1; /* Para que la 'X' no se desborde */
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    font-weight: bold;
+    z-index: 12; /* Asegurar que esté por encima de otros elementos */
+}
+
+.boton-eliminar-servicio:hover {
+    opacity: 1;
+    color: #cc0000; /* Un rojo más oscuro al pasar el mouse */
+}
+
+/* Cuando el select es válido, la etiqueta se oculta, y queremos que la 'X' siga visible */
+.campo.servicio-adicional select:valid + .etiqueta {
+    opacity: 0;
+    transform: translateY(-50%);
+}
+
+/* En pantallas grandes, asegúrate de que el botón de eliminar también se ajuste */
+
 /* ---------------------------------------------------------------------- */
 /* MEDIA QUERY: Tabletas y Escritorios Pequeños (min-width: 641px) */
 /* ---------------------------------------------------------------------- */
@@ -252,14 +315,14 @@ input:-webkit-autofill:active {
 /* MEDIA QUERY: Escritorios Grandes (min-width: 1025px) */
 /* ---------------------------------------------------------------------- */
 @media (min-width: 1025px) {
-    .registro-contenedor {
-        height: 1400px;         
+    .registro-contenedor {      
         display: flex;
         flex-direction: column;
         align-items: center; 
         width: 100%;
         padding: 0;
-        position: relative; 
+        min-height: 100vh;
+        height: auto;
     }
 
     .flecha {
@@ -282,16 +345,20 @@ input:-webkit-autofill:active {
     }
 
     .formulario-card {
-        position: absolute; 
-        top: 45%; 
-        left: 44%; 
-        transform: translate(-50%, -50%); 
-        position: absolute; 
+        position: relative; /* O static, pero relative es más seguro si hay z-index */
+        top: auto;
+        left: auto;
+        transform: none; 
+        margin-bottom: 80px; /* Esto asegura que el botón "Añadir Trabajador" no quede pegado al final */
         padding: 10px;
         padding-top: 80px;
         align-items: center;
         text-align: center;
         z-index: 2; 
+        width: 600px; /* Usar un valor fijo en lugar de 60vw para mayor control */
+        max-width: 90%; /* Máximo el 90% de la ventana, para adaptabilidad */
+        margin-left: 20%;
+        margin-right: auto;
     }
 
     .titulo {
@@ -357,7 +424,7 @@ input:-webkit-autofill:active {
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
         /* Clave: Usa un color que concuerde con el contenedor padre y fuerza el cambio */
-        -webkit-box-shadow: 0 0 0px 1000px #ff9985 inset !important; 
+        -webkit-box-shadow: 0 0 0px 1000px transparent inset !important; 
         
         /* Clave: Asegura que el color de texto sea negro */
         -webkit-text-fill-color: black !important;
@@ -420,5 +487,13 @@ input:-webkit-autofill:active {
         width: 100%;
         padding: 0;
         line-height: 1.5; 
+    }
+
+    .campo.servicio-adicional {
+        padding-right: 60px; /* Más espacio para la 'X' grande */
+    }
+    .boton-eliminar-servicio {
+        right: 15px; /* Ajustar posición de la 'X' */
+        font-size: 3rem; /* Hacer la 'X' más grande */
     }
 }

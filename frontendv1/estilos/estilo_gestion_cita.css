@@ -14,6 +14,10 @@
     --color-terciario: #6c757d;
     --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.06);
     --sombra-media: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --color-pendiente: #ffc107;       /* Amarillo/Naranja para alerta */
+    --color-pendiente-texto: #5e4e03; /* Texto oscuro para contraste */
+    --color-completada: #17a2b8;      /* Azul/Teal para finalizado */
+    --color-completada-texto: #ffffff;
 }
 
 *,
@@ -23,20 +27,22 @@
     margin: 0;
 }
 
-body {
+body{
     font-family: 'Lato', sans-serif;
     background-color: var(--color-fondo-panel);
     color: var(--color-texto-oscuro);
     line-height: 1.6;
     padding-top: 70px;
     background: 
-        linear-gradient(rgba(151, 151, 151, 0.6), rgba(255, 255, 255, 0.6)), 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), 
         url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;
     padding: 0;
-    min-height: 100vh;
+    height: 120vh;
+    max-height: auto;
+    user-select: none;
 }
 
 main {
@@ -109,7 +115,6 @@ main {
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    display: none;
 }
 /* Estilo para mostrar el panel de filtros */
 .filtro-panel.active {
@@ -173,7 +178,7 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 30rem;
+    width: 100%;
 }
 
 .bulk-actions .checkbox-label {
@@ -182,6 +187,7 @@ input::placeholder {
     gap: 0.75rem;
     font-weight: 600;
     cursor: pointer;
+    padding-bottom: 10px;
 }
 
 .bulk-actions input[type="checkbox"] {
@@ -190,13 +196,6 @@ input::placeholder {
     accent-color: var(--color-principal);
 }
 
-#bulkCancel {
-    width: 100%;
-}
-
-/* ============================================================
-   TARJETAS DE CITAS
-   ============================================================ */
 .lista-citas {
     display: grid;
     grid-template-columns: 1fr;
@@ -274,8 +273,6 @@ input::placeholder {
     padding: 0.25rem 0.75rem;
     border-radius: 16px;
     font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
@@ -287,6 +284,17 @@ input::placeholder {
 .estado-cancelada {
     background-color: var(--color-cancelada-fondo);
     color: var(--color-cancelada-texto);
+}
+
+.estado-pendiente {
+    background-color: var(--color-pendiente);
+    color: white;
+}
+
+/* Estado Completada */
+.estado-completada {
+    background-color: var(--color-completada);
+    color: var(--color-completada-texto);
 }
 
 .cita-acciones {
@@ -311,6 +319,17 @@ input::placeholder {
 
 .btn-cancelar {
     background-color: var(--color-peligro);
+    color: white;
+}
+
+.btn-confirmar {
+    background-color: var(--color-confirmar);
+    color: white;
+}
+
+/* Botón para marcar como completada */
+.btn-completar {
+    background-color: var(--color-completada);
     color: white;
 }
 

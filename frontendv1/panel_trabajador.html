@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Atención</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="estilos/estilo_general.css">
+  <link rel="stylesheet" href="estilos/panel_trab_estilo.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+  <script src="funciones/header_fun.js"></script>
+<script src="funciones/cerrar_sesion_fun.js"></script>
+</head>
+<header>
+    <div class="menu_hamburguesa">☰</div>
+    <div class="logo">
+        <img src="imagenes/logo.png" alt="Logo">
+    </div>
+
+    <div class="menu-opciones">
+        <nav>
+            <ul>
+                <li><a href="panel_trabajador.html" id="ventanaPrincipal">Ventana Principal</a></li>
+            </ul>
+        </nav>
+        <nav>
+            <ul>
+                <li><a href="#" id="cerrarSesion">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<body>
+    <div class="header-admin">
+        <div class="logo-container">
+            <i class="fa-solid fa-spa logo-icon"></i>
+            <div class="titulo">Panel de Control</div>
+        </div>
+        <p class="bienvenido-texto">Bienvenido, Estilista</p>
+    </div>
+
+    <main class="dashboard-container">
+        
+        <!-- Grid de Navegación -->
+        <nav class="dashboard-grid">
+            
+            <!-- Tarjeta 1: Agenda General -->
+            <a href="lista_cita.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-regular fa-calendar-check"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Listado de Citas</h2>
+                    <p>Visualiza las citas programadas</p>
+                </div>
+            </a>
+
+            <!-- Tarjeta 2: Horarios de Atención -->
+            <a href="horario_servicios.html" class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fa-regular fa-clock"></i>
+                </div>
+                <div class="card-info">
+                    <h2>Horario y Servicios</h2>
+                    <p>Visualiza tu horario semanal y servicios que ofreces</p>
+                </div>
+            </a>
+        </nav>
+    </main>
+</body>
+</html>

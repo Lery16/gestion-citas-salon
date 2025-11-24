@@ -1,0 +1,278 @@
+:root {
+    --color-acento: #f96c7a;
+    --color-fondo-tarjeta: rgba(78, 72, 72, 0.4);
+    --color-texto: #333333; /* No se usa directamente en este tema oscuro */
+    --color-texto-suave: #6c757d; /* No se usa directamente en este tema oscuro */
+    --color-exito: #28a745;
+    --color-peligro: #dc3545;
+    --color-borde: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+	font-family: 'Lato', sans-serif;
+    background: 
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: top;
+	min-height: 100vh;
+	max-height: 100%;
+	user-select: none;
+}
+/* Fuentes personalizadas (Asegúrate de que estén disponibles) */
+/* Para este ejemplo, usaré Inter (default de Tailwind) y una fallback similar a 'Instrument Serif' */
+.font-serif-custom {
+    font-family: 'Instrument Serif', serif; 
+}
+
+/* Contenedor principal */
+.contenedor {
+    max-width: 1200px;
+    margin: 40px auto; /* Centrar y darle margen */
+    padding: 0 30px;
+}
+
+/* Barra de herramientas */
+.barra-herramientas {
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Estilos del Botón Primario */
+.btn-primario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--color-acento);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(249, 108, 122, 0.3);
+    font-family: 'Courier Prime', monospace;
+    font-size: 1rem;
+}
+
+.btn-primario:hover {
+    background-color: #da5764;
+    transform: translateY(-1px);
+}
+
+/* Contenedor y Campo de Búsqueda */
+.contenedor-busqueda {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.entrada-busqueda {
+    width: 100%;
+    padding: 10px;
+    padding-left: 40px;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background-color: var(--color-fondo-tarjeta);
+    color: white;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1rem;
+}
+
+.entrada-busqueda::placeholder {
+    color: rgb(196, 196, 196);
+}
+
+.entrada-busqueda:focus {
+    border-color: var(--color-acento);
+    outline: none;
+}
+
+.icono-busqueda {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+	height: 18px;
+	color: white;
+}
+
+/* Contenedor de la Tabla/Tarjeta */
+.contenedor-tabla {
+	overflow-x: auto;
+	background-color: var(--color-fondo-tarjeta);
+	border-radius: 12px;
+	color: #ffffff;
+	height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.tabla-datos {
+    width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+	scrollbar-width: thin;
+}
+
+.tabla-datos th, .tabla-datos td {
+    padding: 15px 30px;
+    text-align: left;
+}
+
+.tabla-datos th {
+	background-color: rgba(249, 108, 122, 0.4);
+	font-size: 1.5rem;
+	font-weight: 500;
+	font-family: 'Instrument Serif', sans-serif;
+	position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Efecto hover en filas */
+.tabla-datos tbody tr:hover {
+    background-color: rgba(249, 108, 122, 0.3) !important;
+}
+
+/* Scrollbar personalizado */
+.contenedor-tabla::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.contenedor-tabla::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.contenedor-tabla::-webkit-scrollbar-thumb {
+    background: rgba(249, 108, 122, 0.6);
+    border-radius: 10px;
+}
+
+.contenedor-tabla::-webkit-scrollbar-thumb:hover {
+    background: rgba(249, 108, 122, 0.8);
+}
+
+/* Etiquetas de estado */
+.etiqueta-estado {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    color: white;
+}
+
+.estado-activo {
+    background-color: rgba(40, 167, 69, 0.8);
+}
+
+.estado-inactivo {
+    background-color: rgba(220, 53, 69, 0.8);
+}
+
+/* Botones de acción */
+.btn-accion {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-accion:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.icono-eliminar {
+    color: var(--color-peligro);
+}
+.icono-editar {
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 0 10px;
+        margin: 2%;
+    }
+
+    .barra-herramientas {
+        flex-direction: column;
+    }
+
+    .btn-primario {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .contenedor-busqueda {
+        max-width: 100%;
+    }
+
+    .tabla-datos {
+        border: none;
+    }
+
+    .tabla-datos thead {
+        display: none;
+    }
+
+    .tabla-datos, .tabla-datos tbody, .tabla-datos tr {
+        display: block;
+        width: 100%;
+    }
+
+    .tabla-datos tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--color-borde);
+        border-radius: 8px;
+        padding: 5px 0;
+    }
+
+    .tabla-datos td {
+        display: block;
+        text-align: left;
+        position: relative;
+        border-bottom: 1px solid var(--color-borde);
+    }
+
+    .tabla-datos tr td:last-child {
+        border-bottom: none;
+    }
+
+    .tabla-datos td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 20px;
+        width: 40%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+    }
+}

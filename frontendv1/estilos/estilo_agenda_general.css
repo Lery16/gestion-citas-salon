@@ -25,6 +25,7 @@ body {
     background-repeat: no-repeat;
     color: var(--color-texto-oscuro);
     line-height: 1.5;
+    user-select: none;
 }
 
 .agenda-container {

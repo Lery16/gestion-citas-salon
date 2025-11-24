@@ -6,26 +6,26 @@ header {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    user-select: none;
 }
 
-.header-left, .header-right {
+header .header-left, .header-right {
     display: flex;
     gap: 2vh;
 }
 
-.menu_hamburguesa {
+header .menu_hamburguesa {
     display: none;
 }
 
-.logo {
-    font-size: 1.15rem;
+header .logo {
     font-weight: 500;
     color: #333333;
     display: flex;
     align-items: center;
 }
 
-.logo-img {
+header .logo-img {
     height: 5vh;
     margin-right: 8px;
     display: flex; 
@@ -70,14 +70,14 @@ header {
     color: white;
 }
 
-.menu-opciones { 
+header .menu-opciones { 
     display: flex; 
     align-items: center; 
     gap: 5vh;
     border-radius: 10%; 
 } 
 
-nav ul { 
+header nav ul { 
     list-style-type: none; 
     display: flex; 
     gap: 5vh; 
@@ -86,7 +86,7 @@ nav ul {
     margin: 0; 
 } 
 
-nav a { 
+header nav a { 
     text-decoration: none; 
     color: #333333;
     position: relative; 
@@ -96,7 +96,7 @@ nav a {
 } 
 
 /* Animación subrayado */
-nav a::after { 
+header nav a::after { 
     content: ""; 
     position: absolute; 
     width: 0; 
@@ -107,7 +107,7 @@ nav a::after {
     transition: all 0.3s ease; 
 } 
 
-nav a:hover::after { 
+header a:hover::after { 
     width: 100%; 
     left: 0vh; 
 }

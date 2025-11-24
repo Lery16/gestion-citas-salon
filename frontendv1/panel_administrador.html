@@ -6,22 +6,43 @@
     <title>Panel de Administración - Salón de Belleza</title>
     <!-- Vinculación a la hoja de estilos -->
     <link rel="stylesheet" href="estilos/panel_admin_estilo.css">
-    <!-- Fuentes de Google Fonts para el estilo Coquette/Elegante -->
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     <!-- Iconos para los botones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<header>
+    <div class="header-left">
+        <div class="menu_hamburguesa">☰</div>
+        <div class="logo">
+            <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="menu-opciones">
+            <nav>
+                <ul>
+                    <li><a href="panel_administrador.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <ul>
+                    <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
 <body>
-
-    <header class="header-admin">
+    <div class="header-admin">
         <div class="logo-container">
             <i class="fa-solid fa-spa logo-icon"></i>
-            <h1>Panel de Control</h1>
+            <div class="titulo">Panel de Control</div>
         </div>
         <p class="bienvenido-texto">Bienvenido, Administrador</p>
-    </header>
+    </div>
 
     <main class="dashboard-container">
         

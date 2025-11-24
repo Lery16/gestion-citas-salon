@@ -22,6 +22,7 @@
     align-items: center;
     background-color: #333;
     overflow: hidden;
+    user-select: none;
 }
 
 .contenedor-fondo {

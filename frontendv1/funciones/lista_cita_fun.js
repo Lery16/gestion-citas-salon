@@ -1,23 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1️⃣ Cargar nombre y foto del trabajador
+    // 1️⃣ Cargar nombre del trabajador (MANTENER)
     const usuarioJSON = localStorage.getItem("usuario");
     if (usuarioJSON) {
         const trabajador = JSON.parse(usuarioJSON);
         document.querySelector(".nombre-trabajador").textContent = trabajador.nombre || "Trabajador";
-        if (trabajador.foto) {
-            document.querySelector(".perfil-img").src = trabajador.foto;
-        }
     }
 
-    // 2️⃣ Inicializar Flatpickr
+    const hoy = new Date();
+    // 5 años en el futuro. Usamos el objeto Date para calcularlo
+    const fechaMax = new Date();
+    fechaMax.setFullYear(hoy.getFullYear() + 5); 
+    // Aseguramos que el límite máximo sea hasta el día de hoy + 5 años
+
+    // 2️⃣ Inicializar Flatpickr (MODIFICADO)
     flatpickr.localize(flatpickr.l10ns.es);
     flatpickr("input[name='fecha']", {
         dateFormat: "d/m/Y",
         locale: "es",
-        allowInput: false
+        allowInput: false,
+        
+        // 🚨 CAMBIO 1: Establecer la fecha predeterminada en HOY
+        defaultDate: hoy,
+
+        // 🚨 CAMBIO 2: Limitar el calendario
+        minDate: "today", 
+        // Permite seleccionar desde hoy.
+
+        maxDate: fechaMax 
+        // Permite seleccionar hasta la fecha que calculamos (hoy + 5 años)
     });
 
-    // 3️⃣ Escuchar botón Buscar
+    // 3️⃣ Escuchar botón Buscar (MANTENER)
     const botonBuscar = document.querySelector(".btn-buscar");
     const inputFecha = document.querySelector("input[name='fecha']");
     const tablaBody = document.querySelector(".table-scroll-container tbody");
@@ -25,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     botonBuscar.addEventListener("click", async () => {
         const fechaSeleccionada = inputFecha.value;
         if (!fechaSeleccionada) {
+            // El defaultDate previene esto, pero lo mantenemos por seguridad
             alert("Por favor selecciona una fecha.");
             return;
         }

@@ -92,15 +92,5 @@ El Administrador (quien gestiona el sistema en nombre del salón) es responsable
 ---
 
 TAREAS DE UN EMPLEADO (INFERENCIA DEL ROL)
-
-Dado que no hay un "Panel del Trabajador", el empleado del salón usaría el sistema de la siguiente manera:
-
-* Consulta su Horario:
-  El empleado consultaría el Panel Administrativo (o una vista de él) para saber las citas que tiene asignadas para el día.
-  El sistema registra la cita con el servicio, la fecha, la hora y el empleado asignado.
-
-* Actualiza el Estado de la Cita:
-  Es probable que el empleado (o el administrador) actualice el estado de la cita en el Panel Administrativo a "Completada" una vez que el servicio haya terminado.
-  (El módulo de gestión de citas permite actualizar estados: pendiente, confirmada, completada).
-
-El Administrador es quien tiene las herramientas de configuración y control, mientras que el Empleado es el usuario final que trabaja bajo la estructura definida por el Administrador.
+✔ lista_cita.html
+✔ horario_servicios.html

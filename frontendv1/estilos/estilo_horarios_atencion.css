@@ -24,6 +24,7 @@ body {
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;
+    user-select: none;
 }
 
 .contenedor-principal {
@@ -390,62 +391,7 @@ input:checked + .slider:before {
 /* ------------------------------------------------ */
 /* --- Media Queries para TABLET/Escritorio Menor --- */
 /* ------------------------------------------------ */
-@media (min-width: 768px) {
-    /* Header */
-    header {
-        padding: 5vh; /* Restaurar padding original para desktop */
-    }
-    .header-left {
-        gap: 2vh;
-    }
-    .menu_hamburguesa {
-        display: none; /* Ocultar hamburguesa en desktop */
-    }
-    .logo {
-        font-size: 1.15rem;
-        max-width: none; /* Eliminar restricción de ancho */
-    }
-    .perfil-administrador {
-        display: flex; /* Mostrar perfil en desktop */
-        padding: 2vh 5vh;
-    }
-    .menu-opciones { 
-        display: flex; /* Mostrar menú de opciones en desktop */
-        align-items: center; 
-        gap: 5vh;
-        border-radius: 10%; 
-    } 
-    nav ul { 
-        list-style-type: none; 
-        display: flex; 
-        gap: 5vh; 
-        justify-content: flex-end; 
-        padding: 0; 
-        margin: 0; 
-    } 
-    nav a { 
-        text-decoration: none; 
-        color: #333333;
-        position: relative; 
-        font-family: sans-serif; 
-        padding: 0.5vh 0vh; 
-        transition: color 0.3s ease; 
-    } 
-    nav a::after { 
-        content: ""; 
-        position: absolute; 
-        width: 0; 
-        height: 0.42vh; 
-        bottom: 0; 
-        left: 50%; 
-        background-color: #333333;
-        transition: all 0.3s ease; 
-    } 
-    nav a:hover::after { 
-        width: 100%; 
-        left: 0vh; 
-    }
-    
+@media (min-width: 768px) { 
     /* Horarios Regulares */
     .dia-semana {
         flex-direction: row; 

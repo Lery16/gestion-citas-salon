@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;  -- ACTIVAR EXTENSIÓN (Necesaria para contraseñas)
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- ACTIVAR EXTENSIÓN (Necesaria para contraseñas)
 
 -- 1. LIMPIEZA TOTAL
 DROP TRIGGER IF EXISTS tr_cita_before_insert ON Cita;
@@ -130,11 +130,11 @@ CREATE TABLE Horario_Semanal_Empleado (
     hora_cierre TIME NOT NULL,
     CONSTRAINT fk_Horario_Semanal_Empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT chk_horario_logico CHECK (hora_cierre > hora_apertura),
-    UNIQUE (id_empleado, dia) 
+    UNIQUE (id_empleado, dia)
 );
 CREATE INDEX idx_horario_empleado ON Horario_Semanal_Empleado(id_empleado);
 
--- 4. FUNCIONES Y TRIGGERS
+-- 4. FUNCIONES Y TRIGGERS (Se mantienen iguales)
 -- Trigger BEFORE INSERT (Validaciones)
 CREATE OR REPLACE FUNCTION tr_cita_before_insert_func()
 RETURNS TRIGGER AS $$
@@ -245,7 +245,9 @@ CREATE TRIGGER tr_cita_after_update
 AFTER UPDATE ON Cita
 FOR EACH ROW EXECUTE FUNCTION tr_cita_after_update_func();
 
--- 5. INSERCIÓN DE DATOS
+-- 5. INSERCIÓN DE DATOS (Actualizando servicios y sus relaciones)
+
+-- CLIENTES (Se mantienen)
 INSERT INTO Cliente (nombre, apellido, telefono, correo) VALUES
 ('Ana', 'García', '5551234567', 'ana.garcia@mail.com'),
 ('Benito', 'López', '5559876543', 'benito.lopez@mail.com'),
@@ -258,6 +260,7 @@ INSERT INTO Cliente (nombre, apellido, telefono, correo) VALUES
 ('Irene', 'Gómez', '5559990011', 'irene.gomez@mail.com'),
 ('Javier', 'Rodríguez', '5552223344', 'javier.rodriguez@mail.com');
 
+-- EMPLEADOS (Se mantienen)
 INSERT INTO Empleado (nombre, apellido, rol, telefono, correo, estado, contraseña) VALUES
 ('Laura', 'Vargas', 'admin', '5551000001', 'laura.vargas@salon.com', 'disponible', ENCODE(DIGEST('contraseña1', 'sha256'), 'hex')),
 ('Miguel', 'Rojas', 'trabajador', '5551000002', 'miguel.rojas@salon.com', 'disponible', ENCODE(DIGEST('contraseña2', 'sha256'), 'hex')),
@@ -270,29 +273,48 @@ INSERT INTO Empleado (nombre, apellido, rol, telefono, correo, estado, contrase�
 ('Valeria', 'Cruz', 'trabajador', '5551000009', 'valeria.cruz@salon.com', 'vacaciones', ENCODE(DIGEST('contraseña9', 'sha256'), 'hex')),
 ('Jorge', 'Nieto', 'trabajador', '5551000010', 'jorge.nieto@salon.com', 'disponible', ENCODE(DIGEST('contraseña10', 'sha256'), 'hex'));
 
+
+-- ACTUALIZACIÓN DE SERVICIOS (12 Servicios solicitados)
 INSERT INTO Tipo_Servicio (nombre_servicio, duracion_horas, precio, estado) VALUES
-('Corte Dama y Peinado', 1.50, 45.00, 'activo'),
-('Masaje Relajante (60m)', 1.00, 60.00, 'activo'),
-('Tinte Completo + Tratamiento', 2.00, 85.50, 'activo'),
-('Manicura y Pedicura Deluxe', 1.50, 55.00, 'activo'),
-('Masaje Deportivo (90m)', 1.50, 90.00, 'activo'),
-('Diseño de Cejas', 0.50, 20.00, 'activo'),
-('Corte Caballero', 0.75, 30.00, 'activo'),
-('Tratamiento Capilar Profundo', 1.00, 40.00, 'activo'),
-('Extensiones de Pestañas', 2.50, 120.00, 'activo'),
-('Peinado para Eventos', 1.00, 50.00, 'activo');
+('Corte y Peinado', 1.50, 45.00, 'activo'),                  -- ID 31
+('Coloración y Mechas', 2.50, 110.00, 'activo'),            -- ID 32
+('Manicure Spa', 1.00, 35.00, 'activo'),                    -- ID 33
+('Pedicure Spa', 1.50, 50.00, 'activo'),                    -- ID 34
+('Maquillaje Profesional', 1.50, 65.00, 'activo'),          -- ID 35
+('Tratamientos Capilares', 1.00, 40.00, 'activo'),          -- ID 36
+('Corte de Cabello', 0.75, 30.00, 'activo'),                -- ID 37
+('Peinado', 1.00, 35.00, 'activo'),                         -- ID 38
+('Coloración de Cabello', 2.00, 80.00, 'activo'),           -- ID 39
+('Depilación de Cejas con Cera', 0.50, 20.00, 'activo'),    -- ID 40
+('Depilación de Cejas con Gillete', 0.50, 15.00, 'activo'), -- ID 41
+('Depilación de Cejas con Hilo', 0.75, 25.00, 'activo');    -- ID 42
 
+
+-- ACTUALIZACIÓN DE EMPLEADO_SERVICIO (N:N, Asignando nuevos servicios a empleados)
+-- Se asignan los servicios a los empleados existentes (21-30)
 INSERT INTO Empleado_Servicio (id_empleado, id_servicio) VALUES
-(21, 31), (21, 33), (21, 37), (21, 38), (21, 40),
-(22, 32), (22, 35),
-(23, 31), (23, 33), (23, 38), (23, 39), (23, 40),
-(24, 34), (24, 36),
-(26, 31), (26, 37), (26, 38),
-(27, 36), (27, 39),
-(28, 37),
-(29, 32), (29, 34), (29, 36), (29, 39), (29, 38), (29, 40),
-(30, 32), (30, 35);
+-- Laura (21): Corte, Color, Tratamiento, Depilación
+(21, 31), (21, 32), (21, 36), (21, 37), (21, 39),
+-- Miguel (22): Uñas, Maquillaje, Tratamiento
+(22, 33), (22, 34), (22, 35), (22, 36),
+-- Sofía (23): Corte, Color, Maquillaje, Peinado
+(23, 31), (23, 32), (23, 35), (23, 38), (23, 39),
+-- Pablo (24): Uñas y Depilaciones
+(24, 33), (24, 34), (24, 40), (24, 41), (24, 42),
+-- Diana (25): Se omite ya que no está en la lista de empleados (IDs 21-30)
+-- Andrés (26): Cabello
+(26, 31), (26, 37), (26, 38), (26, 39),
+-- Fernanda (27): Solo Depilaciones
+(27, 40), (27, 41), (27, 42),
+-- Ricardo (28): Cortes y Peinados
+(28, 37), (28, 38),
+-- Valeria (29): General (En vacaciones)
+(29, 31), (29, 33), (29, 36), (29, 37), (29, 38), (29, 40),
+-- Jorge (30): Uñas y Estética
+(30, 33), (30, 34), (30, 35), (30, 36);
 
+
+-- DISPONIBILIDAD (Se mantienen)
 INSERT INTO Disponibilidad (id_empleado, fecha_disponible, hora_inicio, hora_fin) VALUES
 (21, '2025-11-01', '09:00:00', '17:00:00'),
 (21, '2025-11-02', '09:00:00', '17:00:00'),
@@ -310,34 +332,35 @@ INSERT INTO Disponibilidad (id_empleado, fecha_disponible, hora_inicio, hora_fin
 (22, '2025-11-03', '10:00:00', '18:00:00'),
 (24, '2025-11-03', '11:00:00', '19:00:00');
 
--- Precarga de días para triggers
+-- Precarga de días para triggers (Se mantiene)
 INSERT INTO Dia_Salon_Estado (fecha) VALUES
 ('2025-11-01'), ('2025-11-02'), ('2025-11-03');
 
-INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado) VALUES
-(11, 31, 21, '2025-11-01', '09:00:00', 'confirmada'),
-(12, 32, 22, '2025-11-01', '10:00:00', 'confirmada'),
-(13, 33, 23, '2025-11-01', '08:00:00', 'confirmada'),
-(14, 34, 24, '2025-11-01', '11:00:00', 'confirmada'),
-(15, 35, 22, '2025-11-03', '12:00:00', 'cancelada'),
-(16, 37, 28, '2025-11-03', '09:00:00', 'confirmada'),
-(17, 31, 21, '2025-11-01', '10:30:00', 'confirmada'),
-(18, 32, 30, '2025-11-02', '09:00:00', 'confirmada'),
-(19, 39, 27, '2025-11-02', '12:00:00', 'confirmada'),
-(20, 38, 26, '2025-11-02', '10:00:00', 'confirmada'),
-(11, 33, 23, '2025-11-01', '12:00:00', 'confirmada'),
-(12, 34, 24, '2025-11-03', '14:00:00', 'confirmada'),
-(13, 35, 30, '2025-11-01', '11:00:00', 'confirmada'),
-(14, 36, 24, '2025-11-03', '16:00:00', 'confirmada'),
-(15, 37, 28, '2025-11-03', '13:00:00', 'confirmada'),
-(16, 38, 21, '2025-11-02', '14:00:00', 'confirmada'),
--- LÍNEA CORREGIDA: Cambiado de 15:00:00 a 14:30:00 (14:30 + 2.5h = 17:00, justo a la hora de cierre)
-(17, 39, 23, '2025-11-01', '14:30:00', 'cancelada'), 
-(18, 40, 23, '2025-11-01', '10:30:00', 'confirmada'),
-(19, 31, 21, '2025-11-01', '13:30:00', 'confirmada'),
-(20, 32, 22, '2025-11-01', '16:00:00', 'confirmada');
 
--- Datos de Horario Semanal
+-- ACTUALIZACIÓN DE CITAS (Mapeando a los nuevos id_servicio)
+INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado) VALUES
+(11, 31, 21, '2025-11-01', '09:00:00', 'confirmada'), -- 31: Corte y Peinado (1.5h)
+(12, 33, 22, '2025-11-01', '10:00:00', 'confirmada'), -- 33: Manicure Spa (1.0h)
+(13, 39, 23, '2025-11-01', '08:00:00', 'confirmada'), -- 39: Coloración de Cabello (2.0h)
+(14, 34, 24, '2025-11-01', '11:00:00', 'confirmada'), -- 34: Pedicure Spa (1.5h)
+(15, 35, 22, '2025-11-03', '12:00:00', 'cancelada'), -- 35: Maquillaje Profesional (1.5h)
+(16, 37, 28, '2025-11-03', '09:00:00', 'confirmada'), -- 37: Corte de Cabello (0.75h)
+(17, 31, 21, '2025-11-01', '10:30:00', 'confirmada'), -- 31: Corte y Peinado (1.5h)
+(18, 36, 30, '2025-11-02', '09:00:00', 'confirmada'), -- 36: Tratamientos Capilares (1.0h)
+(19, 32, 27, '2025-11-02', '12:00:00', 'confirmada'), -- 32: Coloración y Mechas (2.5h)
+(20, 38, 26, '2025-11-02', '10:00:00', 'confirmada'), -- 38: Peinado (1.0h)
+(11, 39, 23, '2025-11-01', '12:00:00', 'confirmada'), -- 39: Coloración de Cabello (2.0h)
+(12, 34, 24, '2025-11-03', '14:00:00', 'confirmada'), -- 34: Pedicure Spa (1.5h)
+(13, 35, 30, '2025-11-01', '11:00:00', 'confirmada'), -- 35: Maquillaje Profesional (1.5h)
+(14, 40, 24, '2025-11-03', '16:00:00', 'confirmada'), -- 40: Depilación de Cejas con Cera (0.5h)
+(15, 37, 28, '2025-11-03', '13:00:00', 'confirmada'), -- 37: Corte de Cabello (0.75h)
+(16, 38, 21, '2025-11-02', '14:00:00', 'confirmada'), -- 38: Peinado (1.0h)
+(17, 34, 23, '2025-11-01', '14:30:00', 'cancelada'), 
+(18, 38, 23, '2025-11-01', '10:30:00', 'confirmada'), -- 38: Peinado (1.0h)
+(19, 31, 21, '2025-11-01', '13:30:00', 'confirmada'), -- 31: Corte y Peinado (1.5h)
+(20, 33, 22, '2025-11-01', '16:00:00', 'confirmada'); -- 33: Manicure Spa (1.0h)
+
+-- Datos de Horario Semanal (Se mantienen)
 INSERT INTO Horario_Semanal_Empleado (id_empleado, dia, hora_apertura, hora_cierre) VALUES
 (21, 'Lunes', '09:00', '17:00'), (21, 'Martes', '09:00', '17:00'), (21, 'Miércoles', '09:00', '17:00'), (21, 'Jueves', '09:00', '17:00'), (21, 'Viernes', '09:00', '17:00'),
 (22, 'Martes', '10:00', '19:00'), (22, 'Miércoles', '10:00', '19:00'), (22, 'Jueves', '10:00', '19:00'), (22, 'Viernes', '10:00', '19:00'), (22, 'Sábado', '09:00', '14:00'),

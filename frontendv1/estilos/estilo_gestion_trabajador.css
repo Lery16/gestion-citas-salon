@@ -22,6 +22,7 @@ body {
     background-position: top;
 	min-height: 100vh;
 	max-height: 100%;
+	user-select: none;
 }
 
 .contenedor {
@@ -106,42 +107,47 @@ body {
 }
 
 .contenedor-tabla {
-	overflow-x: auto;
-	background-color: var(--color-fondo-tarjeta);
-	border-radius: 12px;
-	color: #ffffff;
-	height: 350px;
+    overflow-x: hidden; /* Se cambió a hidden para eliminar el scroll horizontal innecesario */
+    background-color: var(--color-fondo-tarjeta);
+    border-radius: 12px;
+    color: #ffffff;
+    height: 335px;
     overflow-y: auto;
-    overflow-x: hidden;
     position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave para destacar */
 }
 
 .tabla-empleados {
-	width: 100%;
-	border-collapse: collapse;
-	text-align: center;
-	scrollbar-width: thin;
+    width: 100%;
+    border-collapse: collapse;
+    scrollbar-width: thin;
 }
 
 .tabla-empleados th,
 .tabla-empleados td {
-	padding: 18px 20px;
-	text-align: left;
-	border-bottom: 1px solid var(--color-borde);
+    padding: 14px 20px; /* Reducido ligeramente el padding para mejor ajuste */
+    text-align: left;
+    vertical-align: middle; /* Centra el contenido verticalmente */
+    font-size: 0.9rem; /* Tamaño de fuente para el contenido */
 }
 
 .tabla-empleados th {
-	background-color: rgba(249, 108, 122, 0.4);
-	font-size: 1.5rem;
-	font-weight: 500;
-	font-family: 'Instrument Serif', sans-serif;
-	position: sticky;
+    background-color: rgba(249, 108, 122, 0.4);
+    font-size: 1.2rem; /* Tamaño de fuente del encabezado más pequeño y legible */
+    font-weight: 500; /* Más peso para mejor distinción */
+    font-family: 'Instrument Serif', sans-serif;
+    position: sticky;
     top: 0;
     z-index: 10;
+    backdrop-filter: blur(5px); /* Efecto blur para el encabezado sticky */
 }
 
 .tabla-empleados tbody tr:hover {
-	background-color: rgba(249, 108, 122, 0.3) !important;
+    background-color: rgba(249, 108, 122, 0.3) !important;
+}
+
+.tabla-empleados tbody tr:last-child td {
+    border-bottom: none; /* Elimina el borde de la última fila */
 }
 
 /* Scrollbar personalizado */
@@ -156,7 +162,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(249, 108, 122, 0.6); /* Rosa de tu tabla */
+    background: rgba(249, 108, 122, 0.6);
     border-radius: 10px;
     backdrop-filter: blur(4px);
 }
@@ -166,76 +172,85 @@ body {
 }
 
 .etiqueta-rol {
-	padding: 4px 10px;
-	border-radius: 20px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    color: #ffffff; /* Color de texto blanco general */
 }
 
 .rol-admin {
-	background-color: #e2e6ea;
-	color: var(--color-acento);
+    background-color: rgba(249, 108, 122, 0.6); /* Fondo más suave y coherente */
+    color: white; /* Mantener el color de acento para texto */
 }
 
 .rol-trabajador {
-	background-color: #e2e6ea;
-	color: #495057;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e2e6ea; /* Texto más claro para fondo oscuro */
 }
 
 .indicador-estado {
-	display: flex;
-	align-items: center;
-	gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
 }
 
 .punto-estado {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    /* Añadido: borde sutil para destacar el punto */
+    border: 1px solid rgba(255, 255, 255, 0.3); 
 }
 
 .estado-disponible .punto-estado {
-	background-color: var(--color-exito);
+    background-color: var(--color-exito);
 }
 
 .estado-ocupado .punto-estado {
-	background-color: var(--color-peligro);
+    background-color: var(--color-peligro);
 }
 
 .celda-acciones {
-	text-align: right;
-	white-space: nowrap;
+    text-align: center; /* Centrado para que los botones se vean mejor */
+    white-space: nowrap;
+    padding: 10px 15px; /* Relleno ajustado */
 }
 
 .btn-accion {
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: 8px;
-	margin-left: 5px;
-	border-radius: 50%;
-	transition: background-color 0.2s ease;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px; /* Relleno reducido */
+    margin-left: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* Asegura el color por defecto */
 }
 
 .btn-accion:hover {
-	background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.15); /* Cambio a blanco semitransparente para mejor contraste */
 }
 
 .icono-editar {
-	color: white;
+    color: white;
 }
 
 .icono-eliminar {
-	color: var(--color-peligro);
+    color: var(--color-peligro);
 }
 
 .icono-contraseña,
 .texto-contraseña {
-	color: white;
+    color: white;
+}
+td[data-label="Contraseña"] {
+    text-align: center; /* Asegura que el ícono y texto estén centrados en la columna */
 }
 
 /* 5. RESPONSIVE MÓVIL */

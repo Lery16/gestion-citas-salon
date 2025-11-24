@@ -16,6 +16,7 @@
     margin: 0;
     padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
     position: relative; 
+    user-select: none;
 }
 
 .flecha {
@@ -37,7 +38,6 @@
 }
 
 .sesion-card {
-    /* Eliminamos la posición y transformación absoluta para que fluya en el layout normal */
     position: relative; 
     top: auto; 
     left: auto; 
