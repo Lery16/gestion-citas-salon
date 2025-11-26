@@ -1,3 +1,4 @@
+/* Estilos Globales del Header */
 header {
     background-color: #f96c7a;
     height: 60px;
@@ -9,15 +10,12 @@ header {
     user-select: none;
 }
 
-header .header-left, .header-right {
-    display: flex;
-    gap: 2vh;
-}
-
+/* Ocultar el icono de hamburguesa por defecto (para escritorio) */
 header .menu_hamburguesa {
     display: none;
 }
 
+/* Estilos del Logo */
 header .logo {
     font-weight: 500;
     color: #333333;
@@ -31,6 +29,51 @@ header .logo-img {
     display: flex; 
 }
 
+/* Estilos de la navegación de escritorio (menu-opciones) */
+header .menu-opciones { 
+    display: flex; 
+    align-items: center; 
+    gap: 5vh;
+    border-radius: 10%; 
+} 
+
+header nav ul { 
+    list-style-type: none; 
+    display: flex; 
+    gap: 5vh; 
+    justify-content: flex-end; 
+    padding: 0; 
+    margin: 0; 
+} 
+
+header nav a { 
+    text-decoration: none; 
+    color: #333333;
+    position: relative; 
+    font-family: sans-serif; 
+    padding: 0.5vh 0vh; 
+    transition: color 0.3s ease; 
+} 
+
+/* Animación subrayado de escritorio */
+header nav a::after { 
+    content: ""; 
+    position: absolute; 
+    width: 0; 
+    height: 0.38vh; 
+    bottom: 0; 
+    left: 50%; 
+    background-color: #333333;
+    transition: all 0.3s ease; 
+} 
+
+header a:hover::after { 
+    width: 100%; 
+    left: 0vh; 
+}
+
+
+/* Estilos del Perfil del Administrador (aparte del header principal) */
 .perfil-administrador {
     padding: 2vh 5vh;
     display: flex;
@@ -70,49 +113,8 @@ header .logo-img {
     color: white;
 }
 
-header .menu-opciones { 
-    display: flex; 
-    align-items: center; 
-    gap: 5vh;
-    border-radius: 10%; 
-} 
 
-header nav ul { 
-    list-style-type: none; 
-    display: flex; 
-    gap: 5vh; 
-    justify-content: flex-end; 
-    padding: 0; 
-    margin: 0; 
-} 
-
-header nav a { 
-    text-decoration: none; 
-    color: #333333;
-    position: relative; 
-    font-family: sans-serif; 
-    padding: 0.5vh 0vh; 
-    transition: color 0.3s ease; 
-} 
-
-/* Animación subrayado */
-header nav a::after { 
-    content: ""; 
-    position: absolute; 
-    width: 0; 
-    height: 0.38vh; 
-    bottom: 0; 
-    left: 50%; 
-    background-color: #333333;
-    transition: all 0.3s ease; 
-} 
-
-header a:hover::after { 
-    width: 100%; 
-    left: 0vh; 
-}
-
-/* Responsive TABLETS */
+/* --- Responsive TABLETS (@media 1000px) --- */
 @media (max-width: 1000px) {
     .perfil-administrador {
         display: flex;
@@ -124,12 +126,15 @@ header a:hover::after {
     }
 }
 
+/* --- Responsive MOBILE (@media 768px) --- */
 @media (max-width: 768px) {
     header {
         padding: 0 20px;
+        justify-content: left;
     }
 
-    .menu_hamburguesa {
+    /* Mostrar el icono de hamburguesa en móvil */
+    header .menu_hamburguesa {
         display: flex;
         cursor: pointer;
         font-size: 1.8rem;
@@ -137,24 +142,27 @@ header a:hover::after {
         z-index: 101;
     }
 
-    .menu-opciones {
+    /* Estilos del menú desplegable en móvil (oculto por defecto) */
+    header .menu-opciones {
         position: absolute;
         top: 60px;
         left: 0;
         width: 170px;
-        background-color: #ffffff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         z-index: 99;
-        display: none;
+        display: none; /* OCULTAR POR DEFECTO */
         flex-direction: column;
         text-align: left;
-        padding: 0;
+        padding: 2%;
         background-color: #f96c7a;
         gap: 1vh;
     }
 
-    .menu-opciones.active {
-        display: flex;
+    /* Mostrar el menú cuando tiene la clase 'active' (manejado por JS) */
+    header .menu-opciones.active {
+        display: flex; /* 💡 CORRECCIÓN: Usar 'flex' (o 'block') para MOSTRAR el menú */
+        /* Z-index alto para asegurar que el menú esté sobre otros elementos */
+        z-index: 100; 
     }
 
     .menu-opciones nav ul {
@@ -163,26 +171,6 @@ header a:hover::after {
 
     .menu-opciones nav li {
         width: 100%;
-    }
-
-    .menu-opciones a {
-        color: #333333;
-        padding: 10px;
-        display: block;
-    }
-
-    nav a {
-        transition: none; 
-    }
-
-    nav a::after {
-        content: none; 
-        height: 0; 
-        transition: none;
-    }
-
-    nav a:hover::after {
-        width: 0;
     }
 
     .logo {

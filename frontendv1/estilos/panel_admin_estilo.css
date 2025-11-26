@@ -18,7 +18,7 @@
 body {
     font-family: 'Lato', sans-serif;
     background: 
-        linear-gradient(rgba(151, 151, 151, 0.6), rgba(255, 255, 255, 0.6)), /* Blanco más sólido, 60% opacidad */
+        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
         url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
     background-size: cover;
     background-position: top;
@@ -79,6 +79,7 @@ body {
     display: grid;
     grid-template-columns: 1fr; /* Una columna en móvil */
     gap: 1.5rem;
+    justify-content: center;
 }
 
 /* Tarjetas */
@@ -93,6 +94,17 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+}
+
+.dashboard-grid .dashboard-card:last-child {
+    /* Hace que la última tarjeta ocupe ambas columnas */
+    grid-column: 1 / -1; 
+    /* Luego centramos el contenido de la tarjeta si es necesario, 
+       o simplemente la tarjeta completa dentro del espacio */
+    margin-left: auto;
+    margin-right: auto;
+    /* Puedes limitar su ancho para que no se extienda por completo */
+    max-width: 500px; 
 }
 
 .dashboard-card:hover {

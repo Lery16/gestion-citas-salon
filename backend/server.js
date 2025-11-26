@@ -4,6 +4,7 @@ import { db } from "./src/config/db.js";
 import authRoutes from "./src/routes/auth.js";
 import serviciosRoutes from "./src/routes/servicios.js";
 import usuariosRoutes from "./src/routes/usuarios.js";
+import citasRoutes from './src/routes/citas.js';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/servicios", serviciosRoutes);
 app.use("/api/usuarios", usuariosRoutes);
+app.use('/api/citas', citasRoutes);
 
 // Ruta de prueba
 app.get("/", (req, res) => {

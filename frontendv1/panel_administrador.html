@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Salón de Belleza</title>
-    <!-- Vinculación a la hoja de estilos -->
     <link rel="stylesheet" href="estilos/panel_admin_estilo.css">
     <link rel="stylesheet" href="estilos/estilo_header_admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
-    <!-- Iconos para los botones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="funciones/panel_admin_fun.js"></script>
 </head>
 <header>
     <div class="header-left">
@@ -24,12 +23,7 @@
         <div class="menu-opciones">
             <nav>
                 <ul>
-                    <li><a href="panel_administrador.html" id="ventanaPrincipal">Ventana Principal</a></li>
-                </ul>
-            </nav>
-            <nav>
-                <ul>
-                    <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                    <li><a href="#" id="cerrarSesion">Cerrar Sesión</a></li>
                 </ul>
             </nav>
         </div>
@@ -46,11 +40,9 @@
 
     <main class="dashboard-container">
         
-        <!-- Grid de Navegación -->
         <nav class="dashboard-grid">
             
-            <!-- Tarjeta 1: Agenda General -->
-            <a href="agenda_general_admin.html" class="dashboard-card">
+            <div class="dashboard-card" id="agendaCard" data-url="agenda_general_admin.html">
                 <div class="card-icon">
                     <i class="fa-regular fa-calendar-check"></i>
                 </div>
@@ -58,10 +50,9 @@
                     <h2>Agenda General</h2>
                     <p>Visualiza la agenda del día y citas programadas.</p>
                 </div>
-            </a>
+            </div>
 
-            <!-- Tarjeta 2: Gestión de Citas -->
-            <a href="gestion_citas_admin.html" class="dashboard-card">
+            <div class="dashboard-card" data-url="gestion_citas_admin.html">
                 <div class="card-icon">
                     <i class="fa-solid fa-list-check"></i>
                 </div>
@@ -69,10 +60,9 @@
                     <h2>Gestión de Citas</h2>
                     <p>Filtrar, cancelar y administrar reservas.</p>
                 </div>
-            </a>
+            </div>
 
-            <!-- Tarjeta 3: Gestión de Trabajadores -->
-            <a href="gestion_trabajador_admin.html" class="dashboard-card">
+            <div class="dashboard-card" data-url="gestion_trabajador_admin.html">
                 <div class="card-icon">
                     <i class="fa-solid fa-users-gear"></i>
                 </div>
@@ -80,10 +70,9 @@
                     <h2>Personal</h2>
                     <p>Gestionar equipo y añadir nuevos empleados.</p>
                 </div>
-            </a>
+            </div>
 
-            <!-- Tarjeta 4: Horarios de Atención -->
-            <a href="horarios_atencion_admin.html" class="dashboard-card">
+            <div class="dashboard-card" data-url="horarios_atencion_admin.html">
                 <div class="card-icon">
                     <i class="fa-regular fa-clock"></i>
                 </div>
@@ -91,9 +80,20 @@
                     <h2>Horarios</h2>
                     <p>Configurar aperturas, cierres y días especiales.</p>
                 </div>
-            </a>
+            </div>
 
+            <div class="dashboard-card" data-url="gestion_servicios_admin.html">
+                <div class="card-icon">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                
+                <!-- Información de la tarjeta -->
+                <div class="card-info">
+                    <h2>Servicios</h2>
+                    <p>Agregar y editar los servicios disponibles.</p>
+                </div>
+            </div>
         </nav>
     </main>
 </body>
-</html>
+</html

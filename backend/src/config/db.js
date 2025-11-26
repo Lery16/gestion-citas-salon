@@ -1,16 +1,18 @@
-import mysql from "mysql2";
+import pkg from 'pg';
+const { Pool } = pkg;
 
-export const db = mysql.createConnection({
+export const db = new Pool({
   host: "127.0.0.1",
-  user: "root",
+  user: "postgres",
   password: "1234",
-  database: "bd_salon"
+  database: "bd_salon",
+  port: 5433,
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("Error al conectar con MySQL:", err);
+    console.error("❌ Error al conectar con PostgreSQL:", err);
   } else {
-    console.log("Conectado a MySQL correctamente");
+    console.log("✅ Conectado a PostgreSQL correctamente");
   }
 });

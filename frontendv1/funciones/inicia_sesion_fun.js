@@ -20,13 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const resultado = await respuesta.json();
 
-            if (respuesta.ok) {
-                localStorage.setItem('user_token', resultado.token);
-                localStorage.setItem('user_rol', resultado.rol);
-                window.location.href = 'principal_trabajador.html';
-            } else {
-                alert(resultado.error || 'Credenciales incorrectas.');
-            }
+            // Redirige según el rol
+                if (respuesta.ok) {
+                    localStorage.setItem('user_token', resultado.token);
+                    localStorage.setItem('user_rol', resultado.rol); 
+
+                    if (resultado.rol === 'admin') {
+                        window.location.href = 'panel_administrador.html';
+                    } else if (resultado.rol === 'trabajador') {
+                        window.location.href = 'panel_trabajador.html';
+                    } else {
+                        window.location.href = 'pagina_inicio.html';
+                    }
+
+                } else {
+                    alert(resultado.error || 'Credenciales incorrectas.');
+                }
         } catch (error) {
             alert('Error de conexión con el servidor.');
             console.error(error);
