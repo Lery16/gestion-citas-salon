@@ -1,35 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Atención</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="estilos/estilo_general.css">
-  <link rel="stylesheet" href="estilos/estilo_lista_cita.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-</head>
-<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Atención</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_general.css">
+    <link rel="stylesheet" href="estilos/estilo_lista_cita.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script src="funciones/header_fun.js"></script>
     <script src="funciones/lista_cita_fun.js"></script>
     <script src="funciones/cerrar_sesion_fun.js"></script>
-    <header>
-        <div class="menu_hamburguesa">☰</div>
-        <div class="logo">
-            <img src="imagenes/logo.png" alt="Logo">
-        </div>
+</head>
+<header>
+    <div class="menu_hamburguesa">☰</div>
+    <div class="logo">
+        <img src="imagenes/logo.png" alt="Logo">
+    </div>
 
-        <div class="menu-opciones">
-            <nav>
-                <ul>
-                    <li><a href="#" id="cerrarSesion">Cerrar Sesión</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
+    <div class="menu-opciones">
+        <nav>
+            <ul>
+                <li><a href="#" id="cerrarSesion">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<body>
     <div class="container">
         <div class="background-overlay"></div>
         <div class="perfil-trabajador">
@@ -38,10 +37,10 @@
         </div>
         <div class="content">
             <div class="header-content-wrapper">
-                <h1>Historial de Atención</h1>
+                <h1>Listado de Citas</h1>
                 <section class="selector-dia-wrapper">
                     <div class="contenedor-dia">
-                        <input type="text" name="fecha" placeholder="Selecciona la fecha" required>
+                        <input type="text" name="fecha" required>
                         <button class="btn-buscar">Buscar</button>
                     </div>
                 </section>  
@@ -58,6 +57,7 @@
                                 <th>Servicio</th>
                                 <th>Horario</th>
                                 <th>Precio</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                     </table>
@@ -73,6 +73,7 @@
                                 <td>Cabello Largo o Tinturado</td>
                                 <td>10:45 hs</td>
                                 <td>123,00</td>
+                                <td>Completada</td>
                             </tr>
                             <tr class="data-row">
                                 <td>02</td>
@@ -81,6 +82,7 @@
                                 <td>Manicura y Pedicura</td>
                                 <td>11:45 hs</td>
                                 <td>123,00</td>
+                                <td>Cancelada</td>
                             </tr>
                             <tr class="data-row">
                                 <td>03</td>
@@ -89,6 +91,7 @@
                                 <td>Alisado Capilar Completo</td>
                                 <td>12:00 hs</td>
                                 <td>123,00</td>
+                                <td>Completada</td>
                             </tr>
                             <tr class="data-row">
                                 <td>04</td>
@@ -97,6 +100,7 @@
                                 <td>Corte de Caballero Premium</td>
                                 <td>15:45 hs</td>
                                 <td>123,00</td>
+                                <td>Pendiente</td>
                             </tr>
                             <tr class="data-row">
                                 <td>05</td>
@@ -105,6 +109,7 @@
                                 <td>Color Completo</td>
                                 <td>16:00 hs</td>
                                 <td>150,00</td>
+                                <td>Pendiente</td>
                             </tr>
                             <tr class="data-row">
                                 <td>06</td>
@@ -113,6 +118,7 @@
                                 <td>Arreglo de Barba</td>
                                 <td>16:30 hs</td>
                                 <td>50,00</td>
+                                <td>Pendiente</td>
                             </tr>
                             <tr class="data-row">
                                 <td>07</td>
@@ -121,6 +127,7 @@
                                 <td>Peinado de Fiesta</td>
                                 <td>17:00 hs</td>
                                 <td>80,00</td>
+                                <td>Pendiente</td>
                             </tr>
                             <tr class="data-row">
                                 <td>08</td>
@@ -129,6 +136,7 @@
                                 <td>Manicura Clásica</td>
                                 <td>17:30 hs</td>
                                 <td>70,00</td>
+                                <td>Pendiente</td>
                             </tr>
                             <tr class="data-row">
                                 <td>09</td>
@@ -137,70 +145,7 @@
                                 <td>Maquillaje de Noche</td>
                                 <td>09:00 hs</td>
                                 <td>100,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>10</td>
-                                <td>Felipe M.</td>
-                                <td>23/03/24</td>
-                                <td>Diseño de Cejas</td>
-                                <td>09:30 hs</td>
-                                <td>40,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>11</td>
-                                <td>Gabriela P.</td>
-                                <td>23/03/24</td>
-                                <td>Masaje Terapéutico</td>
-                                <td>10:00 hs</td>
-                                <td>200,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>12</td>
-                                <td>Héctor V.</td>
-                                <td>23/03/24</td>
-                                <td>Retoque de Tinte</td>
-                                <td>11:00 hs</td>
-                                <td>180,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>13</td>
-                                <td>Relleno A</td>
-                                <td>24/03/24</td>
-                                <td>Relleno para Scroll</td>
-                                <td>12:00 hs</td>
-                                <td>10,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>14</td>
-                                <td>Relleno B</td>
-                                <td>24/03/24</td>
-                                <td>Relleno para Scroll</td>
-                                <td>13:00 hs</td>
-                                <td>10,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>15</td>
-                                <td>Relleno C</td>
-                                <td>24/03/24</td>
-                                <td>Relleno para Scroll</td>
-                                <td>14:00 hs</td>
-                                <td>10,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>16</td>
-                                <td>Relleno D</td>
-                                <td>24/03/24</td>
-                                <td>Relleno para Scroll</td>
-                                <td>15:00 hs</td>
-                                <td>10,00</td>
-                            </tr>
-                            <tr class="data-row">
-                                <td>17</td>
-                                <td>Relleno E</td>
-                                <td>24/03/24</td>
-                                <td>Relleno para Scroll</td>
-                                <td>16:00 hs</td>
-                                <td>10,00</td>
+                                <td>Pendiente</td>
                             </tr>
                         </tbody>
                     </table>
@@ -208,38 +153,37 @@
             </div>
         </div>
     </div>
-
-    <footer id="pie_de_pagina" class="pie_de_pagina">
-        <div class="footer-container">
-            <div class="footer-logo-social">
-                <div class="logo-footer-img">
-                    <img src="imagenes/logo_footer.png" alt="Logo Salon de Belleza" class="logo-footer-img">
-                </div>
-                <br>
-                <div class="social-icons">
-                    <a href="https://x.com/fiec_campus?lang=es" aria-label="X" target="_blank" rel="noopener noreferrer">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/X_icon.svg" alt="Icono de X" width="27" height="27">
-                    </a>
-                    <a href="https://www.instagram.com/fiecup_oficial/?hl=es" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-glyphs/30/000000/instagram-new.png" alt="Icono de Instagram">
-                    </a>
-                    <a href="https://www.youtube.com/@FIECCampusCentral" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-glyphs/30/000000/youtube-play.png" alt="Icono de YouTube">
-                    </a>
-                    <a href="https://www.linkedin.com/groups/1986559/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-glyphs/30/000000/linkedin.png" alt="Icono de LinkedIn">
-                    </a>
-                </div>
+</body>
+ <footer id="pie_de_pagina" class="pie_de_pagina">
+    <div class="footer-container">
+        <div class="footer-logo-social">
+            <div class="logo-footer-img">
+                <img src="imagenes/logo_footer.png" alt="Logo Salon de Belleza" class="logo-footer-img">
             </div>
-            <div class="footer-info">
-                <h3 class="footer-title">Salón de Belleza</h3>
-                <p>📍Calle Bella Vista, Plaza Central, Local 5, Ciudad de Panamá</p>
-                <p>📞Teléfonos: +507 1234-5678, +507 5432-1678</p>
-                <p>📧 Correo Electrónico: salonbellezatotal@example.com</p>
-                <p>📅 Horario: Lunes a Sábado  |  9:00 am - 7:00 pm</p>
-                <p>🔗 Síguenos en nuestras redes</p>
+            <br>
+            <div class="social-icons">
+                <a href="https://x.com/fiec_campus?lang=es" aria-label="X" target="_blank" rel="noopener noreferrer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/X_icon.svg" alt="Icono de X" width="27" height="27">
+                </a>
+                <a href="https://www.instagram.com/fiecup_oficial/?hl=es" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/instagram-new.png" alt="Icono de Instagram">
+                </a>
+                <a href="https://www.youtube.com/@FIECCampusCentral" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/youtube-play.png" alt="Icono de YouTube">
+                </a>
+                <a href="https://www.linkedin.com/groups/1986559/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/linkedin.png" alt="Icono de LinkedIn">
+                </a>
             </div>
         </div>
-    </footer>
-</body>
+        <div class="footer-info">
+             <h3 class="footer-title">Salón de Belleza</h3>
+             <p>📍Calle Bella Vista, Plaza Central, Local 5, Ciudad de Panamá</p>
+            <p>📞Teléfonos: +507 1234-5678, +507 5432-1678</p>
+            <p>📧 Correo Electrónico: salonbellezatotal@example.com</p>
+            <p>📅 Horario: Lunes a Sábado  |  9:00 am - 7:00 pm</p>
+            <p>🔗 Síguenos en nuestras redes</p>
+        </div>
+    </div>
+</footer>
 </html>

@@ -1,3 +1,6 @@
+main{
+    user-select: none;
+}
 /* --- Sección de Servicios --- */
 .servicios-section {
     margin: 0 auto; /* Centrar la sección */

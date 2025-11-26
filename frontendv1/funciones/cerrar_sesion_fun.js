@@ -1,33 +1,48 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const btnCerrarSesion = document.getElementById("cerrarSesion");
+document.addEventListener('DOMContentLoaded', () => {
+    // Selecciona el div del menú (para manejar el estado activo/hamburguesa)
+    const menu = document.querySelector('.menu-opciones'); 
 
-  // Verifica si hay usuario en sesión
-  const usuario = sessionStorage.getItem("usuario");
+    // Selecciona TODOS los enlaces dentro del menú que tienen el atributo 'data-url'
+    const enlacesMenu = document.querySelectorAll('.menu-opciones a[data-url]');
 
-  if (usuario) {
-    console.log("Sesión activa:", usuario);
-
-    // Si hay sesión, activar el botón de cerrar sesión
-    if (btnCerrarSesion) {
-      btnCerrarSesion.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Elimina solo los datos de sesión relacionados
-        sessionStorage.clear();
-
-        // Redirige al inicio o login
-        window.location.href = "inicio.html";
-      });
+    // Manejo del menú hamburguesa 🍔 (Se mantiene al inicio para consistencia)
+    const hamburger = document.querySelector('.menu_hamburguesa');
+    if (hamburger && menu) {
+        hamburger.addEventListener('touchstart', function(event) {
+            event.stopPropagation(); 
+            menu.classList.toggle('active'); 
+        });
     }
-  } else {
-    console.log("No hay sesión iniciada.");
 
-    // Desactivar el botón de cerrar sesión (no hace nada si no hay sesión)
-    if (btnCerrarSesion) {
-      btnCerrarSesion.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("No hay sesión iniciada.");
-      });
-    }
-  }
+    // Lógica para asignar el comportamiento de navegación y cerrar sesión 🔗
+    enlacesMenu.forEach(enlace => {
+        const urlDestino = enlace.dataset.url;
+
+        if (urlDestino) {
+            enlace.addEventListener('click', (event) => {
+                event.preventDefault(); 
+                
+                // 1. Lógica Específica para CERRAR SESIÓN
+                // Detectamos si este es el enlace de "Cerrar Sesión" usando su URL de destino.
+                if (urlDestino === 'inicia_sesion.html') {
+                    const usuario = sessionStorage.getItem("usuario");
+                    
+                    if (usuario) {
+                        console.log("Cerrando sesión para:", usuario);
+                        // Limpia TODAS las variables de sesión
+                        sessionStorage.clear(); 
+                        window.location.href = urlDestino; // Redirige a iniciar_sesion.html
+                    } else {
+                        console.log("Intento de cerrar sesión sin sesión activa.");
+                        alert("No hay sesión iniciada para cerrar.");
+                    }
+                } 
+                // 2. Lógica General para OTROS ENLACES (Ventana Principal, etc.)
+                else {
+                    console.log(`Navegando a: ${urlDestino}`);
+                    window.location.href = urlDestino;
+                }
+            });
+        }
+    });
 });

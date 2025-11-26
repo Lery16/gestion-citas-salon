@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Servicios</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_header_admin.css">
+    <link rel="stylesheet" href="estilos/estilo_gestion_servicios.css">
+    <script src="funciones/gestion_servicios_fun.js"></script>
+    <script src="funciones/header_admin_fun.js"></script>
+</head>
+<header>
+    <div class="header-left">
+        <div class="menu_hamburguesa">☰</div>
+        <div class="logo">
+            <img src="imagenes/logo_t.png" alt="Logo" class="logo-img"> 
+            Gestión de Servicios
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="menu-opciones">
+            <nav>
+                <ul>
+                    <li><a href="panel_trabajador.html" id="ventanaPrincipal">Ventana Principal</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <ul>
+                    <li><a href="inicio.html" id="cerrarSesion">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+<body class="antialiased">
+    <div class="perfil-administrador">
+        <img src="imagenes/modelo-principal.jpg" alt="Foto del Administrador" class="perfil-img">
+        <span class="nombre-administrador">Administrador</span>
+    </div>
+    <div class="contenedor">
+        <!-- BARRA DE HERRAMIENTAS -->
+        <div class="barra-herramientas">
+            <!-- Botón de Añadir -->
+            <button class="btn-primario">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span>Añadir Nuevo Servicio</span>
+            </button>
+            <button class="btn-primario">
+                    <i data-lucide="save" class="lucide-icon" style="width: 20px; height: 20px;"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+                <!-- Campo de Búsqueda -->
+                <div class="contenedor-busqueda">
+                    <input type="text" placeholder="Nombre y Apellido" class="entrada-busqueda">
+                    <i data-lucide="search" class="icono-busqueda"></i>
+                </div>
+                <button class="btn-primario">
+                    <span>Buscar</span>
+                </button>
+        </div>
+        
+        <!-- CONTENEDOR DE LA TABLA -->
+        <div class="contenedor-tabla shadow-2xl">
+            <table class="tabla-datos">
+                <thead>
+                    <tr>
+                        <th class="columna-id">ID</th>
+                        <th>Nombre del Servicio</th>
+                        <th>Duración (Horas)</th>
+                        <th>Precio (B/.)</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr data-id-servicio="1">
+                        <td data-label="ID" class="columna-id">1</td>
+                        <td data-label="Nombre del Servicio">Corte y Peinado</td>
+                        <td data-label="Duración">1.50</td>
+                        <td data-label="Precio">45.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(1)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(1)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="2">
+                        <td data-label="ID" class="columna-id">2</td>
+                        <td data-label="Nombre del Servicio">Coloración y Mechas</td>
+                        <td data-label="Duración">2.50</td>
+                        <td data-label="Precio">110.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-inactivo">Inactivo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(2)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(2)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="3">
+                        <td data-label="ID" class="columna-id">3</td>
+                        <td data-label="Nombre del Servicio">Manicura Spa</td>
+                        <td data-label="Duración">1.00</td>
+                        <td data-label="Precio">35.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(3)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(3)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="4">
+                        <td data-label="ID" class="columna-id">4</td>
+                        <td data-label="Nombre del Servicio">Pedicure Profesional</td>
+                        <td data-label="Duración">1.50</td>
+                        <td data-label="Precio">50.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(4)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(4)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="5">
+                        <td data-label="ID" class="columna-id">5</td>
+                        <td data-label="Nombre del Servicio">Maquillaje Profesional</td>
+                        <td data-label="Duración">1.50</td>
+                        <td data-label="Precio">65.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(5)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(5)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="6">
+                        <td data-label="ID" class="columna-id">6</td>
+                        <td data-label="Nombre del Servicio">Tratamientos Capilares</td>
+                        <td data-label="Duración">1.00</td>
+                        <td data-label="Precio">40.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(6)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(6)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="7">
+                        <td data-label="ID" class="columna-id">7</td>
+                        <td data-label="Nombre del Servicio">Corte de Cabello Express</td>
+                        <td data-label="Duración">0.75</td>
+                        <td data-label="Precio">30.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(7)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(7)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="8">
+                        <td data-label="ID" class="columna-id">8</td>
+                        <td data-label="Nombre del Servicio">Peinado de Novia</td>
+                        <td data-label="Duración">2.00</td>
+                        <td data-label="Precio">150.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-inactivo">Inactivo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(8)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(8)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-id-servicio="9">
+                        <td data-label="ID" class="columna-id">9</td>
+                        <td data-label="Nombre del Servicio">Masaje Relajante</td>
+                        <td data-label="Duración">1.00</td>
+                        <td data-label="Precio">60.00</td>
+                        <td data-label="Estado"><span class="etiqueta-estado estado-activo">Activo</span></td>
+                        <td class="celda-acciones">
+                            <button class="btn-accion" title="Editar" onclick="editarServicio(9)"><i data-lucide="edit-3" class="w-5 h-5 icono-editar"></i></button>
+                            <button class="btn-accion" title="Eliminar" onclick="eliminarServicio(9)"><i data-lucide="trash-2" class="w-5 h-5 icono-eliminar"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

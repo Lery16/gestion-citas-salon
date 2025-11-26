@@ -16,14 +16,15 @@ header {
     padding-left: 5vh;
     padding-right: 5vh;
     box-sizing: border-box;
-    overflow: hidden; /* evita que algo sobresalga horizontalmente */
+    overflow: hidden;
+    user-select: none;
 }
 
-.menu_hamburguesa {
+header .menu_hamburguesa {
     display: none;
 }
 
-.logo img { 
+header .logo img { 
     display: flex; 
     height: 7vh; 
 } 
@@ -34,7 +35,7 @@ header .menu-opciones {
     gap: 5vh; 
 } 
 
-nav ul { 
+header nav ul { 
     list-style-type: none; 
     display: flex; 
     gap: 5vh; 
@@ -43,7 +44,7 @@ nav ul {
     margin: 0; 
 } 
 
-nav a { 
+header nav a { 
     text-decoration: none; 
     color: #333; 
     position: relative; 
@@ -53,7 +54,7 @@ nav a {
 } 
 
 /* Animación subrayado */
-nav a::after { 
+header nav a::after { 
     content: ""; 
     position: absolute; 
     width: 0; 
@@ -64,17 +65,17 @@ nav a::after {
     transition: all 0.3s ease; 
 } 
 
-nav a:hover::after { 
+header nav a:hover::after { 
     width: 100%; 
     left: 0vh; 
 }
 
-.header-buttons {
+header .header-buttons {
     display: flex;
     gap: 0.5rem; 
 }
 
-.header-buttons button {
+header .header-buttons button {
     padding: 0.5rem 1rem;
     border-radius: 2vh;
     cursor: pointer;
@@ -85,20 +86,20 @@ nav a:hover::after {
 }
 
 /* Botones específicos */
-.header-buttons .signin {
+header .header-buttons .signin {
     background-color: #fff;
     border: 0.4vh solid #c2c2c2;
     color: #333;
 }
 
-.header-buttons .register {
+header .header-buttons .register {
     background-color: #333;
     border: 0.4vh solid #0f0f0f;
     color: #fff;
 }
 
 /* Efecto brillo botones */
-.header-buttons button.fx-neon:hover {
+header .header-buttons button.fx-neon:hover {
     background: #ffd5d1;
     color: #000;
     box-shadow: 0 0 0.5vh #ffd5d1, 0 0 0.5vh #ffd5d1;

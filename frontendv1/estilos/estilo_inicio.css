@@ -1,3 +1,7 @@
+body{
+    user-select: none;
+}
+
 /* SECCIÓN CONÓCENOS */
 .intro-section {
     background-color: #fff; /* Color de fondo de reserva */

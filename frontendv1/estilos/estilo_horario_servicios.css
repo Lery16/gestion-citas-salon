@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif; 
+    color: white; 
+    line-height: 1.6;
+    overflow-x: hidden;
+    user-select: none;
+}
+
+.container {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('../imagenes/modelo-principal.jpg') no-repeat center center fixed;
+    background-size: cover;
+    padding-bottom: 50px; 
+}
+
+.background-overlay {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.45); 
+    z-index: 1;
+}
+
+/* Perfil del Trabajador */
+.perfil-trabajador {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre la imagen y el nombre */
+    position: absolute; /* Para que quede en la esquina superior izquierda */
+    top: 20px; 
+    left: 20px; 
+    z-index: 5; /* Encima del overlay y contenido */
+}
+
+.perfil-trabajador .perfil-img {
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%; 
+    object-fit: cover;
+    border: 2px solid white; 
+}
+
+.perfil-trabajador .nombre-trabajador {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: white;
+}
+
+/* === ESTRUCTURA PRINCIPAL === */
+.contenido-dashboard {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 800px;
+    margin: 60px auto 20px;
+    padding: 0px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* Separación entre Horario y Servicios */
+    font-family: 'Courier Prime', monospace;
+}
+
+.encabezado-titulo {
+    font-family: 'Courgette', cursive;
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.titulo-seccion {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem;
+    color: white;
+    border-bottom: 1px solid var(--highlight-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* === ESTILOS HORARIO (LISTA VERTICAL) === */
+.lista-horarios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 1.5rem;
+}
+
+.tarjeta-horario {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.tarjeta-horario:hover {
+    background: rgba(255, 136, 136, 0.4);
+    transform: translateX(5px);
+}
+
+.dia-nombre {
+    color: white;
+    width: 30%; /* Ancho fijo para alinear */
+}
+
+.dia-info {
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Estilos específicos por tipo de día */
+.dia-laboral .hora-entrada, 
+.dia-laboral .hora-salida {
+    color: white;
+}
+
+.dia-laboral .separador {
+    color: var(--highlight-color);
+}
+
+.etiqueta-libre {
+    background-color: var(--highlight-color);
+    color: #b8b8b8;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.etiqueta-cerrado {
+    border: 1px solid #949494;
+    color: #d3d3d3;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.dia-cerrado {
+    opacity: 0.6; /* Se ve más apagado */
+}
+
+/* === ESTILOS SERVICIOS (GRID/CUADRÍCULA) === */
+.grid-servicios {
+    display: grid;
+    /* Grid responsivo: Minimo 140px de ancho, se ajusta solo */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+}
+
+.tarjeta-servicio {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+    font-size: 1.5rem;
+}
+
+.tarjeta-servicio:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 136, 136, 0.4);
+    border-color: var(--highlight-color);
+}
+
+.nombre-servicio {
+    color: white;
+    margin-bottom: 5px;
+}
+
+/* === MEDIA QUERIES (Ajustes Móviles) === */
+@media (max-width: 600px) {
+    .contenido-dashboard {
+        margin-top: 100px;
+       padding: 20px 30px;
+    }
+
+    .encabezado-titulo h1 {
+        font-size: 3rem;
+    }
+
+    .titulo-seccion {
+        font-size: 2rem;
+    }
+
+    .lista-horarios {
+        font-size: 1.2rem;
+    }
+
+    .tarjeta-servicio {
+        font-size: 1.2rem;
+    }
+}

@@ -1,5 +1,4 @@
 .registro-contenedor {
-    min-height: 100vh; /* Usar altura mínima de viewport para adaptación */
     padding-bottom: 50px; /* Espacio para el contenido debajo del formulario */
     
     /* Configuración de la imagen de fondo */
@@ -16,6 +15,10 @@
     margin: 0;
     padding-top: 50px; /* Agrega padding arriba para compensar la posición absoluta de la flecha */
     position: relative; 
+    user-select: none;
+
+    min-height: 100vh;
+    height: auto;
 }
 
 .flecha {
@@ -42,8 +45,6 @@
     top: auto; 
     left: auto; 
     transform: none; 
-    
-    /* Reducimos el padding horizontal para garantizar que no se desborde el contenido */
     padding: 20px 10px; 
     align-items: center;
     text-align: center;
@@ -56,6 +57,13 @@
 .titulo {
     font-family: 'Courgette', cursive; 
     font-size: 30px; /* Reducción de fuente para móvil */
+    font-weight: 400; 
+    color: #fff; 
+}
+
+.subtitulo {
+    font-family: 'Playfair Display', sans-serif; 
+    font-size: 20px; /* Reducción de fuente para móvil */
     font-weight: 400; 
     color: #fff; 
     margin-bottom: 40px;
@@ -106,12 +114,11 @@ input[type="text"] {
     transition: opacity 0.3s ease; 
     
     font-family: 'Courier Prime', monospace;
-    font-size: 25px; /* Tamaño de etiqueta reducido */
+    font-size: 3vh; /* Tamaño de etiqueta reducido */
     font-weight: 500; 
     color: black; 
     display: block; 
-    text-transform: capitalize;
-    z-index: 10;
+    z-index: 12;
 }
 
 /* Estilos de Autocompletado (Mantenidos) */
@@ -134,6 +141,50 @@ input:-webkit-autofill:active {
 
 .campo input:focus {
     background-color: transparent;
+}
+
+.campo select {
+    /* Mantiene el diseño base de los inputs */
+    border: none;
+    background: transparent;
+    width: 100%;
+    color: black;
+    font-family: 'Courier Prime', monospace;
+    font-size: 6.5vh;
+    outline: none;
+    opacity: 1;
+    padding: 5px 0 0 5px;
+    box-sizing: border-box;
+    z-index: 12;
+    height: 100%;
+    /* Estilos específicos para el select */
+    appearance: none; /* Oculta el estilo de flecha por defecto del navegador */
+    cursor: pointer;
+}
+
+/* Estilo para la opción de placeholder ("Selecciona el Rol") */
+.campo select option:first-of-type {
+    color: #000000; /* Color para que sea visible */
+    background-color: #ff9985; /* Color de fondo del campo */
+    font-size: 0;
+}
+
+/* Estilo de las opciones normales */
+.campo select option {
+    background-color: #ff9985;
+    color: black;
+    font-size: 1.5rem; /* Ajuste más estándar para opciones de lista */
+}
+
+/* Mantiene el color de fondo del campo cuando se enfoca */
+.campo select:focus {
+    background-color: transparent;
+}
+
+/* Regla para ocultar la etiqueta cuando un valor es seleccionado */
+.campo select:valid + .etiqueta {
+    opacity: 0;
+    transform: translateY(-50%);
 }
 
 .boton-contenedor {
@@ -164,6 +215,66 @@ input:-webkit-autofill:active {
     padding: 0;
     line-height: 1.5; 
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.boton-agregar-servicio-contenedor {
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.boton-anadir-otro-servicio {
+    background: none;
+    border: 1px solid #ff9985; /* Color de acento de sus opciones */
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, color 0.3s;
+    font-family: 'Courier Prime', monospace; /* Para mantener la coherencia */
+    background-color: #ff9985;
+    color: white;
+}
+
+.boton-anadir-otro-servicio:hover {
+    background-color: transparent;
+}
+
+/* Estilo para los campos de servicio adicionales (opcional) */
+/* Estilo para el contenedor de los campos de servicio adicionales */
+.campo.servicio-adicional {
+    position: relative; /* Necesario para posicionar el botón de eliminar */
+    margin-top: 10px; /* Separación entre campos */
+    padding-right: 40px; /* Espacio para el botón de eliminar */
+}
+
+/* Estilo para el botón de eliminar servicio */
+.boton-eliminar-servicio {
+    position: absolute; /* Posicionamiento absoluto dentro del .campo */
+    top: 50%; /* Centrar verticalmente */
+    right: 10px; /* A la derecha del campo */
+    transform: translateY(-50%); /* Ajuste fino para centrar */
+    background: none;
+    border: none;
+    color: #ff4d4d; /* Un rojo para indicar eliminación */
+    font-size: 2.2rem; /* Tamaño de la 'X' */
+    cursor: pointer;
+    line-height: 1; /* Para que la 'X' no se desborde */
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    font-weight: bold;
+    z-index: 12; /* Asegurar que esté por encima de otros elementos */
+}
+
+.boton-eliminar-servicio:hover {
+    opacity: 1;
+    color: #cc0000; /* Un rojo más oscuro al pasar el mouse */
+}
+
+/* Cuando el select es válido, la etiqueta se oculta, y queremos que la 'X' siga visible */
+.campo.servicio-adicional select:valid + .etiqueta {
+    opacity: 0;
+    transform: translateY(-50%);
 }
 
 .enlace-ingreso {
@@ -225,7 +336,8 @@ input:-webkit-autofill:active {
 /* ---------------------------------------------------------------------- */
 @media (min-width: 1025px) {
     .registro-contenedor {
-        height: 1500px; 
+        min-height: 100vh;
+        height: auto; 
         
         /* Configuración de la imagen de fondo */
         background-image: url('../imagenes/modelo-principal-blanca.jpg'); 
@@ -263,24 +375,33 @@ input:-webkit-autofill:active {
     }
 
     .formulario-card {
-        position: absolute; 
-        top: 41%; 
-        left: 44%; 
-        transform: translate(-50%, -50%); 
-        position: absolute; 
+        position: relative; /* O static, pero relative es más seguro si hay z-index */
+        top: auto;
+        left: auto;
+        transform: none; 
+        margin-bottom: 80px; /* Esto asegura que el botón "Añadir Trabajador" no quede pegado al final */
         padding: 10px;
+        padding-top: 80px;
         align-items: center;
         text-align: center;
         z-index: 2; 
+        width: 600px; /* Usar un valor fijo en lugar de 60vw para mayor control */
+        max-width: 90%; /* Máximo el 90% de la ventana, para adaptabilidad */
+        margin-left: 20%;
+        margin-right: auto;
     }
 
     .titulo {
         font-family: 'Courgette', cursive; 
         font-size: 50px; 
-        font-weight: 400; 
-        color: #fff; 
-        margin-bottom: 70px;
         width: 60vw; 
+    }
+
+    .subtitulo {
+        font-size: 22px; /* Reducción de fuente para móvil */
+        margin-bottom: 40px;
+        width: 60vw;
+        margin-bottom: 70px;
     }
 
     .campo {
@@ -344,12 +465,10 @@ input:-webkit-autofill:active {
         transition: opacity 0.3s ease; 
         
         font-family: 'Courier Prime', monospace;
-        font-size: 45px; 
+        font-size: 6.5vh; 
         font-weight: 500; 
         color: black; 
         display: block; 
-        text-transform: capitalize;
-        z-index: 10;
     }
 
     /* REGLA DE DESAPARICIÓN */

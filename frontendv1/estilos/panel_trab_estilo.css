@@ -1,10 +1,9 @@
 /* Variables de color basadas en la imagen (Estilo Coquette/Soft) */
 :root {
-    --bg-pink: rgba(249, 108, 122, 0.5);       /* Tono salmón/rosa suave del fondo */
-    --card-white: rgba(78, 72, 72, 0.3);    /* Blanco puro para contraste */
-    --text-muted: rgb(228, 211, 211);      /* Gris suave para descripciones */
-    --text-dark: #333333;
-    --accent-gold: #BFA48D;    /* Tono dorado/tierra suave para iconos */
+    --bg-pink: rgba(252, 179, 173, 0.5);       /* Tono salmón/rosa suave del fondo */
+    --card-white: rgba(0, 0, 0, 0.2);    /* Blanco puro para contraste */
+    --text-muted: rgb(202, 187, 187);      /* Gris suave para descripciones */
+    --text-dark: #ffffff;
     --hover-pink: #FFEEE9;     /* Rosa muy pálido para hover */
     --shadow-soft: 0 10px 25px rgba(163, 99, 90, 0.15); /* Sombra suave rojiza rgba(119, 55, 57, 0.4);*/
 }
@@ -18,11 +17,10 @@
 body {
     font-family: 'Lato', sans-serif;
     background: 
-        linear-gradient(rgba(151, 151, 151, 0.6), rgba(151, 151, 151, 0.6)), /* Blanco más sólido, 60% opacidad */
-        url('../imagenes/modelo-nueva.jpg') no-repeat center center fixed;
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), /* Blanco más sólido, 60% opacidad */
+        url('../imagenes/modelo-principal.jpg') no-repeat center center fixed;
     background-size: cover;
     background-position: top;
-    background-repeat: no-repeat;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -54,7 +52,7 @@ body {
     margin-top: 3%;
     letter-spacing: 0.5px;
     color: var(--text-dark);
-    text-shadow: 0 2px 15px rgba(249, 108, 122);
+    text-shadow: 0 2px 15px rgba(252, 179, 173); 
 }
 
 .bienvenido-texto {
@@ -79,7 +77,6 @@ body {
     display: grid;
     grid-template-columns: 1fr; /* Una columna en móvil */
     gap: 1.5rem;
-    justify-content: center;
 }
 
 /* Tarjetas */
@@ -96,24 +93,14 @@ body {
     gap: 1.5rem;
 }
 
-.dashboard-grid .dashboard-card:last-child {
-    /* Hace que la última tarjeta ocupe ambas columnas */
-    grid-column: 1 / -1; 
-    /* Luego centramos el contenido de la tarjeta si es necesario, 
-       o simplemente la tarjeta completa dentro del espacio */
-    margin-left: auto;
-    margin-right: auto;
-    /* Puedes limitar su ancho para que no se extienda por completo */
-    max-width: 500px; 
-}
-
 .dashboard-card:hover {
     transform: translateY(-5px);
-    background-color: rgba(249, 108, 122, 0.5); 
+    box-shadow: 0 15px 30px rgba(163, 99, 90, 0.25);
+    background-color: var(--bg-pink); 
 }
 
 .card-icon {
-    background-color: rgba(202, 87, 99, 0.5); 
+    background-color: rgba(252, 179, 173, 0.4);
     min-width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -124,7 +111,7 @@ body {
 
 .card-icon i {
     font-size: 1.5rem;
-    color: var(--text-muted);
+    color: white;
 }
 
 .card-info {

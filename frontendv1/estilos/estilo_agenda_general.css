@@ -25,6 +25,9 @@ body {
     background-repeat: no-repeat;
     color: var(--color-texto-oscuro);
     line-height: 1.5;
+    user-select: none;
+    min-height: 100vh;
+    max-height: auto;
 }
 
 .agenda-container {
@@ -392,7 +395,7 @@ body {
 .calendario-popup {
     position: absolute;
     top: 40%;
-    left: 70%;
+    left: 66%;
     width: 320px;
     max-width: 90%;
     background-color: var(--color-principal);
@@ -582,6 +585,11 @@ body {
         display: block;
         width: 100px;
     }
+
+    .calendario-popup {
+        top: 50.5%;
+        left: 4%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -629,5 +637,20 @@ body {
     .info-asesor {
         margin-top: 10px;
         align-self: flex-end;
+    }
+
+    .hora-inicio {
+        font-size: calc(0.8rem + 3px);
+        font-weight: 500;
+    }
+
+    .hora-fin {
+        font-size: calc(0.6rem + 3px);
+        color: var(--color-texto-gris);
+    }
+
+    .calendario-popup {
+        top: 30%;
+        left: 5%;
     }
 }
