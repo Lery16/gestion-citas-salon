@@ -231,6 +231,7 @@ header .header-buttons button.fx-neon:hover {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap; /* Para adaptabilidad en pantallas pequeñas */
+     user-select: text;
 }
 
 .footer-logo-social {
@@ -276,11 +277,11 @@ header .header-buttons button.fx-neon:hover {
 /*RESPONSIVE HEADER*/
 @media (max-width: 912px) {
     header { 
-        padding-left: 2vh;
+        padding-left: 1vh;
         padding-right: 2vh;
     }
 
-    .menu_hamburguesa {
+    header .menu_hamburguesa {
         display: block;
         font-size: 5vh;
         cursor: pointer;
@@ -289,9 +290,10 @@ header .header-buttons button.fx-neon:hover {
         left: 0vh;
         z-index: 101;
         color: black;
+        padding-right: 1vh;
     }
 
-    .menu-opciones nav ul {
+    header .menu-opciones nav ul {
         display: none; /* oculto por defecto en móvil */
         flex-direction: column;
         gap: 2vh;
@@ -306,7 +308,7 @@ header .header-buttons button.fx-neon:hover {
     }
 
     /* Mostrar cuando se haga click */
-    .menu-opciones nav ul.active {
+    header .menu-opciones nav ul.active {
         display: flex;
     }
 
@@ -345,8 +347,8 @@ header .header-buttons button.fx-neon:hover {
         text-align: center;     /* Centra el texto */
         padding-right: 6%;
         padding-left: 5%;
-        padding-bottom: 5%;
-        padding-top: 5%;
+        padding-bottom: 10%;
+        padding-top: 10%;
     }
 
     .footer-logo-social {
@@ -368,7 +370,7 @@ header .header-buttons button.fx-neon:hover {
 
     .footer-info {
         padding-top: 1vh;
-        font-size: 2.2vh; /* Ajusta tamaño de texto */
+        font-size: 2vh; /* Ajusta tamaño de texto */
         text-align: center; /* Centra los párrafos de info */
     }
 

@@ -13,6 +13,7 @@ header {
 /* Ocultar el icono de hamburguesa por defecto (para escritorio) */
 header .menu_hamburguesa {
     display: none;
+    position: absolute;
 }
 
 /* Estilos del Logo */
@@ -175,5 +176,6 @@ header a:hover::after {
 
     .logo {
         font-size: 1.2rem;
+        padding-left: 4vh;
     }
 }
