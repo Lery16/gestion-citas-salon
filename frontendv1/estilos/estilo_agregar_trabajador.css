@@ -143,7 +143,7 @@ input:-webkit-autofill:active {
 .campo select {
     /* Mantiene el diseño base de los inputs */
     border: none;
-    background: #ff9985; 
+    background: transparent; 
     width: 100%;
     color: black;
     font-family: 'Courier Prime', monospace;
@@ -227,7 +227,7 @@ input:-webkit-autofill:active {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     transition: background-color 0.3s, color 0.3s;
     font-family: 'Courier Prime', monospace; /* Para mantener la coherencia */
     background-color: #f96c7a;

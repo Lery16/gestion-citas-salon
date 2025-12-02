@@ -1,126 +1,44 @@
+/**
+ * funciones/gestion_citas_fun.js
+ * Lógica principal: Gestión de estado, filtros, renderizado y acciones CRUD (local/remoto).
+ * Depende de que el DOM y calendario.js ya hayan cargado.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // ==========================================
-    // 1. REFERENCIAS AL DOM
-    // ==========================================
-    const filtroPanel = document.getElementById('filtroPanel');
+    // REFERENCIAS AL DOM (CORREGIDAS)
     const limpiarButton = document.getElementById('limpiarFiltros');
     const selectAllCheckbox = document.getElementById('selectAll');
     const bulkCancelButton = document.getElementById('bulkCancel');
-    const aplicarFiltrosBtn = document.querySelector('.aplicar-filtros-btn');
+    
+    // 🚩 CORRECCIÓN: Usar ID 'aplicar-filtros-btn'
+    const aplicarFiltrosBtn = document.getElementById('aplicar-filtros-btn'); 
+    
     const deshacerAccionBtn = document.getElementById('deshacerAccion');
-    const guardarBtn = document.getElementById('Guardar');
+    
+    // 🚩 CORRECCIÓN: Usar ID 'Guardar'
+    const guardarBtn = document.getElementById('Guardar'); 
+
+    const API_BASE_URL = 'http://localhost:3000/api';
     
     // Inputs de Filtros
     const buscarNombreInput = document.getElementById('buscarNombre');
     const selectEstado = document.getElementById('selectEstado');
-    const inputFecha = document.getElementById('fechaSeleccionada');
+    const inputFecha = document.getElementById('fechaSeleccionada'); // Usado en filtros
     
     // Contenedor de resultados
     const listaCitasContainer = document.querySelector('.lista-citas');
 
-    // ==========================================
-    // 2. VARIABLES DE ESTADO
-    // ==========================================
-    // Almacena los datos originales traídos del backend (para poder "Deshacer")
-    let citasOriginales = []; 
-    // Almacena los datos actuales visibles con modificaciones del usuario (antes de Guardar)
-    let citasVisuales = [];   
-    // Almacena los IDs que han sido modificados para enviarlos al backend
-    let cambiosPendientes = new Map(); // Map<id, nuevoEstado>
+    // VARIABLES DE ESTADO (Globales de la App)
+    let citasOriginales = []; // Datos iniciales del backend
+    let citasVisuales = [];   // Datos actuales con cambios locales
+    let cambiosPendientes = new Map(); // Cambios a enviar: Map<id, nuevoEstado>
 
-    // ==========================================
-    // 3. LÓGICA DEL CALENDARIO (INTACTA)
-    // ==========================================
-    const calendarioWrapper = document.getElementById('calendarioPicker');
-    const panelCalendario = calendarioWrapper?.querySelector('.calendario-dropdown-panel');
-    const mesSelect = document.getElementById('mesSelect');
-    const anioSelect = document.getElementById('anioSelect');
-    const calPrev = document.getElementById('calPrev');
-    const calNext = document.getElementById('calNext');
-    const calendarioDiasGrid = document.getElementById('calendarioDias');
-    const mesDropdown = calendarioWrapper?.querySelector('.mes-select-menu');
-    const anioDropdown = calendarioWrapper?.querySelector('.anio-select-menu');
-    const mesWrapper = calendarioWrapper?.querySelector('.mes-dropdown-wrapper');
-    const anioWrapper = calendarioWrapper?.querySelector('.anio-dropdown-wrapper');
-
-    if (calendarioWrapper && inputFecha && panelCalendario) {
-        let fechaActual = new Date();
-        let fechaSeleccionada = null;
-        const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const minAnio = 2020; const maxAnio = 2030;
-        function renderMesDropdown() {
-            if (!mesDropdown) return; mesDropdown.innerHTML = '';
-            nombresMeses.forEach((nombre, index) => {
-                const li = document.createElement('li'); li.textContent = nombre; li.dataset.mes = index;
-                li.classList.toggle('selected', index === fechaActual.getMonth()); mesDropdown.appendChild(li);
-            }); mesSelect.textContent = nombresMeses[fechaActual.getMonth()];
-        }
-        function renderAnioDropdown() {
-            if (!anioDropdown) return; anioDropdown.innerHTML = '';
-            for (let anio = minAnio; anio <= maxAnio; anio++) {
-                const li = document.createElement('li'); li.textContent = anio; li.dataset.anio = anio;
-                li.classList.toggle('selected', anio === fechaActual.getFullYear()); anioDropdown.appendChild(li);
-            } anioSelect.textContent = fechaActual.getFullYear();
-        }
-        function crearDiaElemento(dia, clase, esClickeable) {
-            const div = document.createElement('div'); div.classList.add('calendario-dia');
-            if (clase) div.classList.add(...clase.split(' ')); div.textContent = dia;
-            if (!esClickeable) div.style.cursor = 'default'; return div;
-        }
-        function renderCalendario() {
-            if (!calendarioDiasGrid) return; calendarioDiasGrid.innerHTML = '';
-            const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-            const primerDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
-            const ultimoDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0);
-            let diaInicio = primerDiaDelMes.getDay(); if (diaInicio === 0) diaInicio = 7;
-            let diaDeLaSemanaInicio = diaInicio - 1;
-            const mesAnteriorUltimoDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 0).getDate();
-            for (let i = diaDeLaSemanaInicio; i > 0; i--) { calendarioDiasGrid.appendChild(crearDiaElemento(mesAnteriorUltimoDia - i + 1, 'otro-mes', false)); }
-            for (let dia = 1; dia <= ultimoDiaDelMes.getDate(); dia++) {
-                const fechaDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), dia); fechaDia.setHours(0, 0, 0, 0);
-                const clases = []; let isPast = fechaDia < hoy && fechaDia.getTime() !== hoy.getTime();
-                let isSelected = fechaSeleccionada && fechaSeleccionada.getTime() === fechaDia.getTime();
-                if (fechaDia.getTime() === hoy.getTime()) clases.push('hoy');
-                if (isPast) clases.push('dia-pasado'); if (isSelected) clases.push('seleccionado');
-                // Nota: Se permite click en pasado si se desea filtrar histórico, cambié !isPast a true para filtros
-                const diaEl = crearDiaElemento(dia, clases.join(' '), true); 
-                diaEl.dataset.fullDate = fechaDia.toISOString().split('T')[0]; calendarioDiasGrid.appendChild(diaEl);
-            }
-            const diasTotales = diaDeLaSemanaInicio + ultimoDiaDelMes.getDate(); const diasRestantes = 42 - diasTotales;
-            for (let i = 1; i <= diasRestantes; i++) { calendarioDiasGrid.appendChild(crearDiaElemento(i, 'otro-mes', false)); }
-        }
-        function actualizarVista() { renderMesDropdown(); renderAnioDropdown(); renderCalendario(); }
-        calPrev?.addEventListener('click', () => { fechaActual.setMonth(fechaActual.getMonth() - 1); actualizarVista(); });
-        calNext?.addEventListener('click', () => { fechaActual.setMonth(fechaActual.getMonth() + 1); actualizarVista(); });
-        mesSelect?.addEventListener('click', (e) => { e.stopPropagation(); anioWrapper?.classList.remove('open'); mesWrapper?.classList.toggle('open'); });
-        anioSelect?.addEventListener('click', (e) => { e.stopPropagation(); mesWrapper?.classList.remove('open'); anioWrapper?.classList.toggle('open'); });
-        mesDropdown?.addEventListener('click', (e) => { if (e.target.tagName === 'LI' && e.target.dataset.mes !== undefined) { fechaActual.setMonth(parseInt(e.target.dataset.mes)); mesWrapper?.classList.remove('open'); actualizarVista(); } });
-        anioDropdown?.addEventListener('click', (e) => { if (e.target.tagName === 'LI' && e.target.dataset.anio !== undefined) { fechaActual.setFullYear(parseInt(e.target.dataset.anio)); anioWrapper?.classList.remove('open'); actualizarVista(); } });
-        calendarioDiasGrid?.addEventListener('click', (e) => {
-            const diaEl = e.target.closest('.calendario-dia');
-            if (diaEl && diaEl.dataset.fullDate && !diaEl.classList.contains('otro-mes')) {
-                const [year, month, day] = diaEl.dataset.fullDate.split('-').map(Number);
-                fechaSeleccionada = new Date(year, month - 1, day); fechaSeleccionada.setHours(0, 0, 0, 0);
-                const diaStr = String(day).padStart(2, '0'); const mesStr = String(month).padStart(2, '0');
-                inputFecha.value = `${diaStr}/${mesStr}/${year}`;
-                // Guardamos valor ISO en un atributo data para enviarlo fácil al backend
-                inputFecha.dataset.iso = diaEl.dataset.fullDate; 
-                calendarioWrapper.classList.remove('open'); renderCalendario();
-            }
-        });
-        inputFecha.addEventListener('click', (e) => { e.stopPropagation(); calendarioWrapper.classList.toggle('open'); mesWrapper?.classList.remove('open'); anioWrapper?.classList.remove('open'); });
-        document.addEventListener('click', (e) => { if (!calendarioWrapper.contains(e.target)) { calendarioWrapper.classList.remove('open'); mesWrapper?.classList.remove('open'); anioWrapper?.classList.remove('open'); } else if (!mesWrapper?.contains(e.target) && !anioWrapper?.contains(e.target)) { mesWrapper?.classList.remove('open'); anioWrapper?.classList.remove('open'); } });
-        actualizarVista();
-    }
-
-    // ==========================================
-    // 4. UTILIDADES
-    // ==========================================
+    // --- 1. UTILIDADES (Movidas aquí ya que dependen de 'inputFecha' en su lógica) ---
     
-    // Convierte fecha input (DD/MM/YYYY) a ISO (YYYY-MM-DD) para backend si no se usó el calendario
+    // Convierte fecha input (DD/MM/YYYY) a ISO (YYYY-MM-DD)
     function parseDateToISO(value) {
         if(!value) return null;
+        // Utiliza el data-iso guardado por el calendario.js si coincide el valor visible
         if(inputFecha.dataset.iso && inputFecha.value === value) return inputFecha.dataset.iso;
         const parts = value.split('/');
         if(parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -133,26 +51,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         let horas = date.getHours();
         const ampm = horas >= 12 ? 'PM' : 'AM';
-        horas = horas % 12; horas = horas ? horas : 12; 
+        horas = horas % 12; horas = horas ? horas : 12; 
         const minutos = String(date.getMinutes()).padStart(2, '0');
         return `${date.getDate()} ${meses[date.getMonth()]}, ${date.getFullYear()} - ${horas}:${minutos} ${ampm}`;
     }
 
-    // Icono según servicio (simulación basada en tu HTML)
-    function obtenerIconoServicio(nombre) {
-        const n = nombre.toLowerCase();
-        if(n.includes('dental')) return 'fa-tooth';
-        if(n.includes('contable')) return 'fa-briefcase';
-        if(n.includes('entrenamiento') || n.includes('gym')) return 'fa-dumbbell';
-        if(n.includes('frenos') || n.includes('auto')) return 'fa-car';
-        if(n.includes('foto')) return 'fa-camera-retro';
-        return 'fa-calendar-check';
+
+    // --- 2. MANEJO DE ESTADO LOCAL ---
+
+    function modificarEstadoCitaLocal(id, nuevoEstado) {
+        const index = citasVisuales.findIndex(c => c.id == id);
+        if (index !== -1) {
+            
+            // Convertir a minúsculas para manejar la BD (si el estado no está ya en minúsculas)
+            const estadoNormalizado = nuevoEstado.toLowerCase(); 
+
+            // Actualizar solo si el estado es diferente al actual, para evitar loops innecesarios
+            if (citasVisuales[index].estado.toLowerCase() !== estadoNormalizado) {
+                 // Actualizar el estado visualmente (con la primera letra en mayúscula para el render)
+                citasVisuales[index].estado = nuevoEstado.charAt(0).toUpperCase() + nuevoEstado.slice(1);
+                
+                // Almacenar el cambio para el envío: Map<id, estado_normalizado>
+                cambiosPendientes.set(id, estadoNormalizado); 
+                renderizarCitas(citasVisuales); // Re-renderizar
+            }
+        }
     }
 
-    // ==========================================
-    // 5. RENDERIZADO DE CITAS
-    // ==========================================
 
+    // --- 3. RENDERIZADO DE CITAS ---
     function renderizarCitas(lista) {
         listaCitasContainer.innerHTML = '';
 
@@ -165,104 +92,125 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragment = document.createDocumentFragment();
 
         lista.forEach(cita => {
-            const article = document.createElement('article');
-            article.className = 'cita-card';
-            article.dataset.id = cita.id;
+            let botonesAccion = '';
+            let isCheckboxDisabled = false;
+            let cardClass = 'cita-card';
+            // Usar estado en minúsculas para las clases CSS
+            const estadoClase = cita.estado.toLowerCase(); 
 
-            // Clases de estado para colores de borde
-            if (cita.estado === 'cancelada') article.classList.add('cancelada-card');
-            if (cita.estado === 'completada') article.classList.add('completada-card');
-
-            // --- Checkbox ---
-            const divSelector = document.createElement('div');
-            divSelector.className = 'cita-selector';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'cita-checkbox';
-            checkbox.ariaLabel = `Seleccionar cita de ${cita.cliente}`;
-            // Deshabilitar checkbox si completada o cancelada (según lógica visual html)
-            if (cita.estado === 'completada' || cita.estado === 'cancelada') {
-                checkbox.disabled = true;
+            // Lógica de botones y clases de estado
+            if (estadoClase === 'pendiente') {
+                botonesAccion = `
+                    <div class="cita-acciones">
+                        <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
+                        <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
+                    </div>
+                `;
+                isCheckboxDisabled = false;
+            } else if (estadoClase === 'confirmada') {
+                botonesAccion = `
+                    <div class="cita-acciones">
+                        <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
+                    </div>
+                `;
+                isCheckboxDisabled = false;
+            } else if (estadoClase === 'completada') {
+                botonesAccion = `
+                    <div class="cita-acciones">
+                        <button class="btn-accion btn-pendiente" title="Regresar a citas pendientes">⧗</button>
+                    </div>
+                `;
+                isCheckboxDisabled = true;
+                cardClass += ' completada-card';
+            } else if (estadoClase === 'cancelada') {
+                botonesAccion = `
+                    <div class="cita-acciones">
+                        <button class="btn-accion btn-pendiente" title="Regresar a citas pendientes">⧗</button>
+                    </div>
+                `;
+                isCheckboxDisabled = true;
+                cardClass += ' cancelada-card';
             }
-            divSelector.appendChild(checkbox);
+            
+            // Atributo disabled para el checkbox
+            const disabledAttr = isCheckboxDisabled ? 'disabled' : '';
 
-            // --- Detalles ---
-            const divDetalles = document.createElement('div');
-            divDetalles.className = 'cita-detalles';
-            
-            const divCliente = document.createElement('div');
-            divCliente.className = 'cita-cliente';
-            divCliente.textContent = cita.cliente;
-            
-            const divMetaServicio = document.createElement('div');
-            divMetaServicio.className = 'cita-meta';
-            divMetaServicio.innerHTML = `<i class="fa-solid ${obtenerIconoServicio(cita.servicio)}"></i><span>Servicio: ${cita.servicio}</span>`;
-            
-            const divMetaFecha = document.createElement('div');
-            divMetaFecha.className = 'cita-meta';
-            divMetaFecha.innerHTML = `<i class="fa-regular fa-calendar-days"></i><span>Fecha: ${formatearFechaVisual(cita.fecha)}</span>`;
-            
-            divDetalles.append(divCliente, divMetaServicio, divMetaFecha);
+            // Generar el HTML de la tarjeta usando template literals
+            const citaHTML = `
+                <article class="${cardClass}" data-id="${cita.id}">
+                    <div class="cita-selector">
+                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de ${cita.cliente}" ${disabledAttr}>
+                    </div>
+                    <div class="cita-detalles">
+                        <div class="cita-cliente">${cita.cliente}</div>
+                        <div class="cita-meta">
+                            <span>Servicio: ${cita.servicio}</span>
+                        </div>
+                        <div class="cita-meta">
+                            <span>Fecha: ${formatearFechaVisual(cita.fecha)}</span>
+                        </div>
+                    </div>
+                    <div class="cita-info-estado">
+                        <span class="estado estado-${estadoClase}" title="Cita ${cita.estado}">${cita.estado}</span>
+                        ${botonesAccion}
+                    </div>
+                </article>
+            `;
 
-            // --- Estado y Acciones ---
-            const divInfoEstado = document.createElement('div');
-            divInfoEstado.className = 'cita-info-estado';
+            // Crear un contenedor temporal para parsear el string HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = citaHTML.trim();
             
-            const spanEstado = document.createElement('span');
-            spanEstado.className = `estado estado-${cita.estado}`;
-            spanEstado.title = `Cita ${cita.estado}`;
-            spanEstado.textContent = cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1);
-            
-            const divAcciones = document.createElement('div');
-            divAcciones.className = 'cita-acciones';
-
-            // LÓGICA DE BOTONES SEGÚN ESTADO
-            if (cita.estado === 'pendiente') {
-                divAcciones.innerHTML = `
-                    <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
-                    <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
-                `;
-            } else if (cita.estado === 'confirmada') {
-                divAcciones.innerHTML = `
-                    <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
-                `;
-            } else if (cita.estado === 'cancelada') {
-                divAcciones.innerHTML = `
-                    <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
-                `;
-            }
-            // Completada no tiene botones.
-
-            divInfoEstado.append(spanEstado, divAcciones);
-            article.append(divSelector, divDetalles, divInfoEstado);
-            fragment.appendChild(article);
+            // Agregar el primer (y único) hijo al fragment
+            fragment.appendChild(tempDiv.firstChild);
         });
 
         listaCitasContainer.appendChild(fragment);
         actualizarEstadoBulk();
+        
+        // 🚩 ACTULIZACIÓN: Se usa para manejar la visibilidad/texto del botón de Guardar/Deshacer.
+        actualizarVisibilidadBotonesGlobales();
+    }
+    
+    // 🚩 NUEVA FUNCIÓN: Para actualizar el texto y el estado de los botones globales
+    function actualizarVisibilidadBotonesGlobales() {
+        if (cambiosPendientes.size > 0) {
+            guardarBtn.classList.remove('oculto');
+            deshacerAccionBtn.classList.remove('oculto');
+            // Actualiza el texto para mostrar cuántos cambios hay
+            guardarBtn.querySelector('span').textContent = ` Guardar Cambios (${cambiosPendientes.size})`;
+        } else {
+            guardarBtn.classList.add('oculto');
+            deshacerAccionBtn.classList.add('oculto');
+             // Restablece el texto original
+            guardarBtn.querySelector('span').textContent = ' Guardar Cambios';
+        }
+        // Asumiendo que 'oculto' es una clase que lo esconde/deshabilita
+        // Si no existe, puedes agregar estilos directos o crear esa clase CSS.
     }
 
-    // ==========================================
-    // 6. CONEXIÓN CON BACKEND (FILTROS)
-    // ==========================================
 
-    async function obtenerCitasFiltradas() {
+    // --- 4. CONEXIÓN CON BACKEND (FETCH) ---
+    // Hacemos esta función global (window) para que calendario.js pueda llamarla al seleccionar una fecha
+    window.obtenerCitasFiltradas = async function() {
         const nombre = buscarNombreInput.value.trim();
         const estado = selectEstado.value;
         const fechaISO = parseDateToISO(inputFecha.value);
 
-        // Construcción dinámica del payload (7 combinaciones)
         const filtros = {};
         if (nombre) filtros.nombre = nombre;
         if (estado && estado !== "") filtros.estado = estado;
         if (fechaISO) filtros.fecha = fechaISO;
 
+        // Guardar el contenido original del botón
+        const originalContent = aplicarFiltrosBtn.innerHTML; 
+
         aplicarFiltrosBtn.disabled = true;
-        aplicarFiltrosBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
+        // 🚩 CORRECCIÓN: Usar el ID correcto para actualizar el spinner
+        aplicarFiltrosBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i><span>Buscando...</span>';
 
         try {
-            // Asumimos endpoint POST /api/citas/buscar en Express
-            const response = await fetch('/api/citas/buscar', {
+            const response = await fetch(`${API_BASE_URL}/citas/buscar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(filtros)
@@ -272,10 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             
-            // Clonamos profundamente para guardar el estado original (Deshacer)
+            // Asegurar que los estados se guarden en mayúsculas/minúsculas como vienen de la BD
             citasOriginales = JSON.parse(JSON.stringify(data));
             citasVisuales = JSON.parse(JSON.stringify(data));
-            cambiosPendientes.clear(); // Limpiar cambios previos al cargar nueva búsqueda
+            cambiosPendientes.clear();
             
             renderizarCitas(citasVisuales);
 
@@ -284,40 +232,46 @@ document.addEventListener('DOMContentLoaded', () => {
             listaCitasContainer.innerHTML = '<p class="error">Error al cargar datos. Intenta de nuevo.</p>';
         } finally {
             aplicarFiltrosBtn.disabled = false;
-            aplicarFiltrosBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>Aplicar filtros</span>';
+            // 🚩 CORRECCIÓN: Usar el contenido original para restaurar
+            aplicarFiltrosBtn.innerHTML = originalContent; 
+            // Recrear iconos de Lucide
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     }
 
-    aplicarFiltrosBtn.addEventListener('click', obtenerCitasFiltradas);
+
+    // --- 5. EVENT LISTENERS PRINCIPALES ---
+
+    // Filtros
+    // 🚩 CORRECCIÓN: El selector para aplicarFiltrosBtn ya usa el ID correcto
+    aplicarFiltrosBtn.addEventListener('click', window.obtenerCitasFiltradas);
 
     limpiarButton.addEventListener('click', () => {
         buscarNombreInput.value = '';
         selectEstado.value = '';
         inputFecha.value = '';
         if(inputFecha.dataset.iso) delete inputFecha.dataset.iso;
-        // Opcional: Cargar todo de nuevo al limpiar
-        obtenerCitasFiltradas();
+        window.obtenerCitasFiltradas();
     });
 
-    // ==========================================
-    // 7. MANEJO DE ACCIONES (LOCALMENTE)
-    // ==========================================
-
-    // Delegación de eventos para botones Confirmar/Cancelar
+    // Acciones Individuales (Delegación)
     listaCitasContainer.addEventListener('click', (e) => {
         const btnConfirmar = e.target.closest('.btn-confirmar');
         const btnCancelar = e.target.closest('.btn-cancelar');
-        const card = e.target.closest('.cita-card');
-
-        if (!card) return;
+        const btnPendiente = e.target.closest('.btn-pendiente');
         
+        const card = e.target.closest('.cita-card');
+        if (!card) return;
         const id = card.dataset.id;
         let nuevoEstado = null;
 
         if (btnConfirmar) {
-            nuevoEstado = 'confirmada'; // O 'pendiente' a 'confirmada' o 'cancelada' a 'confirmada'
+            // El estado que se guarda visualmente (primera letra mayúscula)
+            nuevoEstado = 'Confirmada'; 
         } else if (btnCancelar) {
-            nuevoEstado = 'cancelada';
+             nuevoEstado = 'Cancelada';
+        } else if (btnPendiente) {
+             nuevoEstado = 'Pendiente';
         }
 
         if (nuevoEstado) {
@@ -325,80 +279,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function modificarEstadoCitaLocal(id, nuevoEstado) {
-        // 1. Actualizar array visual
-        const index = citasVisuales.findIndex(c => c.id == id);
-        if (index !== -1) {
-            citasVisuales[index].estado = nuevoEstado;
-            
-            // 2. Registrar cambio pendiente para guardar luego
-            cambiosPendientes.set(id, nuevoEstado);
-
-            // 3. Re-renderizar para ver cambios inmediatos
-            renderizarCitas(citasVisuales);
-        }
-    }
-
-    // ==========================================
-    // 8. DESHACER Y GUARDAR
-    // ==========================================
-
+    // Deshacer
     deshacerAccionBtn.addEventListener('click', () => {
         if (cambiosPendientes.size === 0) {
             alert("No hay acciones para deshacer.");
             return;
         }
-        // Restaurar visual con original
-        citasVisuales = JSON.parse(JSON.stringify(citasOriginales));
+        // Se restablece al estado original
+        citasVisuales = JSON.parse(JSON.stringify(citasOriginales)); 
         cambiosPendientes.clear();
         renderizarCitas(citasVisuales);
-        alert("Acciones deshechas localmente.");
+        alert("Acciones deshechas localmente. Haga clic en 'Guardar Cambios' para revertir las acciones si ya se enviaron al servidor.");
     });
 
+    // Guardar
     guardarBtn.addEventListener('click', async () => {
         if (cambiosPendientes.size === 0) {
             alert("No hay cambios pendientes para guardar.");
             return;
         }
 
-        // Convertir Map a Array para enviar
+        // Se envían los cambios normalizados (Map<id, estado_en_minusculas>)
         const cambiosArray = Array.from(cambiosPendientes, ([id, estado]) => ({ id, estado }));
-
+        
+        // Guardar el contenido original del botón de Guardar
+        const originalContent = guardarBtn.innerHTML;
+        
         guardarBtn.disabled = true;
-        guardarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+        // 🚩 CORRECCIÓN: Usar el ID correcto para actualizar el spinner
+        guardarBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i><span>Guardando...</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
         try {
-            const response = await fetch('/api/citas/actualizar-lote', {
-                method: 'PUT', // O POST, según tu backend
+            // Se asume que el backend espera un PUT a /citas y el body tiene { cambios: [] }
+            const response = await fetch(`${API_BASE_URL}/citas`, { 
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cambios: cambiosArray })
             });
 
             if (!response.ok) throw new Error('Error guardando cambios');
 
-            // Si todo sale bien, recargamos los datos desde la BD para asegurar sincronía
             alert("Cambios guardados exitosamente.");
-            await obtenerCitasFiltradas();
-
+            await window.obtenerCitasFiltradas(); // Recargar para sincronizar y limpiar cambios pendientes
         } catch (error) {
             console.error(error);
-            alert("Error al conectar con el servidor.");
+            alert("Error al conectar con el servidor o al guardar los cambios.");
         } finally {
             guardarBtn.disabled = false;
-            guardarBtn.innerHTML = '<i class="fa-solid fa-filter"></i><span>Guardar</span>';
+            // 🚩 CORRECCIÓN: Usar el contenido original para restaurar
+            guardarBtn.innerHTML = originalContent; 
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     });
 
-    // ==========================================
-    // 9. ACCIONES MASIVAS (BULK)
-    // ==========================================
+
+    // --- 6. ACCIONES MASIVAS (BULK) ---
 
     function actualizarEstadoBulk() {
         const checkboxes = document.querySelectorAll('.cita-checkbox:not(:disabled)');
         
         checkboxes.forEach(cb => {
-            // Clonar nodo para limpiar listeners viejos (truco rápido) o usar removeEventListener
-            // Aquí usaremos asignación directa con lógica simple
             cb.onchange = () => verificarSelectAll(checkboxes);
         });
 
@@ -419,6 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkboxes = document.querySelectorAll('.cita-checkbox:not(:disabled)');
         checkboxes.forEach(cb => cb.checked = e.target.checked);
         bulkCancelButton.disabled = !e.target.checked || checkboxes.length === 0;
+        // Asegurar que el estado del botón se actualiza
+        verificarSelectAll(checkboxes); 
     });
 
     bulkCancelButton.addEventListener('click', () => {
@@ -431,13 +374,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (card) ids.push(card.dataset.id);
         });
 
-        // Aplicar cancelación masiva localmente
-        ids.forEach(id => modificarEstadoCitaLocal(id, 'cancelada'));
+        // Aplicar el estado de cancelación a todas las citas seleccionadas
+        ids.forEach(id => modificarEstadoCitaLocal(id, 'Cancelada'));
         
-        // Resetear checks
+        // Resetear checks y estado de botones
         selectAllCheckbox.checked = false;
+        bulkCancelButton.disabled = true;
     });
 
-    // Carga inicial opcional (sin filtros)
-    obtenerCitasFiltradas();
+    // Carga inicial (Llama a la función que es global)
+    window.obtenerCitasFiltradas();
 });

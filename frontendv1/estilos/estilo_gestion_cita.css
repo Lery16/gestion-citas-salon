@@ -56,7 +56,7 @@ main {
     padding: 0.85rem;
     border: none;
     border-radius: 8px;
-    font-size: 0.85rem;
+    font-size: 1rem;
     cursor: pointer;
     display: inline-flex;
     gap: 0.3rem;
@@ -71,7 +71,7 @@ main {
     margin-bottom: 1rem;
     gap: 1rem;
     flex-direction: column;
-    width: 10rem;
+    width: 14rem;
 }
 
 .btn-primario {
@@ -304,7 +304,7 @@ input::placeholder {
 
 .btn-accion {
     padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     border-radius: 6px;
     font-weight: 500;
     border: none;
@@ -318,6 +318,11 @@ input::placeholder {
 
 .btn-cancelar {
     background-color: var(--color-peligro);
+    color: white;
+}
+
+.btn-pendiente {
+    background-color: var(--color-pendiente);
     color: white;
 }
 

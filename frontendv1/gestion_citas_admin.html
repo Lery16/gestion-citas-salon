@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Citas - Admin</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Courier+Prime&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="estilos/estilo_header_admin.css">
     <link rel="stylesheet" href="estilos/estilo_gestion_cita.css">
     <script src="funciones/header_admin_fun.js"></script>
-    <!-- <script src="funciones/gestion_citas_fun.js"></script> -->
+    <script src="funciones/gestion_citas_calendario_fun.js"></script>
+    <script src="funciones/gestion_citas_fun.js"></script>
 </head>
 <header class="header">
     <div class="header-left">
@@ -23,8 +25,12 @@
 
     <div class="header-right">
         <nav class="menu-opciones">
-            <a href="inicio.html">Ventana Principal</a>
-            <a href="inicio.html" class="logout">Cerrar Sesión</a>
+            <nav>
+                <ul>
+                    <li><a data-url="panel_administrador.html">Ventana Principal</a></li>
+                    <li><a data-url="inicia_sesion.html">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
         </nav>
     </div>
 </header>
@@ -36,12 +42,13 @@
     <main class="gestion-container">
             <div class="filtros-top">
                 <button class="btn btn-primario btn-filtro-toggle" id="deshacerAccion">
-                    <i class="fa-solid fa-filter"></i>
-                    <span>Deshacer Acción</span>
+                    <i data-lucide="rotate-ccw" class="lucide-icon"></i>
+                    <span>&nbsp;Deshacer Acción</span>
                 </button>
+
                 <button class="btn btn-primario btn-filtro-toggle" id="Guardar">
-                    <i class="fa-solid fa-filter"></i>
-                    <span>Guardar Cambios</span>
+                    <i data-lucide="save" class="lucide-icon"></i>
+                    <span>&nbsp;Guardar Cambios</span>
                 </button>
             </div>
 
@@ -49,12 +56,12 @@
                 <div class="filtro-grid">
                     <div class="filtro-grupo">
                         <label for="buscarNombre">Buscar por nombre</label>
-                        <input type="text" id="buscarNombre" placeholder="Ej: Ana García...">
+                        <input type="text" id="buscarNombre" placeholder="Ej: Ana García..." autocomplete="off">
                     </div>
                     <div class="filtro-grupo">
                         <label for="selectEstado">Buscar por Estado</label>
                         <select id="selectEstado">
-                            <option value="" disabled selected data-default-option>Todos los estados</option> 
+                            <option value="">Todos los estados</option> 
                             <option value="pendiente">Pendiente</option> 
                             <option value="confirmada">Confirmada</option>
                             <option value="completada">Completada</option> 
@@ -98,11 +105,11 @@
                 </div>
                 <div class="filtro-acciones">
                     <button class="btn btn-primario" id="limpiarFiltros">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i data-lucide="x-circle" class="lucide-icon"></i>
                         <span>Limpiar Filtros</span>
                     </button>
-                    <button class="btn btn-primario aplicar-filtros-btn">
-                        <i class="fa-solid fa-check"></i>
+                    <button class="btn btn-primario" id="aplicar-filtros-btn">
+                        <i data-lucide="check" class="lucide-icon"></i>
                         <span>Aplicar Filtros</span>
                     </button>
                 </div>
@@ -120,122 +127,10 @@
 
             <section class="lista-citas">
                 <article class="cita-card">
-                    <div class="cita-selector">
-                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Martín Gómez">
-                    </div>
-                    <div class="cita-detalles">
-                        <div class="cita-cliente">Martín Gómez</div> 
-                        <div class="cita-meta">
-                            <i class="fa-solid fa-tooth"></i>
-                            <span>Servicio: Limpieza Dental</span>
-                        </div>
-                        <div class="cita-meta">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span>Fecha: 22 Nov, 2025 - 04:00 PM</span>
-                        </div>
-                    </div>
-                    <div class="cita-info-estado">
-                        <span class="estado estado-pendiente" title="Cita Pendiente">Pendiente</span>
-                        
-                        <div class="cita-acciones">
-                            <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
-                            <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="cita-card">
-                    <div class="cita-selector">
-                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Ana Torres">
-                    </div>
-                    <div class="cita-detalles">
-                        <div class="cita-cliente">Ana Torres</div>
-                        <div class="cita-meta">
-                            <i class="fa-solid fa-briefcase"></i>
-                            <span>Servicio: Asesoría Contable</span>
-                        </div>
-                        <div class="cita-meta">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span>Fecha: 21 Nov, 2025 - 10:00 AM</span>
-                        </div>
-                    </div>
-                    <div class="cita-info-estado">
-                        <span class="estado estado-confirmada" title="Cita Confirmada">Confirmada</span>
-                        <div class="cita-acciones">
-                            <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="cita-card completada-card">
-                    <div class="cita-selector">
-                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Daniela Castro" disabled>
-                    </div>
-                    <div class="cita-detalles">
-                        <div class="cita-cliente">Daniela Castro</div>
-                        <div class="cita-meta">
-                            <i class="fa-solid fa-dumbbell"></i>
-                            <span>Servicio: Sesión de Entrenamiento</span>
-                        </div>
-                        <div class="cita-meta">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span>Fecha: 18 Nov, 2025 - 07:00 AM</span>
-                        </div>
-                    </div>
-                    <div class="cita-info-estado">
-                        <span class="estado estado-completada" title="Cita Completada">Completada</span>
-                        <button class="btn-accion btn-cancelar" title="Cancelar Cita">⧗</button>
-                    </div>
-                </article>
-
-                <article class="cita-card">
-                    <div class="cita-selector">
-                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Juan Pérez">
-                    </div>
-                    <div class="cita-detalles">
-                        <div class="cita-cliente">Juan Pérez</div>
-                        <div class="cita-meta">
-                            <i class="fa-solid fa-car"></i>
-                            <span>Servicio: Revisión de Frenos</span>
-                        </div>
-                        <div class="cita-meta">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span>Fecha: 25 Nov, 2025 - 03:00 PM</span>
-                        </div>
-                    </div>
-                    <div class="cita-info-estado">
-                        <span class="estado estado-pendiente" title="Cita Pendiente">Pendiente</span>
-                        
-                        <div class="cita-acciones">
-                            <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
-                            <button class="btn-accion btn-cancelar" title="Cancelar Cita">🛇</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="cita-card cancelada-card">
-                    <div class="cita-selector">
-                        <input type="checkbox" class="cita-checkbox" aria-label="Seleccionar cita de Sofía Ríos" disabled>
-                    </div>
-                    <div class="cita-detalles">
-                        <div class="cita-cliente">Sofía Ríos</div>
-                        <div class="cita-meta">
-                            <i class="fa-solid fa-camera-retro"></i>
-                            <span>Servicio: Sesión de Fotos</span>
-                        </div>
-                        <div class="cita-meta">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span>Fecha: 19 Nov, 2025 - 09:30 AM</span>
-                        </div>
-                    </div>
-                    <div class="cita-info-estado">
-                        <span class="estado estado-cancelada" title="Cita Cancelada">Cancelada</span>
-                        <div class="cita-acciones">
-                            <button class="btn-accion btn-confirmar" title="Confirmar Cita">✓</button>
-                        </div>
-                    </div>
+                   
                 </article>
             </section>
     </main>
+    <script> lucide.createIcons(); </script>
 </body>
 </html>

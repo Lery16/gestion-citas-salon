@@ -64,6 +64,18 @@ body {
 	color: white;
 }
 
+.input-tabla,
+.select-tabla, 
+.textarea-tabla {
+    background-color: transparent;
+    color: white;
+}
+
+.select-tabla:focus {
+    color: white;
+	background-color: #f86d7b;
+}
+
 .entrada-busqueda::placeholder {
 	color: rgb(196, 196, 196);
 }
@@ -125,7 +137,7 @@ body {
 
 .tabla-empleados th,
 .tabla-empleados td {
-    padding: 14px 20px; /* Reducido ligeramente el padding para mejor ajuste */
+    padding: 14px 15px; /* Reducido ligeramente el padding para mejor ajuste */
     text-align: left;
     vertical-align: middle; /* Centra el contenido verticalmente */
     font-size: 0.9rem; /* Tamaño de fuente para el contenido */
@@ -142,12 +154,23 @@ body {
     backdrop-filter: blur(5px); /* Efecto blur para el encabezado sticky */
 }
 
+.tabla-empleados tbody tr {
+    border-bottom: 1px solid rgba(249, 108, 122, 0.6) !important;
+}
+
+
 .tabla-empleados tbody tr:hover {
     background-color: rgba(249, 108, 122, 0.3) !important;
 }
 
 .tabla-empleados tbody tr:last-child td {
     border-bottom: none; /* Elimina el borde de la última fila */
+}
+
+.tabla-empleados td:nth-child(1),
+.tabla-empleados th:nth-child(1) {
+    width: 8vh; /* AJUSTA a lo que necesites */
+    max-width: 8vh;
 }
 
 /* Scrollbar personalizado */
@@ -162,7 +185,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(249, 108, 122, 0.6);
+    background: rgba(177, 78, 88, 0.6);
     border-radius: 10px;
     backdrop-filter: blur(4px);
 }
@@ -186,7 +209,7 @@ body {
 }
 
 .rol-trabajador {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(116, 58, 63, 0.6);
     color: #e2e6ea; /* Texto más claro para fondo oscuro */
 }
 
@@ -209,7 +232,7 @@ body {
     background-color: var(--color-exito);
 }
 
-.estado-ocupado .punto-estado {
+.estado-vacacionando .punto-estado {
     background-color: var(--color-peligro);
 }
 
@@ -245,12 +268,33 @@ body {
     color: var(--color-peligro);
 }
 
-.icono-contraseña,
-.texto-contraseña {
-    color: white;
+/* Estilos para el modo edición */
+.input-tabla {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
 }
-td[data-label="Contraseña"] {
-    text-align: center; /* Asegura que el ícono y texto estén centrados en la columna */
+
+.textarea-tabla {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    min-height: 80px;
+}
+
+.select-tabla {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.btn-accion i {
+    pointer-events: none; /* Para que el clic siempre lo detecte el botón */
 }
 
 /* 5. RESPONSIVE MÓVIL */
@@ -258,6 +302,7 @@ td[data-label="Contraseña"] {
 	.contenedor {
 		padding: 0 10px;
 		margin: 2%;
+		margin-top: 20%;
 	}
 
 	.barra-herramientas {
@@ -323,10 +368,5 @@ td[data-label="Contraseña"] {
 		text-align: left;
 		padding-top: 20px;
 		padding-bottom: 20px;
-	}
-
-	/* Ajuste contraseña */
-	.tabla-empleados td:nth-child(7) {
-		text-align: left;
 	}
 }
