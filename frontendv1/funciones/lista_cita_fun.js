@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cargarCitas = async (fechaSeleccionada, userId) => {
         try {
             // URL con los parámetros fecha y userId
-            const consultaURL = `http://localhost:3000/api/citas/listado?fecha=${encodeURIComponent(fechaSeleccionada)}&userId=${encodeURIComponent(userId)}`;
+            const consultaURL = `https://gestion-citas-salon.onrender.com/api/citas/listado?fecha=${encodeURIComponent(fechaSeleccionada)}&userId=${encodeURIComponent(userId)}`;
             
             const respuesta = await fetch(consultaURL);
 
