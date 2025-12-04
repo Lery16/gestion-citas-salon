@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 🚩 CORRECCIÓN: Usar ID 'Guardar'
     const guardarBtn = document.getElementById('Guardar'); 
 
-    const API_BASE_URL = 'http://localhost:3000/api';
+   // const API_BASE_URL = 'http://localhost:3000/api';
+    const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
     
     // Inputs de Filtros
     const buscarNombreInput = document.getElementById('buscarNombre');

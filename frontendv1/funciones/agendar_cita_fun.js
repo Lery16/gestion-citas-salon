@@ -1,5 +1,5 @@
-const API_BASE_URL = 'http://localhost:3000/api'; 
-
+//const API_BASE_URL = 'http://localhost:3000/api'; 
+const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registroForm');
     const backArrow = document.querySelector('.back-arrow');

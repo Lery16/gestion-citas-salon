@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('.sesion-card form');
-    const LOGIN_ENDPOINT = 'http://localhost:3000/api/auth/login';
+    //const LOGIN_ENDPOINT = 'http://localhost:3000/api/auth/login';
+    const LOGIN_ENDPOINT = 'https://gestion-citas-salon.onrender.com/api/auth/login';
+
+
     const LOGIN_PAGE = 'inicia_sesion.html';
 
     form.addEventListener('submit', async (evento) => {
