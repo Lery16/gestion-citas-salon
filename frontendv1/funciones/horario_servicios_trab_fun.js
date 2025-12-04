@@ -1,5 +1,6 @@
 // --- Configuraciones ---
-const API_BASE_URL = 'http://localhost:3000/api';
+//const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 const POLLING_INTERVAL_MS = 120000; // 2 minutos
 
 // --- Utilidades ---
