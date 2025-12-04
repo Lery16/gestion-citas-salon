@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- CONSTANTES Y ELEMENTOS PRINCIPALES ---
-  //  const API_BASE_URL = 'http://localhost:3000/api',
      const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
         ENDPOINT_CREAR_EMPLEADO = '/empleados',
         formulario = document.getElementById('registroForm'),
@@ -9,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
     if (!userToken || userRol !== 'Administrador') {
-        window.location.href = LOGIN_PAGE;
+        window.location.href = 'inicia_sesion.html';
         return;
     }
     

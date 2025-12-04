@@ -52,17 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // LÓGICA DEL CALENDARIO Y NAVEGACIÓN
     // ==========================================
-
-    function actualizarAnioActual() {
-        const anioVisible = fechaActual.getFullYear();
-        anioActualSpan.textContent = anioVisible;
-        
-        // Bloquear ir al pasado más allá del año actual
-        if (anioVisible < fechaReal.getFullYear()) {
-             // Lógica defensiva, aunque se controla en cambiarAnio
-        }
-    }
-
     function cambiarAnio(direccion) {
         const nuevoAnio = fechaActual.getFullYear() + direccion;
         if (direccion === -1 && nuevoAnio < fechaReal.getFullYear()) return;

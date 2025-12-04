@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (resultado.rol === 'Trabajador') {
                     window.location.href = 'panel_trabajador.html';
                 } else {
-                    window.location.href = 'pagina_inicio.html';
+                    window.location.href =  LOGIN_PAGE;
                 }
 
             } else {

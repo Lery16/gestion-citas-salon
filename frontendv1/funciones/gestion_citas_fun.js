@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
     if (!userToken || userRol !== 'Administrador') {
-        window.location.href = LOGIN_PAGE;
+        window.location.href = 'inicia_sesion.html';
         return;
     }
     
@@ -17,15 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectAllCheckbox = document.getElementById('selectAll');
     const bulkCancelButton = document.getElementById('bulkCancel');
     
-    // 🚩 CORRECCIÓN: Usar ID 'aplicar-filtros-btn'
+    // Usar ID 'aplicar-filtros-btn'
     const aplicarFiltrosBtn = document.getElementById('aplicar-filtros-btn'); 
     
     const deshacerAccionBtn = document.getElementById('deshacerAccion');
     
-    // 🚩 CORRECCIÓN: Usar ID 'Guardar'
+    // Usar ID 'Guardar'
     const guardarBtn = document.getElementById('Guardar'); 
-
-   // const API_BASE_URL = 'http://localhost:3000/api';
     const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
     
     // Inputs de Filtros
@@ -41,8 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let citasVisuales = [];   // Datos actuales con cambios locales
     let cambiosPendientes = new Map(); // Cambios a enviar: Map<id, nuevoEstado>
 
-    // --- 1. UTILIDADES (Movidas aquí ya que dependen de 'inputFecha' en su lógica) ---
-    
+    // --- 1. UTILIDADES
     // Convierte fecha input (DD/MM/YYYY) a ISO (YYYY-MM-DD)
     function parseDateToISO(value) {
         if(!value) return null;
