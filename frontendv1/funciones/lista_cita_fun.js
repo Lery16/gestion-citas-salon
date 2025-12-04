@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1️⃣ Cargar datos del trabajador
+    // Cargar datos del trabajador
     const LOGIN_PAGE = 'inicia_sesion.html'; // Página de login
 
     // Verificar token y rol
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // 2️⃣ Inicializar Flatpickr
+    // Inicializar Flatpickr
     flatpickr.localize(flatpickr.l10ns.es);
     flatpickr("input[name='fecha']", {
         dateFormat: "d/m/Y",
@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
         maxDate: fechaMax 
     });
     
-    // 4️⃣ Cargar Citas Iniciales
+    // Cargar Citas Iniciales
     const fechaHoyFormato = hoy.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '/');
     cargarCitas(fechaHoyFormato, userId);
 
-    // 3️⃣ Escuchar botón Buscar
+    // Escuchar botón Buscar
     botonBuscar.addEventListener("click", async () => {
         const fechaSeleccionada = inputFecha.value;
         if (!fechaSeleccionada) {

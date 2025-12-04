@@ -5,68 +5,63 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar autenticación y rol de usuario antes de continuar
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
     if (!userToken || userRol !== 'Administrador') {
         window.location.href = 'inicia_sesion.html';
         return;
     }
-    
-    // REFERENCIAS AL DOM (CORREGIDAS)
+
+    // REFERENCIAS AL DOM
     const limpiarButton = document.getElementById('limpiarFiltros');
     const selectAllCheckbox = document.getElementById('selectAll');
     const bulkCancelButton = document.getElementById('bulkCancel');
-    
-    // 🚩 CORRECCIÓN: Usar ID 'aplicar-filtros-btn'
-    const aplicarFiltrosBtn = document.getElementById('aplicar-filtros-btn'); 
-    
+
+    // Usar el ID correcto para el botón de aplicar filtros
+    const aplicarFiltrosBtn = document.getElementById('aplicar-filtros-btn');
+
     const deshacerAccionBtn = document.getElementById('deshacerAccion');
-    
-    // 🚩 CORRECCIÓN: Usar ID 'Guardar'
-    const guardarBtn = document.getElementById('Guardar'); 
+
+    // Usar el ID correcto para el botón de guardar
+    const guardarBtn = document.getElementById('Guardar');
 
     const API_BASE_URL = 'https://gestion-citas-salon.onrender.com/api';
     /**const API_BASE_URL = 'http://localhost:3000/api'; */
-    
+
     // Inputs de Filtros
     const buscarNombreInput = document.getElementById('buscarNombre');
     const selectEstado = document.getElementById('selectEstado');
     const inputFecha = document.getElementById('fechaSeleccionada'); // Usado en filtros
-    
+
     // Contenedor de resultados
     const listaCitasContainer = document.querySelector('.lista-citas');
 
     // VARIABLES DE ESTADO (Globales de la App)
-    let citasOriginales = []; // Datos iniciales del backend
-    let citasVisuales = [];   // Datos actuales con cambios locales
+    let citasOriginales = []; // Datos iniciales del backend (para deshacer)
+    let citasVisuales = [];   // Datos actuales con cambios locales
     let cambiosPendientes = new Map(); // Cambios a enviar: Map<id, nuevoEstado>
 
-    const cambiosArray = Array.from(cambiosPendientes, ([id, estado]) => ({ id, estado }));
-
-    console.log("--- DATOS PREPARADOS PARA GUARDAR EN BD ---");
-        console.log("Endpoint:", `${API_BASE_URL}/citas/actualizar-lote`);
-        console.log("Cuerpo de la Petición (Body):", { cambios: cambiosArray });
-        console.log("------------------------------------------");
-
     // --- 1. UTILIDADES (Movidas aquí ya que dependen de 'inputFecha' en su lógica) ---
-    
+
     // Convierte fecha input (DD/MM/YYYY) a ISO (YYYY-MM-DD)
     function parseDateToISO(value) {
         if(!value) return null;
-        // Utiliza el data-iso guardado por el calendario.js si coincide el valor visible
+        // Permite usar data-iso guardado por el calendario.js si está disponible
         if(inputFecha.dataset.iso && inputFecha.value === value) return inputFecha.dataset.iso;
         const parts = value.split('/');
         if(parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
         return null;
     }
 
+    // Formatea la fecha para la visualización en la tarjeta de la cita
     function formatearFechaVisual(fechaString) {
         if (!fechaString) return '';
         const date = new Date(fechaString);
         const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         let horas = date.getHours();
         const ampm = horas >= 12 ? 'PM' : 'AM';
-        horas = horas % 12; horas = horas ? horas : 12; 
+        horas = horas % 12; horas = horas ? horas : 12;
         const minutos = String(date.getMinutes()).padStart(2, '0');
         return `${date.getDate()} ${meses[date.getMonth()]}, ${date.getFullYear()} - ${horas}:${minutos} ${ampm}`;
     }
@@ -77,22 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function modificarEstadoCitaLocal(id, nuevoEstado) {
         const index = citasVisuales.findIndex(c => c.id == id);
         if (index !== -1) {
-            
-            // 🛑 CAMBIO CLAVE: Usamos el nuevoEstado (ej: "Cancelada") directamente 
-            // para la BD, ya que el error indica que espera la capitalización.
-            const estadoParaBD = nuevoEstado; 
+
+            // El backend requiere el estado con capitalización (ej: "Cancelada")
+            const estadoParaBD = nuevoEstado;
 
             // Convertir a minúsculas para comparaciones internas y CSS
-            const estadoActualLower = citasVisuales[index].estado.toLowerCase(); 
+            const estadoActualLower = citasVisuales[index].estado.toLowerCase();
             const nuevoEstadoLower = nuevoEstado.toLowerCase();
 
             // Actualizar solo si el estado es diferente al actual
             if (estadoActualLower !== nuevoEstadoLower) {
                 // Actualizar el estado visualmente (ya capitalizado)
                 citasVisuales[index].estado = nuevoEstado;
-                
-                // 🛑 CAMBIO CLAVE: Almacenar el cambio usando el estado capitalizado
-                cambiosPendientes.set(id, estadoParaBD); 
+
+                // Almacenar el cambio usando el estado capitalizado
+                cambiosPendientes.set(id, estadoParaBD);
                 renderizarCitas(citasVisuales); // Re-renderizar
             }
         }
@@ -115,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let isCheckboxDisabled = false;
             let cardClass = 'cita-card';
             // Usar estado en minúsculas para las clases CSS
-            const estadoClase = cita.estado.toLowerCase(); 
+            const estadoClase = cita.estado.toLowerCase();
 
             // Lógica de botones y clases de estado
             if (estadoClase === 'pendiente') {
@@ -150,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isCheckboxDisabled = true;
                 cardClass += ' cancelada-card';
             }
-            
+
             // Atributo disabled para el checkbox
             const disabledAttr = isCheckboxDisabled ? 'disabled' : '';
 
@@ -179,33 +173,31 @@ document.addEventListener('DOMContentLoaded', () => {
             // Crear un contenedor temporal para parsear el string HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = citaHTML.trim();
-            
+
             // Agregar el primer (y único) hijo al fragment
             fragment.appendChild(tempDiv.firstChild);
         });
 
         listaCitasContainer.appendChild(fragment);
         actualizarEstadoBulk();
-        
-        // 🚩 ACTULIZACIÓN: Se usa para manejar la visibilidad/texto del botón de Guardar/Deshacer.
+
+        // Actualiza el texto y visibilidad de los botones de Guardar/Deshacer.
         actualizarVisibilidadBotonesGlobales();
     }
-    
-    // 🚩 NUEVA FUNCIÓN: Para actualizar el texto y el estado de los botones globales
+
+    // Controla la visibilidad y el texto de los botones globales de acción
     function actualizarVisibilidadBotonesGlobales() {
         if (cambiosPendientes.size > 0) {
             guardarBtn.classList.remove('oculto');
             deshacerAccionBtn.classList.remove('oculto');
             // Actualiza el texto para mostrar cuántos cambios hay
-            guardarBtn.querySelector('span').textContent = ` Guardar Cambios (${cambiosPendientes.size})`;
+            guardarBtn.querySelector('span').textContent = ` Guardar Cambios (${cambiosPendientes.size})`;
         } else {
             guardarBtn.classList.add('oculto');
             deshacerAccionBtn.classList.add('oculto');
-             // Restablece el texto original
-            guardarBtn.querySelector('span').textContent = ' Guardar Cambios';
+            // Restablece el texto original
+            guardarBtn.querySelector('span').textContent = ' Guardar Cambios';
         }
-        // Asumiendo que 'oculto' es una clase que lo esconde/deshabilita
-        // Si no existe, puedes agregar estilos directos o crear esa clase CSS.
     }
 
 
@@ -221,11 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (estado && estado !== "") filtros.estado = estado;
         if (fechaISO) filtros.fecha = fechaISO;
 
-        // Guardar el contenido original del botón
-        const originalContent = aplicarFiltrosBtn.innerHTML; 
+        // Guardar el contenido original del botón para restaurarlo
+        const originalContent = aplicarFiltrosBtn.innerHTML;
 
         aplicarFiltrosBtn.disabled = true;
-        // 🚩 CORRECCIÓN: Usar el ID correcto para actualizar el spinner
+        // Mostrar spinner mientras se busca
         aplicarFiltrosBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i><span>Buscando...</span>';
 
         try {
@@ -238,12 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Error en la red');
 
             const data = await response.json();
-            
-            // Asegurar que los estados se guarden en mayúsculas/minúsculas como vienen de la BD
+
+            // Guardar datos originales y visuales, y limpiar cambios pendientes al obtener nuevos datos
             citasOriginales = JSON.parse(JSON.stringify(data));
             citasVisuales = JSON.parse(JSON.stringify(data));
             cambiosPendientes.clear();
-            
+
             renderizarCitas(citasVisuales);
 
         } catch (error) {
@@ -251,9 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
             listaCitasContainer.innerHTML = '<p class="error">Error al cargar datos. Intenta de nuevo.</p>';
         } finally {
             aplicarFiltrosBtn.disabled = false;
-            // 🚩 CORRECCIÓN: Usar el contenido original para restaurar
-            aplicarFiltrosBtn.innerHTML = originalContent; 
-            // Recrear iconos de Lucide
+            // Restaurar el contenido original del botón
+            aplicarFiltrosBtn.innerHTML = originalContent;
+            // Recrear iconos de Lucide (asumiendo que se usa esa librería)
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     }
@@ -261,24 +253,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 5. EVENT LISTENERS PRINCIPALES ---
 
-    // Filtros
-    // 🚩 CORRECCIÓN: El selector para aplicarFiltrosBtn ya usa el ID correcto
+    // Manejo de Filtros
     aplicarFiltrosBtn.addEventListener('click', window.obtenerCitasFiltradas);
 
     limpiarButton.addEventListener('click', () => {
+        // Resetear todos los campos de filtro
         buscarNombreInput.value = '';
         selectEstado.value = '';
         inputFecha.value = '';
         if(inputFecha.dataset.iso) delete inputFecha.dataset.iso;
-        window.obtenerCitasFiltradas();
+        window.obtenerCitasFiltradas(); // Volver a cargar sin filtros
     });
 
-    // Acciones Individuales (Delegación)
+    // Acciones Individuales (Delegación de eventos para botones de acción)
     listaCitasContainer.addEventListener('click', (e) => {
         const btnConfirmar = e.target.closest('.btn-confirmar');
         const btnCancelar = e.target.closest('.btn-cancelar');
         const btnPendiente = e.target.closest('.btn-pendiente');
-        
+
         const card = e.target.closest('.cita-card');
         if (!card) return;
         const id = card.dataset.id;
@@ -286,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (btnConfirmar) {
             // El estado que se guarda visualmente (primera letra mayúscula)
-            nuevoEstado = 'Confirmada'; 
+            nuevoEstado = 'Confirmada';
         } else if (btnCancelar) {
              nuevoEstado = 'Cancelada';
         } else if (btnPendiente) {
@@ -304,8 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("No hay acciones para deshacer.");
             return;
         }
-        // Se restablece al estado original
-        citasVisuales = JSON.parse(JSON.stringify(citasOriginales)); 
+        // Se restablece la lista visual a los datos originales traídos del backend
+        citasVisuales = JSON.parse(JSON.stringify(citasOriginales));
         cambiosPendientes.clear();
         renderizarCitas(citasVisuales);
         alert("Acciones deshechas localmente. Haga clic en 'Guardar Cambios' para revertir las acciones si ya se enviaron al servidor.");
@@ -318,19 +310,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Se envían los cambios normalizados (Map<id, estado_en_minusculas>)
+        // Convertir el Map de cambios a un Array de objetos [{id: 1, estado: "Cancelada"}, ...]
         const cambiosArray = Array.from(cambiosPendientes, ([id, estado]) => ({ id, estado }));
-        
+
         // Guardar el contenido original del botón de Guardar
         const originalContent = guardarBtn.innerHTML;
-        
+
         guardarBtn.disabled = true;
+        // Mostrar spinner mientras se guarda
         guardarBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i><span>Guardando...</span>';
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         try {
-            const response = await fetch(`${API_BASE_URL}/citas/actualizar-lote`, { 
-                method: 'PUT',
+            const response = await fetch(`${API_BASE_URL}/citas/actualizar-lote`, {
+                method: 'PUT', // Usar PUT para actualizar recursos existentes
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cambios: cambiosArray })
             });
@@ -338,23 +331,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Error guardando cambios');
 
             alert("Cambios guardados exitosamente.");
-            await window.obtenerCitasFiltradas(); // Recargar para sincronizar y limpiar cambios pendientes
+            // Recargar para sincronizar con el backend y limpiar cambios pendientes
+            await window.obtenerCitasFiltradas();
         } catch (error) {
             console.error(error);
             alert("Error al conectar con el servidor o al guardar los cambios.");
         } finally {
             guardarBtn.disabled = false;
-            // 🚩 CORRECCIÓN: Usar el contenido original para restaurar
-            guardarBtn.innerHTML = originalContent; 
+            // Restaurar el contenido original del botón
+            guardarBtn.innerHTML = originalContent;
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     });
 
     // --- 6. ACCIONES MASIVAS (BULK) ---
 
+    // Inicializa listeners para checkboxes y actualiza el estado del botón de cancelación masiva
     function actualizarEstadoBulk() {
         const checkboxes = document.querySelectorAll('.cita-checkbox:not(:disabled)');
-        
+
         checkboxes.forEach(cb => {
             cb.onchange = () => verificarSelectAll(checkboxes);
         });
@@ -363,23 +358,28 @@ document.addEventListener('DOMContentLoaded', () => {
         bulkCancelButton.disabled = true;
     }
 
+    // Verifica el estado de los checkboxes para actualizar el checkbox "Seleccionar Todo"
     function verificarSelectAll(checkboxes) {
         const arr = Array.from(checkboxes);
         const allChecked = arr.length > 0 && arr.every(c => c.checked);
         const anyChecked = arr.some(c => c.checked);
-        
+
         selectAllCheckbox.checked = allChecked;
+        // Habilita el botón de cancelación masiva si al menos uno está seleccionado
         bulkCancelButton.disabled = !anyChecked;
     }
 
+    // Maneja la acción de "Seleccionar Todo"
     selectAllCheckbox.addEventListener('change', (e) => {
         const checkboxes = document.querySelectorAll('.cita-checkbox:not(:disabled)');
         checkboxes.forEach(cb => cb.checked = e.target.checked);
+        // Deshabilita el botón si no hay nada seleccionado
         bulkCancelButton.disabled = !e.target.checked || checkboxes.length === 0;
         // Asegurar que el estado del botón se actualiza
-        verificarSelectAll(checkboxes); 
+        verificarSelectAll(checkboxes);
     });
 
+    // Cancela las citas seleccionadas masivamente
     bulkCancelButton.addEventListener('click', () => {
         const checkboxes = document.querySelectorAll('.cita-checkbox:checked');
         if (checkboxes.length === 0) return;
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Aplicar el estado de cancelación a todas las citas seleccionadas
         ids.forEach(id => modificarEstadoCitaLocal(id, 'Cancelada'));
-        
+
         // Resetear checks y estado de botones
         selectAllCheckbox.checked = false;
         bulkCancelButton.disabled = true;

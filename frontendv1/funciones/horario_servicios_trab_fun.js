@@ -1,9 +1,8 @@
-// --- Configuraciones ---
 //const API_BASE_URL = 'http://localhost:3000/api';
 const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 const POLLING_INTERVAL_MS = 120000; // 2 minutos
 
-// --- Utilidades ---
+// Utilidades 
 
 /**
  * 1. Función de utilidad: Formatear hora
@@ -17,11 +16,11 @@ function formatTime(time24) {
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12;
-    // Asegura que los minutos tengan dos dígitos si es necesario (aunque el input ya lo tiene)
+    // Asegura que los minutos tengan dos dígitos si es necesario (aunque ya el input ya lo tiene)
     return `${hours}:${minutes} ${ampm}`; 
 }
 
-// --- Funciones de Renderización de Secciones ---
+// Funcionnes de Renderización de Secciones
 
 /**
  * Función de utilidad: Generar el HTML de la sección completa.
@@ -160,7 +159,7 @@ function renderServicios(employeeServices) {
     }
 }
 
-// --- Funciones de Fetch Separadas ---
+// Funciones de Fetch Separadas 
 
 /**
  * 4a. Fetch Horario Semanal (NO requiere employeeId)
@@ -199,7 +198,7 @@ async function fetchAndRenderServicios(employeeId) {
     }
 }
 
-// --- Inicialización ---
+// Inicialización
 
 /**
  * 5. Inicialización y Polling

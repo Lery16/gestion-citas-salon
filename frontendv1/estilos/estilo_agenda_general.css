@@ -556,6 +556,7 @@ body {
 
 .calendario-dia.hoy {
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    background-color: #f7b0a7;
 }
 
 .calendario-dia.seleccionado {

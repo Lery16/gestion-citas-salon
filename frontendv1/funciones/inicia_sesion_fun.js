@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('user_token', resultado.token);
                 localStorage.setItem('user_rol', resultado.rol);
                 
-                // ✅ CAMBIO: Guardar el ID del usuario
+                // Guardar el ID del usuario
                 if (resultado.id_usuario) {
                     localStorage.setItem('user_id', resultado.id_usuario); 
                 }

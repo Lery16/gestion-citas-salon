@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Constantes ---
   //  const API_BASE_URL = 'http://localhost:3000/api';
     const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
     const ENDPOINT_CREAR_EMPLEADO = '/empleados';
     const CODIGO_ACCESO_REQUERIDO = 'belleza'; // Código requerido para el registro
     const LIMITE_CAMPOS = 12;
 
-    // --- Elementos del DOM ---
+    // Elementos del DOM
     const formulario = document.getElementById('registroForm');
     const campoServicioContenedor = document.querySelector('.campo-servicio-contenedor');
     const agregarServicioBtn = document.getElementById('agregarServicioBtn');
@@ -38,12 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
         plantillaServicio.appendChild(botonEliminarTemplate);
     }
 
-    // --- Event Listeners para el primer campo (si existe) ---
+    // Event Listeners para el primer campo (si existe)
     if (primerSelectServicio) {
         primerSelectServicio.addEventListener('change', actualizarOpcionesSelect);
     }
 
-    // --- Lógica para agregar nuevos campos de servicio ---
+    // Lógica para agregar nuevos campos de servicio
     if (agregarServicioBtn && plantillaServicio) {
         agregarServicioBtn.addEventListener('click', () => {
             const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
@@ -83,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Función para evitar la selección de servicios duplicados ---
+    // Función para evitar la selección de servicios duplicados 
     function actualizarOpcionesSelect() {
         const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
         const valoresSeleccionados = new Set();
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return esValido;
     }
 
-    // --- Función para enviar datos al Backend ---
+    // Función para enviar datos al Backend
     async function enviarDatosAlBackend(e) {
         e.preventDefault();
 
@@ -203,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const resultado = await respuesta.json();
 
             if (respuesta.ok) {
-                alert(`✅ Empleado ${datosEmpleado.nombre} creado exitosamente!`);
+                alert(`Empleado ${datosEmpleado.nombre} creado exitosamente!`);
                 console.log('Respuesta del servidor:', resultado);
                 formulario.reset(); // Limpiar formulario
                 // Re-inicializar el estado de las opciones después del reset
@@ -214,16 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const extras = campoServicioContenedor.querySelectorAll('.servicio-adicional');
                 extras.forEach(el => el.remove());
             } else {
-                alert(`❌ Error al crear empleado (${respuesta.status}): ${resultado.error || resultado.mensaje || 'Respuesta inesperada'}`);
+                alert(`Error al crear empleado (${respuesta.status}): ${resultado.error || resultado.mensaje || 'Respuesta inesperada'}`);
                 console.error('Error del servidor:', resultado);
             }
         } catch (error) {
-            alert('🚨 Error de conexión: No se pudo contactar al servidor. Asegúrate que el backend esté corriendo.');
+            alert('Error de conexión: No se pudo contactar al servidor. Asegúrate que el backend esté corriendo.');
             console.error('Error de fetch:', error);
         }
     }
 
-    // --- Listener de Submit ---
+    // Listener de Submit
     if (formulario) {
         formulario.addEventListener('submit', enviarDatosAlBackend);
     }

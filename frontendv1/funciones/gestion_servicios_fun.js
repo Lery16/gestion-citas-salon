@@ -1,4 +1,4 @@
-// URL base de tu API
+// URL base del API
 //const API_BASE_URL = 'http://localhost:3000/api';
 const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 
@@ -51,7 +51,7 @@ function inicializarEventos() {
     // Se eliminó el listener del botón "Guardar Global" ya que no es necesario.
 }
 
-// --- FUNCIONES AUXILIARES DE TIEMPO ---
+// FUNCIONES AUXILIARES DE TIEMPO
 
 /**
  * Convierte decimal (1.5) a objeto {h: 1, m: 30}
@@ -152,7 +152,7 @@ function renderizarTabla(servicios) {
     }
 }
 
-// --- LÓGICA DE AÑADIR (Crear) ---
+// LÓGICA DE AÑADIR (Crear)
 
 function agregarFilaNueva() {
     const tbody = document.querySelector('.tabla-datos tbody');
@@ -252,7 +252,7 @@ async function guardarNuevoServicio(fila) {
     }
 }
 
-// --- LÓGICA DE EDICIÓN (Actualizar) ---
+// LÓGICA DE EDICIÓN (Actualizar)
 
 function activarEdicion(fila, servicioOriginal) {
     if (fila.classList.contains('modo-edicion')) return;
@@ -358,7 +358,7 @@ async function guardarEdicion(fila, idServicio) {
     }
 }
 
-// --- LÓGICA DE ELIMINACIÓN ---
+// LÓGICA DE ELIMINACIÓN
 
 async function confirmarEliminacion(idServicio, fila) {
     if (!confirm("¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.")) {

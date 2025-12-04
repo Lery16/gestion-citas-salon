@@ -1,48 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const LOGIN_PAGE = 'inicia_sesion.html'; // Página de login
+    const LOGIN_PAGE = 'inicia_sesion.html'; // Página de inicio de sesión
 
-    // Verificar token y rol
+    // Validación de acceso
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
 
     if (!userToken || userRol !== 'Administrador') {
-        window.location.href = LOGIN_PAGE; // Redirige si no es admin
+        window.location.href = LOGIN_PAGE;
         return;
     }
     
-    // Selecciona el div del menú (se mantiene para el manejo de la clase 'active')
+    // Contenedor del menú
     const menu = document.querySelector('.menu-opciones'); 
 
-    // Selecciona TODOS los enlaces dentro del menú que tienen el atributo 'data-url'
+    // Enlaces con data-url
     const enlacesMenu = document.querySelectorAll('.menu-opciones a[data-url]');
 
-    // 1. Asigna el evento de navegación a cada enlace 🔗
+    // Navegación por enlaces
     enlacesMenu.forEach(enlace => {
-        // Obtenemos la URL de destino desde el atributo data-url
         const urlDestino = enlace.dataset.url;
 
-        // Si la URL existe, asignamos el manejador de eventos
         if (urlDestino) {
-            // Usamos 'click' para la navegación, pero el mismo patrón funcionaría con 'touchstart' si fuera necesario
             enlace.addEventListener('click', (event) => {
-                // Previene que el navegador siga la ruta del atributo 'href' por defecto
-                event.preventDefault(); 
-                
+                event.preventDefault();
                 console.log(`Navegando a: ${urlDestino}`);
-
-                // *** ESTA ES LA LÍNEA CLAVE QUE HACE LA NAVEGACIÓN REAL ***
-                window.location.href = urlDestino; 
+                window.location.href = urlDestino;
             });
         }
     });
 
-    // 2. Manejo del menú hamburguesa 🍔
+    // Menú hamburguesa
     const hamburger = document.querySelector('.menu_hamburguesa');
 
     if (hamburger && menu) {
         hamburger.addEventListener('touchstart', function(event) {
-            event.stopPropagation(); 
-            menu.classList.toggle('active'); 
+            event.stopPropagation();
+            menu.classList.toggle('active');
         });
     }
 });

@@ -1,11 +1,14 @@
-//const API_BASE_URL = 'http://localhost:3000/api';
+// La URL de la API se configura para el entorno de producción (Render)
 const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 
+// Espera a que el DOM esté completamente cargado antes de ejecutar el script.
 document.addEventListener('DOMContentLoaded', () => {
     // 1. OBTENCIÓN DE DATOS DEL LOCALSTORAGE
+    // Recuperamos los datos de la cita (cliente y servicio) guardados previamente.
     const datosCitaJSON = localStorage.getItem('datosCita');
     
     if (!datosCitaJSON) {
+        // Bloqueo de seguridad: si no hay datos, redirigimos para iniciar el proceso.
         alert('No se encontraron los datos del servicio. Por favor, inicie el proceso nuevamente.');
         window.location.href = 'agendar_cita.html'; // O la página anterior correspondiente
         return;
@@ -16,10 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const id_servicio = datosCita.id_servicio;
 
     // Variables de Estado
-    let diaSeleccionado = null; // Elemento DOM
-    let fechaSeleccionadaStr = null; // String YYYY-MM-DD
+    let diaSeleccionado = null; // Elemento DOM para el control visual de la selección
+    let fechaSeleccionadaStr = null; // String YYYY-MM-DD para el backend
     let estilistaSeleccionadoId = null;
-    let fechaActual = new Date(); // Para navegación del calendario
+    let fechaActual = new Date(); // Objeto Date para navegar por el calendario
     
     // Referencias DOM
     const cuerpoTablaCitas = document.getElementById('cuerpo-tabla-citas');
@@ -42,33 +45,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Referencias de Fecha Actual Real (Para bloquear días pasados y hoy)
     const fechaReal = new Date();
-    fechaReal.setHours(0,0,0,0);
-
+    fechaReal.setHours(0,0,0,0); // Normalizamos a medianoche para comparaciones
+    
     // Inicialización
     let mesActualIndex = fechaActual.getMonth();
     let mesSeleccionadoText = meses[mesActualIndex];
-    let isHandlingTouch = false;
+    let isHandlingTouch = false; // Bandera para evitar doble evento (click y touch)
 
-    // ==========================================
     // LÓGICA DEL CALENDARIO Y NAVEGACIÓN
-    // ==========================================
 
+    // Muestra el año visible en la UI.
     function actualizarAnioActual() {
         const anioVisible = fechaActual.getFullYear();
         anioActualSpan.textContent = anioVisible;
         
-        // Bloquear ir al pasado más allá del año actual
-        if (anioVisible < fechaReal.getFullYear()) {
-             // Lógica defensiva, aunque se controla en cambiarAnio
-        }
+        // El control de año pasado se realiza en cambiarAnio.
     }
 
+    // Navega al año anterior o siguiente, con validación.
     function cambiarAnio(direccion) {
         const nuevoAnio = fechaActual.getFullYear() + direccion;
+        // Evita ir a años anteriores al año actual real.
         if (direccion === -1 && nuevoAnio < fechaReal.getFullYear()) return;
         
         fechaActual.setFullYear(nuevoAnio);
-        // Ajustar mes si nos fuimos al pasado en el año actual
+        
+        // Ajuste: si regresamos al año actual, el mes debe ser al menos el mes actual real.
         if (nuevoAnio === fechaReal.getFullYear() && fechaActual.getMonth() < fechaReal.getMonth()) {
             fechaActual.setMonth(fechaReal.getMonth());
         }
@@ -82,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarSeleccion();
     }
 
+    // Formato estándar YYYY-MM-DD requerido por el backend (SQL).
     function formatearFecha(dia) {
         const anio = fechaActual.getFullYear();
         const mes = fechaActual.getMonth() + 1;
@@ -90,19 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${anio}-${mesFormateado}-${diaFormateado}`;
     }
 
-    // ==========================================
     // LÓGICA DE DATOS (FETCH BACKEND)
-    // ==========================================
 
     /**
-     * Obtiene el estado de los días del mes (Abierto, Cerrado, Agotado)
-     * Basado en Horario_Semanal_Empleado y Dia_Salon_Estado
+     * Llama al endpoint para obtener el estado de cada día del mes.
+     * Esto usa lógica de backend (horarios, días festivos y citas agotadas).
      */
     async function obtenerEstadoMes(anio, mes) {
         try {
-            // El backend debe retornar un objeto: { "2024-05-01": "Abierto", "2024-05-02": "Cerrado", ... }
+            // Se envía mes + 1 porque en JavaScript los meses van de 0 a 11.
             const response = await fetch(`${API_BASE_URL}/calendario/estado-mes?year=${anio}&month=${mes + 1}`);
             if (!response.ok) throw new Error('Error al obtener calendario');
+            // Retorna un objeto mapeando fecha a estado (e.g., "Abierto", "Cerrado").
             return await response.json();
         } catch (error) {
             console.error(error);
@@ -111,9 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Carga los estilistas que ofrecen el servicio seleccionado (Empleado_Servicio)
+     * Carga el dropdown con los empleados que pueden realizar el 'id_servicio'.
      */
     async function cargarEstilistas() {
+        // Estado inicial de carga.
         desplegableEstilista.innerHTML = '<option value="">Cargando...</option>';
         desplegableEstilista.disabled = true;
 
@@ -124,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             desplegableEstilista.innerHTML = '<option value="">Seleccione un estilista</option>';
             
             if (estilistas.length > 0) {
+                // Rellenamos el <select> con los estilistas obtenidos.
                 estilistas.forEach(est => {
                     const option = document.createElement('option');
                     option.value = est.id_empleado;
@@ -141,13 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Carga la tabla lateral con las citas reales ocupadas
-     * Filtra por día, estilista y servicio.
+     * Muestra la lista de citas **ya agendadas** para el día/estilista seleccionado.
+     * Esto es solo informativo para el usuario.
      */
     async function cargarCitasOcupadas(fecha, idEmpleado) {
         cuerpoTablaCitas.innerHTML = '<tr><td colspan="4" class="text-center">Cargando citas...</td></tr>';
         
         try {
+            // Se envía el id_servicio para calcular correctamente la hora de fin.
             const response = await fetch(`${API_BASE_URL}/citas/ocupadas?fecha=${fecha}&id_empleado=${idEmpleado}&id_servicio=${id_servicio}`);
             const citas = await response.json();
             
@@ -159,23 +164,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Carga los slots de tiempo disponibles (Dropdown Hora)
-     * Usa la función de BD: obtener_slots_disponibles
+     * Llama al endpoint que usa la función de BD `obtener_slots_disponibles`.
+     * Retorna los intervalos de tiempo donde el servicio **cabe** en el horario del estilista.
      */
     async function cargarHorasDisponibles(fecha, idEmpleado) {
         desplegableHora.innerHTML = '<option value="">Cargando...</option>';
         desplegableHora.disabled = true;
 
         try {
+            // El backend usa la fecha, el empleado y la duración del servicio para calcular los slots.
             const response = await fetch(`${API_BASE_URL}/citas/slots-disponibles?fecha=${fecha}&id_empleado=${idEmpleado}&id_servicio=${id_servicio}`);
             const slots = await response.json(); // Array de strings ["09:00:00", "09:30:00"...]
 
             desplegableHora.innerHTML = '<option value="">Seleccione una hora</option>';
 
             if (slots.length > 0) {
+                // Rellenamos el <select> de horas.
                 slots.forEach(hora => {
                     const option = document.createElement('option');
-                    // Cortamos los segundos para mostrar HH:MM
+                    // Mostramos solo HH:MM para mejor visualización.
                     const horaCorta = hora.substring(0, 5);
                     option.value = hora; 
                     option.textContent = horaCorta;
@@ -191,12 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ==========================================
     // RENDERIZADO UI
-    // ==========================================
 
+    // Genera la cuadrícula de días del calendario para el mes actual.
     function mostrarCalendario() {
-        // Mantener cabeceras
+        // Preserva las cabeceras (nombres de días) al limpiar la cuadrícula.
         const headers = Array.from(cuadriculaCalendario.querySelectorAll('.nombre-dia'));
         cuadriculaCalendario.innerHTML = '';
         headers.forEach(h => cuadriculaCalendario.appendChild(h));
@@ -204,15 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const anio = fechaActual.getFullYear();
         const mes = fechaActual.getMonth();
 
-        // Llamada al Backend para obtener estados (Cerrado/Abierto/Agotado)
+        // Se usa .then() para esperar los estados antes de pintar los días.
         obtenerEstadoMes(anio, mes).then(estadosMes => {
             const primerDiaSemana = new Date(anio, mes, 1).getDay();
             const diasEnMes = new Date(anio, mes + 1, 0).getDate();
-            // Ajuste para que Lunes sea el primer día (0 en array visual, pero getDay() Domingo es 0)
+            // Ajuste de `getDay()`: 0 (Dom) a 6 (Sáb). Convertimos a Lunes=0, Domingo=6.
             const inicioSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
             const diaAnterior = new Date(anio, mes, 0).getDate();
 
-            // Días mes anterior (relleno)
+            // Relleno de días del mes anterior (inactivos).
             for (let i = inicioSemana; i > 0; i--) {
                 const dia = document.createElement('div');
                 dia.classList.add('dia', 'dia-mes-anterior');
@@ -232,16 +238,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 diaElemento.dataset.day = dia;
 
                 // Lógica de Estado Visual
-                let claseEstado = 'estado-disponible'; // Default (Negro)
+                let claseEstado = 'estado-disponible';
                 let esClickable = true;
 
-                // 1. Fechas Pasadas y Hoy
+                // 1. Fechas Pasadas y Hoy: Inhabilitar selección.
                 if (fechaIteracion <= fechaReal) {
-                    claseEstado = 'estado-cerrado'; // Usamos estilo cerrado para pasado/hoy
+                    claseEstado = 'estado-cerrado'; 
                     esClickable = false;
                     diaElemento.style.opacity = '0.5';
                 } 
-                // 2. Estado desde DB (Días cerrados por horario o tabla estado, o agotados)
+                // 2. Estado desde DB: Cerrado por negocio o Agotado por reservas.
                 else {
                     const estadoBackend = estadosMes[fechaStr]; // "Abierto", "Cerrado", "Agotado"
                     
@@ -249,16 +255,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         claseEstado = 'estado-cerrado';
                         esClickable = false;
                     } else if (estadoBackend === 'Agotado') {
-                        claseEstado = 'estado-agotado'; // Circulo Rosado
+                        claseEstado = 'estado-agotado'; // Estilo para indicar lleno (Rosado)
                         esClickable = false; 
                     } else {
-                        claseEstado = 'estado-disponible'; // Circulo Negro
+                        claseEstado = 'estado-disponible'; // Estilo para indicar disponible (Negro)
                     }
                 }
 
                 diaElemento.classList.add(claseEstado);
 
                 if (esClickable) {
+                    // Solo los días disponibles son clickeables.
                     diaElemento.addEventListener('click', handleDaySelection);
                     diaElemento.addEventListener('touchstart', handleDaySelection);
                 } else {
@@ -268,10 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 cuadriculaCalendario.appendChild(diaElemento);
             }
 
-            // Relleno días mes siguiente
+            // Relleno de días del mes siguiente (inactivos) para completar la cuadrícula.
             const totalCeldas = cuadriculaCalendario.children.length - 7;
-            const celdasFaltantes = 42 - (totalCeldas % 42); // Asumiendo grid de 6 filas
-            // Corrección bug visual si celdasFaltantes es 42 (ya está lleno)
+            const celdasFaltantes = 42 - (totalCeldas % 42); 
+            // Corrección: si el calendario ya tiene 42 celdas, no añade más.
             if (celdasFaltantes < 42) {
                 for (let i = 1; i <= celdasFaltantes; i++) {
                     const dia = document.createElement('div');
@@ -285,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Pinta las filas de la tabla de citas ocupadas.
     function mostrarTablaCitas(citas) {
         cuerpoTablaCitas.innerHTML = '';
         if (!citas || citas.length === 0) {
@@ -299,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         citas.forEach((cita, index) => {
             const fila = document.createElement('tr');
             fila.classList.add('fila-cita');
-            // cita.hora_inicio y cita.hora_fin vienen del backend
+            // Formatea el horario (quitando segundos).
             const horarioTexto = `${cita.hora_inicio.substring(0,5)} - ${cita.hora_fin.substring(0,5)}`;
             
             fila.innerHTML = `
@@ -312,11 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
     // MANEJO DE EVENTOS
-    // ==========================================
 
+    // Maneja la selección de un día en el calendario.
     async function handleDaySelection(event) {
+        // Lógica para prevenir doble disparo de evento en dispositivos táctiles.
         if (event.type === 'touchstart') {
             isHandlingTouch = true;
             setTimeout(() => { isHandlingTouch = false; }, 500);
@@ -326,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const diaElemento = event.currentTarget;
         
-        // Limpiar selección previa visual
+        // Limpiar selección previa visual.
         cuadriculaCalendario.querySelectorAll('.dia').forEach(d => d.classList.remove('seleccionado'));
         diaElemento.classList.add('seleccionado');
         
@@ -334,26 +342,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const diaNum = diaElemento.dataset.day;
         fechaSeleccionadaStr = formatearFecha(diaNum);
 
-        // Resetear selectores dependientes
+        // Al seleccionar un día, se resetean y recargan los selectores dependientes.
         estilistaSeleccionadoId = null;
         desplegableHora.innerHTML = '<option value="">Seleccione un estilista primero</option>';
         desplegableHora.disabled = true;
-        cuerpoTablaCitas.innerHTML = ''; // Limpiar tabla
+        cuerpoTablaCitas.innerHTML = ''; 
 
-        // Cargar Estilistas disponibles para el servicio
+        // Cargar Estilistas disponibles para el servicio.
         await cargarEstilistas();
     }
 
-    // Evento al seleccionar Estilista
+    // Evento al seleccionar Estilista.
     desplegableEstilista.addEventListener('change', async (event) => {
         estilistaSeleccionadoId = event.target.value;
 
+        // Si se seleccionó estilista y día, se cargan horas y tabla de citas.
         if (estilistaSeleccionadoId && fechaSeleccionadaStr) {
-            // 1. Cargar Horas Disponibles (Dropdown)
+            // 1. Cargar Horas Disponibles (Dropdown) - Lógica de reserva.
             await cargarHorasDisponibles(fechaSeleccionadaStr, estilistaSeleccionadoId);
-            // 2. Cargar Tabla de Citas (Información visual)
+            // 2. Cargar Tabla de Citas (Información visual) - Lógica de ocupación.
             await cargarCitasOcupadas(fechaSeleccionadaStr, estilistaSeleccionadoId);
         } else {
+            // Si el estilista se deselecciona, limpiamos.
             desplegableHora.innerHTML = '<option value="">Seleccione un estilista</option>';
             desplegableHora.disabled = true;
             cuerpoTablaCitas.innerHTML = '';
@@ -364,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAgendar.addEventListener('click', async () => {
         const horaSeleccionada = desplegableHora.value;
 
-        // Validaciones
+        // Validaciones: Todos los campos deben estar seleccionados.
         if (!fechaSeleccionadaStr) {
             alert('Por favor, seleccione una fecha en el calendario.');
             return;
@@ -378,20 +388,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Preparar Payload
+        // Preparar Payload para la solicitud POST.
         const datosReserva = {
             id_cliente: id_cliente,
             id_servicio: id_servicio,
             id_empleado: estilistaSeleccionadoId,
             fecha: fechaSeleccionadaStr,
             hora: horaSeleccionada
-            // estado: No se envía, la BD lo pone en 'Pendiente' por defecto
         };
 
         try {
+            // Deshabilitamos el botón para evitar múltiples clics.
             btnAgendar.disabled = true;
             btnAgendar.textContent = "Agendando...";
 
+            // Solicitud POST al endpoint de agendar cita.
             const response = await fetch(`${API_BASE_URL}/citas/agendar`, {
                 method: 'POST',
                 headers: {
@@ -404,29 +415,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('¡Cita agendada con éxito!');
-                // Limpiar datos temporales si es necesario
-                // Redirigir a inicio
+                // Eliminamos los datos temporales y redirigimos a la página de inicio.
                 localStorage.removeItem('datosCita');
                 window.location.href = 'inicio.html';
             } else {
+                // Manejo de errores de negocio (e.g., slot ya ocupado).
                 throw new Error(resultado.message || 'Error desconocido al agendar');
             }
 
         } catch (error) {
             console.error(error);
             alert('Hubo un error al agendar la cita: ' + error.message);
+            // Restaurar el botón en caso de fallo.
             btnAgendar.disabled = false;
             btnAgendar.textContent = "AGENDAR CITA";
         }
     });
 
-    // ==========================================
     // LISTENERS AUXILIARES (MESES, UI)
-    // ==========================================
     
+    // Asignación de eventos para la navegación de año.
     btnAnioAnterior.addEventListener('click', () => cambiarAnio(-1));
     btnAnioSiguiente.addEventListener('click', () => cambiarAnio(1));
 
+    // Muestra/oculta el menú desplegable de meses.
     function alternarDesplegable() {
         listaMesesDesplegable.classList.toggle('oculto');
         flechaMesDesplegable.classList.toggle('abierto');
@@ -435,23 +447,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Cierra el menú desplegable de meses.
     function cerrarDesplegable() {
         listaMesesDesplegable.classList.add('oculto');
         flechaMesDesplegable.classList.remove('abierto');
     }
 
+    // Resalta el mes activo y sombrea los meses pasados en el desplegable.
     function actualizarClasesSeleccionado() {
         const mesVisible = fechaActual.getMonth();
         const anioVisible = fechaActual.getFullYear();
         listaMesesDesplegable.querySelectorAll('.item-mes').forEach(item => {
             const index = parseInt(item.dataset.mesIndex);
+            
+            // Marca el mes actualmente visible en el calendario.
             if (index === mesVisible) {
                 item.classList.add('activo');
             } else {
                 item.classList.remove('activo');
             }
             
-            // Marcar meses pasados visualmente
+            // Lógica para deshabilitar visualmente meses pasados.
             const esAnioPasado = anioVisible < fechaReal.getFullYear();
             const esMesPasadoEnAnioActual = anioVisible === fechaReal.getFullYear() && index < fechaReal.getMonth();
             
@@ -465,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Crea los elementos DOM para cada mes en el desplegable.
     function inicializarMeses() {
         mesSeleccionadoSpan.textContent = mesSeleccionadoText;
         meses.forEach((mes, index) => {
@@ -475,11 +492,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             itemMes.addEventListener('click', () => {
                 const anioVisible = fechaActual.getFullYear();
-                // Validar no seleccionar mes pasado
+                // Bloquea el click si el mes es pasado en el año actual.
                 if (anioVisible === fechaReal.getFullYear() && index < fechaReal.getMonth()) {
                     return; 
                 }
 
+                // Cambia el mes del objeto Date y refresca la UI.
                 fechaActual.setMonth(index);
                 mesSeleccionadoText = mes;
                 mesSeleccionadoSpan.textContent = mes;
@@ -493,12 +511,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Reinicia todas las variables de estado y selectores.
     function limpiarSeleccion() {
         cuadriculaCalendario.querySelectorAll('.dia').forEach(d => d.classList.remove('seleccionado'));
         diaSeleccionado = null;
         fechaSeleccionadaStr = null;
         estilistaSeleccionadoId = null;
         
+        // Limpiar y deshabilitar dropdowns dependientes.
         desplegableEstilista.innerHTML = '<option value="">Seleccione un día</option>';
         desplegableEstilista.disabled = true;
         
@@ -508,16 +528,18 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarTablaCitas([]);
     }
 
-    // Listeners UI Meses
+    // Listeners UI Meses (manejo del dropdown).
     selectorMesActual.addEventListener('click', alternarDesplegable);
+    // Prevención de comportamiento de arrastre en móvil para el touchstart.
     selectorMesActual.addEventListener('touchstart', (e) => { e.preventDefault(); alternarDesplegable(); });
+    // Cierre del desplegable al hacer clic fuera de él.
     document.addEventListener('click', (event) => {
         if (!selectorMesActual.contains(event.target) && !listaMesesDesplegable.contains(event.target)) {
             cerrarDesplegable();
         }
     });
 
-    // INICIO
+    // INICIO: Funciones de inicialización.
     inicializarMeses();
     actualizarAnioActual();
     mostrarCalendario();

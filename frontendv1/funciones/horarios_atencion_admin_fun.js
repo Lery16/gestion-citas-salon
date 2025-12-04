@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- CONFIGURACIÓN ---
     //const API_URL = 'http://localhost:3000/api/horarios';
     const API_URL ='https://gestion-citas-salon.onrender.com/api/horarios';
 
@@ -8,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fechasSeleccionadas = new Set();
     let excepciones = {}; 
 
-    // --- DOM REFERENCES ---
+    // DOM REFERENCES
     const gridDias = document.getElementById('calendario-grid-dias');
     const displayMesAno = document.getElementById('mes-ano-actual');
     const navAnterior = document.getElementById('nav-mes-anterior');
@@ -20,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGuardarTodo = document.getElementById('btn-guardar-todo');
     const listaDiasSemana = document.getElementById('lista-dias-semana');
 
-    // --- UTILIDADES ---
+    // UTILIDADES 
     const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     
     // Mapeo para traducir lo que viene de la BD (Mayúscula) a lo que está en el HTML (minúscula)
@@ -35,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'jueves': 'Jueves', 'viernes': 'Viernes', 'sabado': 'Sábado', 'domingo': 'Domingo'
     };
 
-    // --- FUNCIONES LÓGICAS ---
+    // FUNCIONES LÓGICAS
 
     function inicializarToggles() {
         listaDiasSemana.querySelectorAll('.dia-semana').forEach(diaEl => {
@@ -255,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT LISTENERS ---
+    // EVENT LISTENERS 
 
     navAnterior.addEventListener('click', () => {
         fechaActual.setMonth(fechaActual.getMonth() - 1);
@@ -369,6 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- INICIO ---
+    // INICIO
     cargarConfiguracion();
 });
