@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendar Cita</title>
+    <title>Salón de Belleza - Inicio</title>
+     <!-- Fuente de Letra Instrument Serif -->
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet">
+    <!-- Fuente de Letra Play Disfair -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="estilos/estilo_general.css">
-    <link rel="stylesheet" href="estilos/estilo_agendar_cita.css">
-    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilo_inicio.css">
     <script src="funciones/header_fun.js"></script>
-    <script src="funciones/agendar_cita_fun.js"></script>
 </head>
 <header>
     <div class="menu_hamburguesa">☰</div>
     <div class="logo">
-            <img src="imagenes/logo.png" alt="Logo">
+        <img src="imagenes/logo.png" alt="Logo">
     </div>
 
     <div class="menu-opciones">
@@ -25,67 +27,83 @@
                 <li><a href="#pie_de_pagina">Contacto</a></li>
             </ul>
         </nav>
+
+        <div class="header-buttons">
+            <button class="signin fx-neon">Iniciar Sesión</button>
+            <button class="register fx-neon">Registrarse</button>
+        </div>
     </div>
 </header>
 <body>
-    <div class="registro-contenedor">
-        
-        <div class="flecha">
-            <a href="#" class="back-arrow" onclick="history.back(); return false;">&#8592;</a>
-        </div>
+    <main>
+        <section class="hero-section">
+        </section>
 
-        <main class="formulario-card">
-            <div class="titulo">Agendar Cita</div>
-            <div class="subtitulo">Solo Clientes</div>
-            
-            <form id="registroForm" method="POST">
+        <section class="intro-section">
+            <div class="intro-container">
+                <div class="intro-text-wrapper">
+                    <div class="intro-text-content">
+                        <div class="titulo-conocenos">¡Conócenos!</div>
+                        <div class="conocenos-texto">Contamos con un equipo de profesionales dedicados a realzar tu belleza y cuidar cada detalle. Ofrecemos una amplia variedad de servicios personalizados para que siempre luzcas y te sientas increíble. ¡Descubre todo lo que tenemos para ti!</div>
+                    </div>
+                </div>
+                <div class="intro-image-wrapper">
+                    <img src="imagenes/arreglando-cabello.png" alt="Estilista trabajando en el cabello de una clienta en un salón moderno">
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials-section">
+            <div class="testimonials-header">
+                <titulo-testimonio>Testimonios</titulo-testimonio>
+            </div>
+            <div class="testimonials-container">
+                <article class="testimonial">
+                    <p>"Excelente servicio y ambiente. ¡Siempre salgo feliz!"</p>
+                    <footer>
+                        <img src="imagenes/ana.jpeg" alt="Foto de perfil de Ana M." class="testimonial-avatar">
+                        <div class="author-info">
+                            <p class="author">Ana M.</p>
+                            <p class="title">Maestra</p>
+                        </div>
+                    </footer>
+                </article>
+
+                <article class="testimonial">
+                    <p>"Recomendado al 100%, puntuales y profesionales."</p>
+                    <footer>
+                        <img src="imagenes/maria.jpeg" alt="Foto de perfil de María G." class="testimonial-avatar">
+                        <div class="author-info">
+                            <p class="author">María G.</p>
+                            <p class="title">Estilista</p>
+                        </div>
+                    </footer>
+                </article>
                 
-                <div class="campo">
-                    <input type="email" id="email" name="email" required placeholder=" ">
-                    <label for="email" class="etiqueta">Email</label>
-                </div>
-                
-                <div class="campo">
-                    <input type="tel" name="celular" placeholder=" " pattern="\+?\d{8,15}" maxlength="15" required>
-                    <label for="celular" class="etiqueta">Celular</label>
-                </div>
-                
-                <div class="campo">
-                    <input type="text" id="nombre" name="nombre" required placeholder=" ">
-                    <label for="nombre" class="etiqueta">Nombre</label>
-                </div>
+                <article class="testimonial">
+                    <p>"Excelente servicio y ambiente. ¡Super rápido!"</p>
+                    <footer>
+                        <img src="imagenes/lia.jpg" alt="Foto de perfil de Lia V." class="testimonial-avatar">
+                        <div class="author-info">
+                            <p class="author">Lia V.</p>
+                            <p class="title">Modelo</p>
+                        </div>
+                    </footer>
+                </article>
+            </div>
+        </section>
 
-                <div class="campo">
-                    <input type="text" id="apellido" name="apellido" required placeholder=" ">
-                    <label for="apellido" class="etiqueta">Apellido</label>
+        <section class="media-feature-section">
+            <div class="media-container">
+                <div class="media-item">
+                    <img src="imagenes/la-maquillan.gif" alt="Mujer recibiendo tratamiento de maquillaje profesional" style="filter: opacity(0.8);">
                 </div>
-
-                <div class="campo">
-                    <select id="servicios" name="servicios" required>
-                        <option value="" disabled selected data-default-option>Servicio</option>
-                        <option value="Corte y Peinado">Corte y Peinado</option>
-                        <option value="Coloración y Mechas">Coloración y Mechas</option>
-                        <option value="Manicure Spa">Manicure Spa</option>
-                        <option value="Pedicure Spa">Pedicure Spa</option>
-                        <option value="Maquillaje Profesional">Maquillaje Profesional</option>
-                        <option value="Tratamientos Capilares">Tratamientos Capilares</option>
-                        <option value="Corte de Cabello">Corte de Cabello</option>
-                        <option value="Peinado">Peinado</option>
-                        <option value="Coloración de Cabello">Coloración de Cabello</option> <option value="Depilación de Cejas con Cera">Depilación de Cejas con Cera</option>
-                        <option value="Depilación de Cejas con Gillete">Depilación de Cejas con Gillete</option>
-                        <option value="Depilación de Cejas con Hilo">Depilación de Cejas con Hilo</option>
-                    </select>
+                <div class="media-item">
+                    <img src="imagenes/cambios.gif" alt="Multiples">
                 </div>
-
-                <div class="boton-contenedor">
-                    <button type="submit" class="boton-agendar-cita">
-                        Agendar Cita
-                    </button>
-                </div>
-            </form>
-        </main>
-        
-    </div>
+            </div>
+        </section>
+    </main>
 </body>
 <footer id="pie_de_pagina" class="pie_de_pagina">
     <div class="footer-container">
@@ -102,9 +120,10 @@
                     <img src="https://img.icons8.com/ios-glyphs/30/000000/instagram-new.png" alt="Icono de Instagram">
                 </a>
                 <a href="https://www.youtube.com/@FIECCampusCentral" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
-                    <img src="https://img.icons8.com/ios-glyphs/30/000000/youtube-play.png" alt="Icono de YouTube">                    </a>
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/youtube-play.png" alt="Icono de YouTube">
+                </a>
                 <a href="https://www.linkedin.com/groups/1986559/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                    <img src="https://img.icons8.com/ios-glyphs/30/000000/linkedin.png" alt="Icono de LinkedIn">                    
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/linkedin.png" alt="Icono de LinkedIn">
                 </a>
             </div>
         </div>
