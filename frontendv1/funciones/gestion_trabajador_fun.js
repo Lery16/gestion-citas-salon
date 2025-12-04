@@ -11,8 +11,7 @@ const userToken = localStorage.getItem('user_token');
 const userRol = localStorage.getItem('user_rol');
     
     if (!userToken || userRol !== 'Administrador') {
-        window.location.href = LOGIN_PAGE; // Redirige si no es administrador
-        return;
+        window.location.href = 'inicia_sesion.html';
     }
     
 document.addEventListener('DOMContentLoaded', () => {
