@@ -313,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalContent = guardarBtn.innerHTML;
         
         guardarBtn.disabled = true;
-        // 🚩 CORRECCIÓN: Usar el ID correcto para actualizar el spinner
         guardarBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i><span>Guardando...</span>';
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
