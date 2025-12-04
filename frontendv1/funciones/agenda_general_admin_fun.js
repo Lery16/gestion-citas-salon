@@ -3,7 +3,7 @@ const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Vier
 const DIAS_SEMANA_LETRAS = ["D", "L", "M", "W", "J", "V", "S"];
 // ** IMPORTANTE: Ajusta el endpoint de tu API **
 //const API_BASE_URL = 'http://localhost:3000/api'; // Asumiendo que tu backend corre en localhost:3000
- const LOGIN_ENDPOINT = 'https://gestion-citas-salon.onrender.com';
+ const API_BASE_URL = 'https://gestion-citas-salon.onrender.com';
 let fechaSeleccionada = new Date(2025, 11, 10); // 10 de diciembre de 2025
 let anioVista, mesVista;
 let hoy = new Date();
