@@ -1,56 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Selecciona el div del menú (se mantiene para el manejo de la clase 'active')
-    const menu = document.querySelector('.menu-opciones'); 
 
-    // Selecciona TODOS los enlaces dentro del menú que tienen el atributo 'data-url'
+    const menu = document.querySelector('.menu-opciones');
+    const hamburger = document.querySelector('.menu_hamburguesa');
     const enlacesMenu = document.querySelectorAll('.menu-opciones a[data-url]');
 
-    // 1. Asigna el evento de navegación a cada enlace 🔗
+    if (!menu || !hamburger) {
+        console.error("❌ No se encontró el menú o el icono hamburguesa.");
+        return;
+    }
+
+    // Navegación de enlaces
     enlacesMenu.forEach(enlace => {
-        // Obtenemos la URL de destino desde el atributo data-url
-        const urlDestino = enlace.dataset.url;
+        enlace.addEventListener('click', (e) => {
+            e.preventDefault();
+            const destino = enlace.dataset.url;
+            if (destino) window.location.href = destino;
+        });
+    });
 
-        // Si la URL existe, asignamos el manejador de eventos
-        if (urlDestino) {
-            // Usamos 'click' para la navegación, pero el mismo patrón funcionaría con 'touchstart' si fuera necesario
-            enlace.addEventListener('click', (event) => {
-                // Previene que el navegador siga la ruta del atributo 'href' por defecto
-                event.preventDefault(); 
-                
-                console.log(`Navegando a: ${urlDestino}`);
+    // Función para abrir/cerrar menú
+    const toggleMenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        menu.classList.toggle('active');
+    };
 
-                // *** ESTA ES LA LÍNEA CLAVE QUE HACE LA NAVEGACIÓN REAL ***
-                window.location.href = urlDestino; 
-            });
+    // Click normal
+    hamburger.addEventListener('click', toggleMenu);
+
+    // Pantallas táctiles
+    hamburger.addEventListener('touchstart', toggleMenu, { passive: false });
+
+    // Cierra al hacer click afuera
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+            menu.classList.remove('active');
         }
     });
 
-    // 2. Manejo del menú hamburguesa 🍔
-    const hamburger = document.querySelector('.menu_hamburguesa');
-
-    if (hamburger && menu) {
-        hamburger.addEventListener('touchstart', function(event) {
-            event.stopPropagation(); 
-            menu.classList.toggle('active'); 
-        });
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Seleccionamos los botones
+    // Botones de login / registro
     const signinBtn = document.querySelector('.header-buttons .signin');
     const registerBtn = document.querySelector('.header-buttons .register');
 
-    // Si existen los botones
-    if (signinBtn) {
-        signinBtn.addEventListener('click', function() {
-            window.location.href = 'inicia_sesion.html'; // reemplaza con tu HTML de login
-        });
-    }
+    if (signinBtn) signinBtn.addEventListener('click', () => {
+        window.location.href = 'inicia_sesion.html';
+    });
 
-    if (registerBtn) {
-        registerBtn.addEventListener('click', function() {
-            window.location.href = 'registrarse.html'; // reemplaza con tu HTML de registro
-        });
-    }
+    if (registerBtn) registerBtn.addEventListener('click', () => {
+        window.location.href = 'registrarse.html';
+    });
 });
