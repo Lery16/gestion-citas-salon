@@ -379,12 +379,13 @@ BEGIN
 
     IF (v_end_time - v_start_time)::INTERVAL < v_duracion_interval THEN RETURN; END IF;
 
-    -- 6. Generar series y filtrar solapamientos (Uso de COALESCE)
+    -- 6. Generar series y filtrar solapamientos (CORRECCIÓN APLICADA AQUÍ)
     RETURN QUERY
     SELECT series_tiempo::TIME
     FROM generate_series(
         ('2000-01-01'::DATE + v_start_time)::TIMESTAMP,
-        ('2000-00-00'::DATE + v_end_time - v_duracion_interval)::TIMESTAMP,
+        -- CORRECCIÓN: Se cambió '2000-00-00' por '2000-01-01'
+        ('2000-01-01'::DATE + v_end_time - v_duracion_interval)::TIMESTAMP,
         p_intervalo_grid
     ) AS series_tiempo
     WHERE series_tiempo::TIME >= v_start_time

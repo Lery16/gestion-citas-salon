@@ -204,7 +204,6 @@ export const buscarCitasFiltradas = async (req, res) => {
     }
 };
 
-// gestion_citas admin
 export const actualizarCitasLote = async (req, res) => {
     const { cambios } = req.body; // Espera un array: [{ id: 1, estado: 'cancelada' }, ...]
 
@@ -252,16 +251,22 @@ export const getSlotsDisponibles = async (req, res) => {
     }
 
     try {
-        // Llamamos a la función almacenada de PostgreSQL
         const sql = `SELECT * FROM obtener_slots_disponibles($1, $2, $3, '30 minutes')`;
         const result = await db.query(sql, [id_empleado, fecha, id_servicio]);
 
-        // La función devuelve una tabla con columna 'hora_inicio'
         const slots = result.rows.map(row => row.hora_inicio);
         
         res.json(slots);
     } catch (err) {
         console.error("Error obteniendo slots:", err);
+        
+        // Manejo específico del error de formato de fecha/hora de la BD (código 22008)
+        if (err.code === '22008') {
+             return res.status(500).json({ 
+                 error: "Error interno: Fallo en la configuración de la base de datos (Error 22008 - Formato de fecha inválido en la función 'obtener_slots_disponibles')." 
+             });
+        }
+        
         res.status(500).json({ error: "Error al calcular horarios disponibles" });
     }
 };
