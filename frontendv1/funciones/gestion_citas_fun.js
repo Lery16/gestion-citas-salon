@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const guardarBtn = document.getElementById('Guardar'); 
 
     const API_BASE_URL = 'https://gestion-citas-salon.onrender.com/api';
+    /**const API_BASE_URL = 'http://localhost:3000/api'; */
     
     // Inputs de Filtros
     const buscarNombreInput = document.getElementById('buscarNombre');
@@ -39,6 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let citasOriginales = []; // Datos iniciales del backend
     let citasVisuales = [];   // Datos actuales con cambios locales
     let cambiosPendientes = new Map(); // Cambios a enviar: Map<id, nuevoEstado>
+
+    const cambiosArray = Array.from(cambiosPendientes, ([id, estado]) => ({ id, estado }));
+
+    console.log("--- DATOS PREPARADOS PARA GUARDAR EN BD ---");
+        console.log("Endpoint:", `${API_BASE_URL}/citas/actualizar-lote`);
+        console.log("Cuerpo de la Petición (Body):", { cambios: cambiosArray });
+        console.log("------------------------------------------");
 
     // --- 1. UTILIDADES (Movidas aquí ya que dependen de 'inputFecha' en su lógica) ---
     
@@ -70,21 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const index = citasVisuales.findIndex(c => c.id == id);
         if (index !== -1) {
             
-            // Convertir a minúsculas para manejar la BD (si el estado no está ya en minúsculas)
-            const estadoNormalizado = nuevoEstado.toLowerCase(); 
+            // 🛑 CAMBIO CLAVE: Usamos el nuevoEstado (ej: "Cancelada") directamente 
+            // para la BD, ya que el error indica que espera la capitalización.
+            const estadoParaBD = nuevoEstado; 
 
-            // Actualizar solo si el estado es diferente al actual, para evitar loops innecesarios
-            if (citasVisuales[index].estado.toLowerCase() !== estadoNormalizado) {
-                 // Actualizar el estado visualmente (con la primera letra en mayúscula para el render)
-                citasVisuales[index].estado = nuevoEstado.charAt(0).toUpperCase() + nuevoEstado.slice(1);
+            // Convertir a minúsculas para comparaciones internas y CSS
+            const estadoActualLower = citasVisuales[index].estado.toLowerCase(); 
+            const nuevoEstadoLower = nuevoEstado.toLowerCase();
+
+            // Actualizar solo si el estado es diferente al actual
+            if (estadoActualLower !== nuevoEstadoLower) {
+                // Actualizar el estado visualmente (ya capitalizado)
+                citasVisuales[index].estado = nuevoEstado;
                 
-                // Almacenar el cambio para el envío: Map<id, estado_normalizado>
-                cambiosPendientes.set(id, estadoNormalizado); 
+                // 🛑 CAMBIO CLAVE: Almacenar el cambio usando el estado capitalizado
+                cambiosPendientes.set(id, estadoParaBD); 
                 renderizarCitas(citasVisuales); // Re-renderizar
             }
         }
     }
-
 
     // --- 3. RENDERIZADO DE CITAS ---
     function renderizarCitas(lista) {
@@ -317,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         try {
-            // ⭐ ÚNICA CORRECCIÓN: Se actualiza la ruta del endpoint a '/citas/actualizar-lote'
             const response = await fetch(`${API_BASE_URL}/citas/actualizar-lote`, { 
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
