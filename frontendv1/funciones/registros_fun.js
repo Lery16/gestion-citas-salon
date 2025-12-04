@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Constantes ---
-    const API_BASE_URL = 'http://localhost:3000/api';
+  //  const API_BASE_URL = 'http://localhost:3000/api';
+    const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
     const ENDPOINT_CREAR_EMPLEADO = '/empleados';
     const CODIGO_ACCESO_REQUERIDO = 'belleza'; // Código requerido para el registro
     const LIMITE_CAMPOS = 12;
