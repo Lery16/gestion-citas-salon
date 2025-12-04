@@ -352,7 +352,7 @@ input:checked + .slider:before {
 }
 
 .boton-primario:hover {
-    background-color: #B93A7A;
+    background-color: #ff5260;
 }
 
 .boton-secundario {

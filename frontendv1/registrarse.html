@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     <script src="funciones/header_fun.js"></script>
     <script src="funciones/registros_fun.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 </head>
 <header>
     <div class="menu_hamburguesa">☰</div>
@@ -65,27 +66,27 @@
                 </div>
 
                 <div class="campo">
-                    <input type="tel" name="celular" placeholder=" " pattern="\+?\d{8,15}" maxlength="15" required>
+                    <input type="tel" name="celular" placeholder="" pattern="\+?\d{8,15}" maxlength="15" required>
                     <label for="celular" class="etiqueta">Celular</label>
+                    <small class="ayuda-input">Sin guiones ni espacios</small> 
                 </div>
 
                 <div class="campo-servicio-contenedor">
                     
                     <div class="campo"> 
                         <select id="servicio" name="servicio[]" required>
-                            <option value="" disabled selected data-default-option><label class="etiqueta">Servicio</label></option>
-                            <option value="Corte_y_Peinado">Corte y Peinado</option>
-                            <option value="Coloracion_y_Mechas">Coloración y Mechas</option>
-                            <option value="Manicure_Spa">Manicure Spa</option>
-                            <option value="Pedicure_Spa">Pedicure Spa</option>
-                            <option value="Maquillaje_Profesional">Maquillaje Profesional</option>
-                            <option value="Tratamientos_Capilares">Tratamientos Capilares</option>
-                            <option value="Corte_de_Cabello">Corte de Cabello</option>
+                            <option value="" disabled selected data-default-option>Servicio</option>
+                            <option value="Corte y Peinado">Corte y Peinado</option>
+                            <option value="Coloración y Mechas">Coloración y Mechas</option>
+                            <option value="Manicure Spa">Manicure Spa</option>
+                            <option value="Pedicure Spa">Pedicure Spa</option>
+                            <option value="Maquillaje Profesional">Maquillaje Profesional</option>
+                            <option value="Tratamientos Capilares">Tratamientos Capilares</option>
+                            <option value="Corte de Cabello">Corte de Cabello</option>
                             <option value="Peinado">Peinado</option>
-                            <option value="Coloracion_de_Cabello">Coloración de Cabello</option>
-                            <option value="Depilacion_Cejas_Cera">Depilación de Cejas con Cera</option>
-                            <option value="Depilacion_Cejas_Gillete">Depilación de Cejas con Gillete</option>
-                            <option value="Depilacion_Cejas_Hilo">Depilación de Cejas con Hilo</option>
+                            <option value="Coloración de Cabello">Coloración de Cabello</option> <option value="Depilación de Cejas con Cera">Depilación de Cejas con Cera</option>
+                            <option value="Depilación de Cejas con Gillete">Depilación de Cejas con Gillete</option>
+                            <option value="Depilación de Cejas con Hilo">Depilación de Cejas con Hilo</option>
                         </select>
                     </div>
 
@@ -95,6 +96,10 @@
                         </button>
                     </div>
 
+                    <div class="campo">
+                        <input type="password" id="codigo" name="codigo" required placeholder=" ">
+                        <label for="codigo" class="etiqueta">Código de Acceso</label>
+                    </div>
                 </div>
 
                 <div class="boton-contenedor">

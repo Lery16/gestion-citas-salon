@@ -29,13 +29,15 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id_empleado, rol: user.rol },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "0.25h" }
     );
 
+    // 🚨 CAMBIO AQUÍ: Se añade user.id_empleado a la respuesta
     res.json({
       mensaje: "Inicio de sesión exitoso",
       token,
       rol: user.rol,
+      id_usuario: user.id_empleado, // <--- CAMBIO CLAVE
     });
 
   } catch (err) {

@@ -2,7 +2,7 @@
     padding-bottom: 50px; /* Espacio para el contenido debajo del formulario */
     
     /* Configuración de la imagen de fondo */
-    background-image: url('frontendv1/imagenes/modelo-principal-blanca.jpg'); 
+    background-image: url('../imagenes/modelo-principal-blanca.jpg'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
@@ -84,9 +84,21 @@
     min-width: unset; /* Reiniciar el min-width */
 }
 
+.ayuda-input {
+    top: 80%;
+    transform: translateY(-50%);
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.5vh; /* Tamaño de etiqueta reducido */
+    font-weight: 500; 
+    color: black; 
+    display: block; 
+    z-index: 12;
+}
+
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+input[type="tel"]  {
     border: none;
     background: transparent; 
     width: 100%;
@@ -94,7 +106,7 @@ input[type="text"] {
     
     font-family: 'Courier Prime', monospace; 
     
-    font-size: 18px; /* Tamaño de fuente de entrada reducido */
+    font-size: 3vh; /* Tamaño de fuente de entrada reducido */
     outline: none; 
     opacity: 1; 
     /* El padding ajustado al nuevo tamaño de fuente/altura */
@@ -110,7 +122,6 @@ input[type="text"] {
     left: 10px; /* Posición ajustada */
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none; 
     transition: opacity 0.3s ease; 
     
     font-family: 'Courier Prime', monospace;
@@ -146,16 +157,16 @@ input:-webkit-autofill:active {
 .campo select {
     /* Mantiene el diseño base de los inputs */
     border: none;
-    background: transparent;
+    background: transparent; 
     width: 100%;
     color: black;
     font-family: 'Courier Prime', monospace;
-    font-size: 6.5vh;
+    font-size: 1.8rem;
     outline: none;
     opacity: 1;
     padding: 5px 0 0 5px;
     box-sizing: border-box;
-    z-index: 12;
+    z-index: 11;
     height: 100%;
     /* Estilos específicos para el select */
     appearance: none; /* Oculta el estilo de flecha por defecto del navegador */
@@ -292,45 +303,6 @@ input:-webkit-autofill:active {
     margin-left: 5px;
 }
 
-
-/* ---------------------------------------------------------------------- */
-/* MEDIA QUERY: Tabletas y Escritorios Pequeños (min-width: 641px) */
-/* ---------------------------------------------------------------------- */
-@media (min-width: 641px) {
-    .formulario-card {
-        margin-top: 100px;
-        width: 80%;
-        max-width: 600px;
-    }
-
-    .titulo {
-        font-size: 40px;
-    }
-    
-    .campo {
-        margin-bottom: 35px;
-        height: 90px;
-    }
-
-    .campo .etiqueta {
-        font-size: 35px; 
-    }
-    
-    input[type="email"],
-    input[type="password"],
-    input[type="text"] {
-        font-size: 22px; 
-    }
-
-    .boton-crear-cuenta {
-        font-size: 30px;
-    }
-    
-    .enlace-ingreso {
-        font-size: 25px;
-    }
-}
-
 /* ---------------------------------------------------------------------- */
 /* MEDIA QUERY: Escritorios Grandes (min-width: 1025px) */
 /* ---------------------------------------------------------------------- */
@@ -340,7 +312,7 @@ input:-webkit-autofill:active {
         height: auto; 
         
         /* Configuración de la imagen de fondo */
-        background-image: url('../imagenes/modelo-principal-blanca.jpg'); 
+        background-image: url('../imagenes/modelo-principal-blanca-2.jpg'); 
         background-size: cover; 
         background-position: center; 
         background-repeat: no-repeat;
@@ -430,7 +402,7 @@ input:-webkit-autofill:active {
         
         font-family: 'Courier Prime', monospace; 
         
-        font-size: 45px; 
+        font-size: 6vh !important; 
         outline: none; /* Elimina el borde de foco por defecto */
         
         opacity: 1; 
@@ -456,16 +428,15 @@ input:-webkit-autofill:active {
     }
 
     /* Estilo de la etiqueta: Posición inicial superpuesta */
-    .campo .etiqueta {
+    .campo .etiqueta, select {
         position: absolute;
         left: 20px;
         top: 50%;
         transform: translateY(-50%);
-        pointer-events: none; 
         transition: opacity 0.3s ease; 
         
         font-family: 'Courier Prime', monospace;
-        font-size: 6.5vh; 
+        font-size: 6.5vh !important; 
         font-weight: 500; 
         color: black; 
         display: block; 
@@ -498,7 +469,7 @@ input:-webkit-autofill:active {
         border: none;
         cursor: pointer;
         font-family: 'Courier Prime', sans-serif;
-        font-size: 45px;
+        font-size: 6.5vh !important;
         font-weight: 500; 
         color: black; 
         width: 100%;
@@ -508,7 +479,7 @@ input:-webkit-autofill:active {
 
     .enlace-ingreso {
         font-family: 'Courier Prime', sans-serif;
-        font-size: 50px;
+        font-size: 45px !important;
         color: #444; 
         font-weight: 500;
         margin-top: 65px;
@@ -520,5 +491,67 @@ input:-webkit-autofill:active {
         text-decoration: none; 
         font-weight: 600; 
         margin-left: 5px;
+    }
+}
+
+/* ---------------------------------------------------------------------- */
+/* MEDIA QUERY: Tabletas y Escritorios Pequeños (min-width: 641px) */
+/* ---------------------------------------------------------------------- */
+@media (min-width: 641px) {
+
+    .formulario-card {
+        margin-top: 100px;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .titulo {
+        font-size: 40px;
+    }
+    
+    .campo {
+        margin-bottom: 35px;
+        height: 90px;
+    }
+
+    .campo .etiqueta {
+        font-size: 35px; 
+    }
+    
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+        font-size: 3vh; 
+    }
+
+    .boton-crear-cuenta {
+        font-size: 30px;
+    }
+    
+    .enlace-ingreso {
+        font-family: 'Courier Prime', sans-serif;
+        font-size: 45px !important;
+        color: #444; 
+        font-weight: 500;
+        margin-top: 65px;
+        width: 60vw; 
+    }
+
+    .ingresa-link {
+        color: #ff9985; 
+        text-decoration: none; 
+        font-weight: 600; 
+        margin-left: 5px;
+    }
+
+    .ayuda-input {
+        top: 80%;
+        transform: translateY(-50%);
+        font-family: 'Courier Prime', monospace;
+        font-size: 2vh; /* Tamaño de etiqueta reducido */
+        font-weight: 500; 
+        color: black; 
+        display: block; 
+        z-index: 12;
     }
 }

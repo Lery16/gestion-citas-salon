@@ -47,6 +47,77 @@ export const getCitasHoy = async (req, res) => {
     }
 };
 
+export const getCitasListado = async (req, res) => {
+    // 1. Recibir 'fecha' y 'userId' de la query
+    const { fecha, userId } = req.query; // Ejemplo: '22/03/2024', '21'
+
+    if (!fecha) {
+        return res.status(400).json({ error: "Falta el parámetro 'fecha' en la consulta." });
+    }
+    // **Añadir validación para userId**
+    if (!userId) {
+        return res.status(400).json({ error: "Falta el parámetro 'userId' (ID del empleado)." });
+    }
+
+
+    // 🚨 CORRECCIÓN CLAVE: Reformatear la fecha de DD/MM/YYYY a YYYY-MM-DD para la DB
+    const partesFecha = fecha.split('/'); 
+    if (partesFecha.length !== 3) {
+        return res.status(400).json({ error: "Formato de fecha inválido. Se espera DD/MM/YYYY." });
+    }
+    const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`; // Resultado: '2024-03-22'
+    
+    // **Convertir userId a número**
+    const empleadoId = parseInt(userId, 10);
+    if (isNaN(empleadoId)) {
+        return res.status(400).json({ error: "El 'userId' debe ser un número entero válido." });
+    }
+
+    try {
+        const sql = `
+            SELECT 
+                cl.nombre || ' ' || cl.apellido AS nombre_cliente,
+                TO_CHAR(c.fecha, 'DD/MM/YYYY') AS dia_cita,
+                ts.nombre_servicio AS servicio_cita,
+                TO_CHAR(c.hora, 'HH24:MI') AS hora_cita,
+                ts.precio AS precio_cita,
+                c.estado AS estado_cita
+            FROM 
+                Cita c
+            JOIN 
+                Cliente cl ON c.id_cliente = cl.id_cliente
+            JOIN 
+                Tipo_Servicio ts ON c.id_servicio = ts.id_servicio
+            WHERE 
+                c.fecha = $1 AND c.id_empleado = $2 -- 🚨 FILTRO POR EMPLEADO AÑADIDO
+            ORDER BY 
+                c.hora ASC;
+        `;
+        
+        // 2. Usar fechaSQL como $1 y empleadoId como $2
+        const result = await db.query(sql, [fechaSQL, empleadoId]); // <-- ¡CAMBIO AQUÍ!
+
+        if (result.rows.length === 0) {
+            return res.json([]); 
+        }
+
+        const citasFormateadas = result.rows.map(cita => ({
+            nombre: cita.nombre_cliente,
+            dia: cita.dia_cita,
+            servicio: cita.servicio_cita,
+            hora: cita.hora_cita,
+            precio: cita.precio_cita,
+            estado: cita.estado_cita,
+        }));
+        
+        res.json(citasFormateadas); 
+
+    } catch (err) {
+        console.error("Error al obtener citas del listado:", err);
+        res.status(500).json({ error: "Error en el servidor al consultar citas" });
+    }
+};
+
 export const buscarCitasFiltradas = async (req, res) => {
     // Filtros recibidos del body
     const { nombre, estado, fecha } = req.body; // 'fecha' es el filtro específico

@@ -15,6 +15,10 @@ router.put('/:id', empleadosController.updateEmpleado);
 // DELETE /api/empleados/:id
 router.delete('/:id', empleadosController.deleteEmpleado);
 
-// 2. Coherencia de Módulos: Usar export default para que pueda ser importado
-//    fácilmente en el archivo principal (server.js, etc.).
+// Ruta: /api/empleados/:id/horario
+router.get('/horario', empleadosController.getHorarioSemanal);
+
+// Ruta: /api/empleados/:id/servicios
+router.get('/:id/servicios', empleadosController.getServiciosEmpleado);
+
 export default router;

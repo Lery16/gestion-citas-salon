@@ -1,213 +1,232 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- LÓGICA DE REGISTRO/ENVÍO DEL FORMULARIO ---
-    
-    // Asume que el formulario principal tiene el id="registroForm"
-    const formulario = document.querySelector('.formulario-card form') || document.getElementById('registroForm');
-    
-    // Cambiar 'la URL de la API de Node.js'
-    const REGISTRO_ENDPOINT = 'http://tu-backend.com/api/registrar'; 
-    
-    if (formulario) {
-        formulario.addEventListener('submit', async (evento) => {
-            evento.preventDefault(); 
-            
-            // Re-validar las opciones de servicio antes de enviar (Lógica del punto 4, movida aquí)
-            if (typeof actualizarOpcionesSelect === 'function' && !actualizarOpcionesSelect()) {
-                alert("Corrija los servicios duplicados antes de continuar.");
-                return; // Detiene el envío si hay duplicados
+    // --- Constantes ---
+    const API_BASE_URL = 'http://localhost:3000/api';
+    const ENDPOINT_CREAR_EMPLEADO = '/empleados';
+    const CODIGO_ACCESO_REQUERIDO = 'belleza'; // Código requerido para el registro
+    const LIMITE_CAMPOS = 12;
+
+    // --- Elementos del DOM ---
+    const formulario = document.getElementById('registroForm');
+    const campoServicioContenedor = document.querySelector('.campo-servicio-contenedor');
+    const agregarServicioBtn = document.getElementById('agregarServicioBtn');
+    const codigoAccesoInput = document.getElementById('codigo');
+
+    // El primer campo de servicio está presente en el HTML, lo usamos para la plantilla.
+    // Solo necesitamos buscar el <select> si el contenedor ya existe.
+    const primerCampoServicio = campoServicioContenedor ? campoServicioContenedor.querySelector('.campo:not(.servicio-adicional)') : null;
+    const primerSelectServicio = primerCampoServicio ? primerCampoServicio.querySelector('select') : null;
+
+    // Crear la plantilla para los servicios adicionales (clonando el primer campo si existe)
+    const plantillaServicio = primerCampoServicio ? primerCampoServicio.cloneNode(true) : null;
+
+    if (plantillaServicio) {
+        // Preparar la plantilla para los nuevos campos
+        plantillaServicio.removeAttribute('id');
+        plantillaServicio.classList.add('servicio-adicional'); // Clase para poder identificar y eliminar
+        
+        const selectTemplate = plantillaServicio.querySelector('select');
+        selectTemplate.removeAttribute('id'); // Quitar el ID del elemento original
+        selectTemplate.value = ""; // Asegurar que el valor inicial sea la opción deshabilitada
+        selectTemplate.required = false; // Solo el primer campo es 'required' por defecto
+
+        // Añadir el botón de eliminar al campo plantilla
+        const botonEliminarTemplate = document.createElement('button');
+        botonEliminarTemplate.type = 'button';
+        botonEliminarTemplate.classList.add('boton-eliminar-servicio');
+        botonEliminarTemplate.innerHTML = '&times;';
+        plantillaServicio.appendChild(botonEliminarTemplate);
+    }
+
+    // --- Event Listeners para el primer campo (si existe) ---
+    if (primerSelectServicio) {
+        primerSelectServicio.addEventListener('change', actualizarOpcionesSelect);
+    }
+
+    // --- Lógica para agregar nuevos campos de servicio ---
+    if (agregarServicioBtn && plantillaServicio) {
+        agregarServicioBtn.addEventListener('click', () => {
+            const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
+
+            if (selectoresServicio.length >= LIMITE_CAMPOS) {
+                alert(`Ya has agregado el máximo de ${LIMITE_CAMPOS} servicios.`);
+                return;
             }
 
-            // 1. Recolección de datos
-            const datosFormulario = new FormData(formulario);
+            const nuevoCampo = plantillaServicio.cloneNode(true);
+            const nuevoSelect = nuevoCampo.querySelector('select');
             
-            // 2. Recolectar Servicios (Servicios es un array)
-            const serviciosSeleccionados = [];
-            datosFormulario.forEach((valor, clave) => {
-                // Buscamos todos los campos de servicio, que deberían llamarse 'servicio[]'
-                if (clave === 'servicio[]' && valor) { 
-                    serviciosSeleccionados.push(valor);
-                }
-            });
+            // Asignar un ID único (aunque no es estrictamente necesario para este HTML, es buena práctica)
+            const nuevoId = 'servicio_' + Date.now();
+            nuevoSelect.setAttribute('id', nuevoId);
+            nuevoSelect.required = false; // Los campos adicionales no son obligatorios
 
-            // 3. Crear el objeto de registro
-            const datosRegistro = {
-                email: datosFormulario.get('email'),
-                contrasena: datosFormulario.get('contrasena'),
-                nombre: datosFormulario.get('nombre'),
-                apellido: datosFormulario.get('apellido'),
-                servicios: serviciosSeleccionados // Incluimos el array de servicios
-            };
+            // El contenedor para el botón está dentro de .campo-servicio-contenedor.
+            // Insertamos el nuevo campo ANTES del contenedor del botón de agregar.
+            campoServicioContenedor.insertBefore(nuevoCampo, campoServicioContenedor.querySelector('.boton-agregar-servicio-contenedor'));
 
-            try {
-                // 4. Enviar la solicitud POST
-                const respuesta = await fetch(REGISTRO_ENDPOINT, {
-                    method: 'POST', 
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datosRegistro), 
+            // Buscar y añadir el listener al botón de eliminar del nuevo campo
+            const botonEliminarNuevo = nuevoCampo.querySelector('.boton-eliminar-servicio');
+            if(botonEliminarNuevo) {
+                botonEliminarNuevo.addEventListener('click', e => {
+                    // El botón está dentro de .servicio-adicional, que tiene la clase .campo
+                    e.target.closest('.campo').remove(); 
+                    actualizarOpcionesSelect(); // Recalcular opciones disponibles después de eliminar
                 });
-
-                const resultado = await respuesta.json();
-
-                if (respuesta.ok) {
-                    alert('✅ Registro exitoso! Bienvenido.');
-                    console.log('Respuesta del servidor:', resultado);
-                    // Opcional: Redirigir al usuario
-                } else {
-                    const mensajeError = resultado.mensaje || 'Error desconocido al registrar.';
-                    alert(`❌ Error al crear cuenta: ${mensajeError}`);
-                    console.error('Error del servidor:', resultado);
-                }
-
-            } catch (error) {
-                alert('🚨 Error de conexión. Verifica la URL o si el servidor está activo.');
-                console.error('Error de fetch:', error);
             }
+
+            // Añadir listener para la validación y actualización de opciones
+            nuevoSelect.addEventListener('change', actualizarOpcionesSelect);
+
+            // Actualizar opciones para reflejar la selección del nuevo campo
+            actualizarOpcionesSelect();
         });
     }
 
-    // ----------------------------------------------------------------------------------
-    // --- LÓGICA DE GESTIÓN DE SERVICIOS (Añadir/Eliminar/Validar) ---
-    // ----------------------------------------------------------------------------------
-
-    const agregarServicioBtn = document.getElementById('agregarServicioBtn');
-    // Asegúrate de que este contenedor exista en tu HTML (e.g., <div class="campo-servicio-contenedor">...)
-    const campoServicioContenedor = document.querySelector('.campo-servicio-contenedor'); 
-    
-    // Validamos que los elementos existan antes de proceder con la lógica de servicios
-    if (!agregarServicioBtn || !campoServicioContenedor) {
-        console.warn("No se encontraron los elementos necesarios para la gestión de servicios (agregarServicioBtn o campoServicioContenedor).");
-        return; 
-    }
-
-    const primerCampoServicio = campoServicioContenedor.querySelector('.campo');
-    
-    // Si no hay un campo inicial, no podemos clonar y la lógica no aplica
-    if (!primerCampoServicio) {
-        console.error("No se encontró el campo de servicio inicial (.campo) dentro de .campo-servicio-contenedor.");
-        return;
-    }
-
-    // Define el límite máximo total de campos de servicio (1 original + 11 adicionales = 12)
-    const LIMITE_CAMPOS = 12;
-
-    // --- 1. Preparación de la Plantilla ---
-    const plantillaServicio = primerCampoServicio.cloneNode(true);
-    plantillaServicio.removeAttribute('id');
-    plantillaServicio.classList.add('servicio-adicional');
-
-    const selectTemplate = plantillaServicio.querySelector('select');
-    selectTemplate.removeAttribute('id');
-    selectTemplate.value = ""; 
-    // Aseguramos que el select no tenga la propiedad 'required' en la plantilla para la clonación
-    selectTemplate.removeAttribute('required'); 
-    
-    // Limpieza de clases extras que no son esenciales
-    selectTemplate.classList.remove('select-con-boton'); 
-
-    const labelTemplate = plantillaServicio.querySelector('label');
-    labelTemplate.classList.remove('label-con-boton');
-    labelTemplate.setAttribute('for', 'servicio_template');
-
-
-    // --- 3. Lógica Central: Actualización y Filtrado de Opciones (Declarada para ser usada en el submit del form) ---
+    // --- Función para evitar la selección de servicios duplicados ---
     function actualizarOpcionesSelect() {
         const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
         const valoresSeleccionados = new Set();
         let esValido = true;
 
-        // Paso A: Recolectar todos los valores actualmente seleccionados (y validar duplicados)
+        // 1. Recoger valores seleccionados y validar duplicados en la UI
         selectoresServicio.forEach(selectElement => {
             const valorActual = selectElement.value;
             if (valorActual) {
                 if (valoresSeleccionados.has(valorActual)) {
-                    // Marca el select con el mensaje de error de validación HTML5
+                    // Marcar como inválido en la UI
                     selectElement.setCustomValidity("Este servicio ya ha sido seleccionado. Por favor, elija uno diferente.");
                     esValido = false;
                 } else {
                     valoresSeleccionados.add(valorActual);
-                    selectElement.setCustomValidity(""); // Limpia el error
+                    selectElement.setCustomValidity(""); // Limpiar si antes era duplicado
                 }
             } else {
-                 selectElement.setCustomValidity("");
+                selectElement.setCustomValidity(""); // Limpiar si es la opción por defecto
             }
         });
 
-        // Paso B: Deshabilitar las opciones seleccionadas en otros selects
+        // 2. Deshabilitar opciones ya seleccionadas en los demás <select>
         selectoresServicio.forEach(currentSelect => {
             const currentSelectedValue = currentSelect.value;
             
             Array.from(currentSelect.options).forEach(option => {
                 const optionValue = option.value;
-                const yaSeleccionado = valoresSeleccionados.has(optionValue);
-                
-                // Deshabilita la opción si está seleccionada en *otro* select
-                if (optionValue && yaSeleccionado && optionValue !== currentSelectedValue) {
-                    option.disabled = true;
-                } else {
-                    // Asegura que las opciones no seleccionadas estén habilitadas
-                    option.disabled = false;
+                if (optionValue) { // Ignorar la opción deshabilitada/por defecto
+                    const yaSeleccionado = valoresSeleccionados.has(optionValue);
+                    
+                    if (yaSeleccionado && optionValue !== currentSelectedValue) {
+                        // Deshabilitar la opción si está seleccionada en otro lugar
+                        option.disabled = true;
+                    } else {
+                        // Habilitar la opción si no está seleccionada en otro lugar
+                        if (!option.hasAttribute('data-default-option')) {
+                            option.disabled = false;
+                        }
+                    }
                 }
             });
         });
-        
+
         return esValido;
     }
-    
-    // --- 2. Función para agregar un nuevo campo de servicio ---
-    agregarServicioBtn.addEventListener('click', () => {
-        const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
 
-        // VERIFICACIÓN DE LÍMITE
-        if (selectoresServicio.length >= LIMITE_CAMPOS) {
-            alert(`Ya has agregado el máximo de ${LIMITE_CAMPOS} servicios.`);
-            return; 
-        }
-        
-        const nuevoCampo = plantillaServicio.cloneNode(true);
-        const nuevoSelect = nuevoCampo.querySelector('select');
-        const nuevaLabel = nuevoCampo.querySelector('label');
-        
-        // Asignar ID único
-        const nuevoId = 'servicio_' + Date.now();
-        nuevoSelect.setAttribute('id', nuevoId);
-        nuevaLabel.setAttribute('for', nuevoId);
-        
-        // Crear y añadir el botón de eliminar
-        const botonEliminarNuevo = document.createElement('button');
-        botonEliminarNuevo.type = 'button';
-        botonEliminarNuevo.classList.add('boton-eliminar-servicio');
-        botonEliminarNuevo.innerHTML = '&times;';
-        
-        nuevoCampo.appendChild(botonEliminarNuevo);
+    // --- Función para enviar datos al Backend ---
+    async function enviarDatosAlBackend(e) {
+        e.preventDefault();
 
-        // Insertar antes del contenedor del botón de agregar
-        const botonAgregarContenedor = campoServicioContenedor.querySelector('.boton-agregar-servicio-contenedor');
-        if (botonAgregarContenedor) {
-             campoServicioContenedor.insertBefore(nuevoCampo, botonAgregarContenedor);
+        // 1. Validar el Código de Acceso
+        if (codigoAccesoInput.value.trim() !== CODIGO_ACCESO_REQUERIDO) {
+            alert("❌ Código de Acceso incorrecto. Por favor, ingrese el código válido para registrarse como trabajador.");
+            codigoAccesoInput.setCustomValidity("Código incorrecto");
+            return;
         } else {
-             campoServicioContenedor.appendChild(nuevoCampo); // fallback
+             codigoAccesoInput.setCustomValidity("");
         }
 
-        // Añadir listeners para eliminación y validación
-        botonEliminarNuevo.addEventListener('click', (e) => {
-            e.target.closest('.campo').remove();
-            actualizarOpcionesSelect(); 
+        // 2. Validar duplicidad de servicios
+        if (!actualizarOpcionesSelect()) {
+            alert("Corrija los servicios duplicados antes de continuar.");
+            return;
+        }
+
+        // 3. Recoger datos
+        const selectoresServicio = campoServicioContenedor.querySelectorAll('select[name="servicio[]"]');
+        const serviciosSeleccionados = [];
+        selectoresServicio.forEach(selectElement => {
+            // Solo incluimos servicios si tienen un valor seleccionado (no la opción por defecto)
+            if (selectElement.value) {
+                serviciosSeleccionados.push(selectElement.value);
+            }
         });
-        
-        nuevoSelect.addEventListener('change', actualizarOpcionesSelect);
-        
-        // Actualizar las opciones en todos los selectores después de añadir uno nuevo
-        actualizarOpcionesSelect(); 
-    });
 
-    // --- 4. Inicialización de Listeners ---
-    // El listener del formulario ya fue manejado al principio.
-    primerCampoServicio.querySelector('select').addEventListener('change', actualizarOpcionesSelect);
-    
-    // Ejecutar la actualización inicial en caso de que el primer campo ya tenga un valor
-    actualizarOpcionesSelect(); 
+        const nombreInput = document.getElementById('nombre');
+        const apellidoInput = document.getElementById('apellido');
+        const correoInput = document.getElementById('email');
+        const telefonoInput = document.querySelector('input[name="celular"]'); // Usar selector por name
+        const passwordInput = document.getElementById('contrasena');
+        const hashPassword = CryptoJS.SHA256(passwordInput.value).toString();
+        
+        // El rol es fijo: 'Trabajador'
+        const datosEmpleado = {
+            nombre: nombreInput ? nombreInput.value.trim() : '',
+            apellido: apellidoInput ? apellidoInput.value.trim() : '',
+            correo: correoInput ? correoInput.value.trim() : '',
+            telefono: telefonoInput ? telefonoInput.value.trim() : '',
+            contraseña: hashPassword,
+            rol: 'Trabajador', // Rol fijo
+            estado: 'Disponible',
+            servicios: serviciosSeleccionados.length > 0 ? serviciosSeleccionados : null // Enviar null o [] si no hay servicios
+        };
 
+        console.log('Datos a enviar:', datosEmpleado);
+
+        // 4. Validación básica de campos obligatorios (aparte de la del propio form)
+        if (!datosEmpleado.nombre || !datosEmpleado.correo || !datosEmpleado.apellido || !datosEmpleado.contraseña || !datosEmpleado.telefono) {
+            alert("Por favor completa los campos obligatorios (Nombre, Apellido, Correo, Contraseña, Celular).");
+            return;
+        }
+        
+        // 5. Envío al Backend
+        try {
+            const URL_COMPLETA = `${API_BASE_URL}${ENDPOINT_CREAR_EMPLEADO}`;
+            console.log('Enviando datos de empleado a:', URL_COMPLETA);
+            
+            const respuesta = await fetch(URL_COMPLETA, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datosEmpleado)
+            });
+
+            const resultado = await respuesta.json();
+
+            if (respuesta.ok) {
+                alert(`✅ Empleado ${datosEmpleado.nombre} creado exitosamente!`);
+                console.log('Respuesta del servidor:', resultado);
+                formulario.reset(); // Limpiar formulario
+                // Re-inicializar el estado de las opciones después del reset
+                // Como reset() no dispara 'change' listeners, llamamos a la función manualmente.
+                actualizarOpcionesSelect(); 
+                
+                // Si tienes campos de servicio adicionales generados dinámicamente, elimínalos
+                const extras = campoServicioContenedor.querySelectorAll('.servicio-adicional');
+                extras.forEach(el => el.remove());
+            } else {
+                alert(`❌ Error al crear empleado (${respuesta.status}): ${resultado.error || resultado.mensaje || 'Respuesta inesperada'}`);
+                console.error('Error del servidor:', resultado);
+            }
+        } catch (error) {
+            alert('🚨 Error de conexión: No se pudo contactar al servidor. Asegúrate que el backend esté corriendo.');
+            console.error('Error de fetch:', error);
+        }
+    }
+
+    // --- Listener de Submit ---
+    if (formulario) {
+        formulario.addEventListener('submit', enviarDatosAlBackend);
+    }
+
+    // Inicializar el estado de las opciones al cargar la página
+    actualizarOpcionesSelect();
 });

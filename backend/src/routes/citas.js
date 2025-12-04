@@ -1,7 +1,5 @@
 import express from 'express';
-import { getCitasHoy, buscarCitasFiltradas, actualizarCitasLote } from '../controllers/citasController.js'; 
-// Importa el middleware de autenticación si lo usas, por ejemplo:
-// import { verificarToken } from '../middleware/auth.js'; 
+import { getCitasHoy, getCitasListado, buscarCitasFiltradas, actualizarCitasLote } from '../controllers/citasController.js'; 
 
 const router = express.Router();
 
@@ -18,8 +16,9 @@ router.post('/buscar',
     buscarCitasFiltradas
 );
 
-
 // 3. Necesitas una ruta para actualizar el estado por lote (PUT/PATCH)
 router.put('/actualizar-lote', actualizarCitasLote);
+
+router.get('/listado', getCitasListado); 
 
 export default router;

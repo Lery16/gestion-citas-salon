@@ -1,25 +1,27 @@
 -- SISTEMA DE GESTIÓN DE CITAS PARA SALÓN DE BELLEZA
---
+-- CÓDIGO NORMALIZADO (3FN) - Horario Universal (9:00 - 19:00, L-S)
+-- CORREGIDO: Inclusión de NEW.id_empleado en el mensaje de error de solapamiento.
+
 -- Establece la extensión pgcrypto para el hash de contraseñas (MANDATORY).
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- 1. DROPS (Limpieza de Objetos Existentes)
 ----------------------------------------------------------------------
 DROP FUNCTION IF EXISTS obtener_slots_disponibles(INT, DATE, INT, INTERVAL);
-DROP FUNCTION IF EXISTS fn_reporte_ingreso_diario(DATE);
 
 DROP TRIGGER IF EXISTS tr_cita_before_insert ON Cita;
-DROP TRIGGER IF EXISTS tr_cita_after_insert ON Cita;
-DROP TRIGGER IF EXISTS tr_cita_after_update ON Cita;
+DROP TRIGGER IF EXISTS tr_empleado_servicio_admin_check ON Empleado_Servicio;
+DROP TRIGGER IF EXISTS tr_dia_salon_estado_check ON Dia_Salon_Estado;
+
 
 DROP FUNCTION IF EXISTS tr_cita_before_insert_func();
-DROP FUNCTION IF EXISTS tr_cita_after_insert_func();
-DROP FUNCTION IF EXISTS tr_cita_after_update_func();
+DROP FUNCTION IF EXISTS tr_empleado_servicio_admin_check_func();
+DROP FUNCTION IF EXISTS tr_dia_salon_estado_check_func();
 
 
-DROP TABLE IF EXISTS Horario_Semanal_Empleado CASCADE;
+DROP TABLE IF EXISTS Horario_Semanal_Empleado CASCADE; 
+DROP TABLE IF EXISTS Disponibilidad_Diaria_Empleado CASCADE; 
 DROP TABLE IF EXISTS Empleado_Servicio CASCADE;
-DROP TABLE IF EXISTS Disponibilidad_Diaria_Empleado CASCADE;
 DROP TABLE IF EXISTS Cita CASCADE;
 DROP TABLE IF EXISTS Dia_Salon_Estado CASCADE;
 DROP TABLE IF EXISTS Tipo_Servicio CASCADE;
@@ -95,30 +97,16 @@ CREATE TABLE Dia_Salon_Estado (
     hora_apertura TIME NOT NULL DEFAULT '09:00:00',
     hora_cierre TIME NOT NULL DEFAULT '19:00:00',
     estado_dia estado_dia_enum NOT NULL DEFAULT 'Abierto',
-    CONSTRAINT chk_horario_salon CHECK (hora_cierre > hora_apertura)
+    CONSTRAINT chk_horario_salon CHECK (hora_cierre > hora_apertura) 
 );
 
 
+-- TABLA UNIVERSAL SOLICITADA PARA EL HORARIO SEMANAL DE TRABAJO (SIN FK A EMPLEADO)
 CREATE TABLE Horario_Semanal_Empleado (
-    id_horario SERIAL PRIMARY KEY,
-    id_empleado INTEGER NOT NULL,
-    dia dia_semana_enum NOT NULL,
+    dia dia_semana_enum PRIMARY KEY, -- Clave primaria basada en el día de la semana
     hora_apertura TIME NOT NULL,
     hora_cierre TIME NOT NULL,
-    CONSTRAINT fk_Horario_Semanal FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT chk_horario_logico CHECK (hora_cierre > hora_apertura),
-    UNIQUE (id_empleado, dia)
-);
-CREATE INDEX idx_horario_empleado ON Horario_Semanal_Empleado(id_empleado);
-
-
-CREATE TABLE Disponibilidad_Diaria_Empleado (
-    id_empleado INTEGER NOT NULL,
-    fecha DATE NOT NULL,
-    -- Horas disponibles iniciales basadas en Horario_Semanal - se resta tiempo con citas
-    horas_disponibles_restantes DECIMAL(6,2) NOT NULL DEFAULT 0.00,
-    PRIMARY KEY (id_empleado, fecha),
-    CONSTRAINT fk_empleado_dd FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT chk_horario_trabajo CHECK (hora_cierre > hora_apertura)
 );
 
 
@@ -144,32 +132,87 @@ CREATE INDEX idx_cita_cliente_fecha ON Cita(id_cliente, fecha);
 -- 4. FUNCIONES Y TRIGGERS (Lógica de Negocio)
 ----------------------------------------------------------------------
 
+-- Control de Días Cerrados del Salón
+
+-- Función de Trigger BEFORE INSERT/UPDATE en Dia_Salon_Estado (Solo acepta entradas con estado_dia 'Cerrado')
+CREATE OR REPLACE FUNCTION tr_dia_salon_estado_check_func()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.estado_dia = 'Abierto' THEN
+        RAISE EXCEPTION 'Solo se permite registrar un día si su estado es "Cerrado". El estado "Abierto" es el predeterminado para cualquier fecha no registrada.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_dia_salon_estado_check
+BEFORE INSERT OR UPDATE ON Dia_Salon_Estado
+FOR EACH ROW
+EXECUTE FUNCTION tr_dia_salon_estado_check_func();
+
+-- Validación de Horario y Disponibilidad de Citas
+
 -- Función de Trigger BEFORE INSERT/UPDATE en Cita (Validación de horarios y solapamiento)
 CREATE OR REPLACE FUNCTION tr_cita_before_insert_func()
 RETURNS TRIGGER AS $$
 DECLARE
+    -- Horario universal de empleado (OBTENIDO DE LA NUEVA TABLA Horario_Semanal_Empleado)
+    HORA_APERTURA_EMP TIME; 
+    HORA_CIERRE_EMP TIME;
+    
     salon_abierto estado_dia_enum; 
     duracion DECIMAL(6,2);
-    horas_restantes DECIMAL(6,2);
     hora_apertura_salon TIME;
     hora_cierre_salon TIME;
     hora_fin_cita TIME;
     solapamiento_existe BOOLEAN;
+    empleado_estado estado_empleado_enum;
+    dia_cita dia_semana_enum;
+    dia_actual_texto TEXT;
 BEGIN
     -- 1. Obtener la duración del servicio
     SELECT duracion_horas INTO duracion 
     FROM Tipo_Servicio 
     WHERE id_servicio = NEW.id_servicio;
 
-    -- 2. Calcular la hora de fin de la nueva cita y asignarla a NEW.hora_fin
-    hora_fin_cita := NEW.hora + (duracion * INTERVAL '1 hour');
-    NEW.hora_fin := hora_fin_cita;
+    -- 2. Obtener el estado del empleado
+    SELECT estado INTO empleado_estado
+    FROM Empleado
+    WHERE id_empleado = NEW.id_empleado;
 
-    -- 3. Obtener horario del salón, usando los valores por defecto si no existe la fecha
+    IF empleado_estado = 'Vacacionando' THEN
+        RAISE EXCEPTION 'El empleado con ID % está de vacaciones y no puede tomar citas.', NEW.id_empleado;
+    END IF;
+
+    -- 3. Calcular el día de la semana y obtener el horario universal del empleado
+    SELECT TRIM(TO_CHAR(NEW.fecha, 'Day')) INTO dia_actual_texto;
+    CASE dia_actual_texto
+        WHEN 'Monday' THEN dia_cita := 'Lunes';
+        WHEN 'Tuesday' THEN dia_cita := 'Martes';
+        WHEN 'Wednesday' THEN dia_cita := 'Miércoles';
+        WHEN 'Thursday' THEN dia_cita := 'Jueves';
+        WHEN 'Friday' THEN dia_cita := 'Viernes';
+        WHEN 'Saturday' THEN dia_cita := 'Sábado';
+        WHEN 'Sunday' THEN dia_cita := 'Domingo';
+        ELSE dia_cita := dia_actual_texto::dia_semana_enum;
+    END CASE;
+
+    -- Obtener el horario de la tabla Horario_Semanal_Empleado
+    SELECT hora_apertura, hora_cierre INTO HORA_APERTURA_EMP, HORA_CIERRE_EMP
+    FROM Horario_Semanal_Empleado
+    WHERE dia = dia_cita;
+
+    -- Validar si el día está registrado como laboral
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El día % no está registrado en el horario semanal universal y se considera no laborable.', dia_cita;
+    END IF;
+
+    -- 4. Obtener horario del salón (o el horario por defecto si no hay registro)
     SELECT 
-        COALESCE(estado_dia, 'Cerrado'::estado_dia_enum),
-        COALESCE(hora_apertura, '09:00:00'::TIME),
-        COALESCE(hora_cierre, '19:00:00'::TIME)
+        COALESCE(estado_dia, 'Abierto'::estado_dia_enum),
+        COALESCE(hora_apertura, HORA_APERTURA_EMP), -- Usar HORA_APERTURA_EMP como default si no hay registro
+        COALESCE(hora_cierre, HORA_CIERRE_EMP)      -- Usar HORA_CIERRE_EMP como default si no hay registro
     INTO 
         salon_abierto, 
         hora_apertura_salon, 
@@ -179,53 +222,47 @@ BEGIN
     WHERE 
         fecha = NEW.fecha;
 
+    -- 5. Validación: No se permiten citas en días con salón cerrado
     IF salon_abierto = 'Cerrado' THEN
-        RAISE EXCEPTION 'El salón está CERRADO para citas en esta fecha.';
+        RAISE EXCEPTION 'El salón está CERRADO para citas en la fecha %.', NEW.fecha;
     END IF;
 
+    -- 6. Calcular la hora de fin de la nueva cita y asignarla a NEW.hora_fin
+    hora_fin_cita := NEW.hora + (duracion * INTERVAL '1 hour');
+    NEW.hora_fin := hora_fin_cita;
+
+    -- 7. Validación de horario EFECTIVO (Intersección Empleado/Salón)
+    hora_apertura_salon := GREATEST(HORA_APERTURA_EMP, hora_apertura_salon);
+    hora_cierre_salon := LEAST(HORA_CIERRE_EMP, hora_cierre_salon);
     
-    -- 4. Validación de horario del salón (Inicio y Fin de la cita)
-    IF NEW.hora < hora_apertura_salon OR NEW.hora >= hora_cierre_salon THEN
-        RAISE EXCEPTION 'La cita debe iniciar entre % y antes de % (Horario del Salón).', hora_apertura_salon, hora_cierre_salon;
+    IF NEW.hora < hora_apertura_salon THEN
+        RAISE EXCEPTION 'La cita debe iniciar a las % o después (Horario efectivo de inicio: % a %).', hora_apertura_salon, hora_apertura_salon, hora_cierre_salon;
     END IF;
 
     IF NEW.hora_fin > hora_cierre_salon THEN
-        RAISE EXCEPTION 'La duración del servicio (%) excede el horario de cierre (%). La cita finalizaría a las %.', duracion, hora_cierre_salon, NEW.hora_fin;
+        RAISE EXCEPTION 'La duración del servicio (%) excede el horario efectivo de cierre (%). La cita finalizaría a las %.', duracion, hora_cierre_salon, NEW.hora_fin;
     END IF;
 
-    -- 5. Validación de SOLAPAMIENTO con otras citas confirmadas
+    -- 8. Validación de SOLAPAMIENTO con otras citas (FIX: Uso de COALESCE)
     SELECT EXISTS (
         SELECT 1 
-        FROM Cita 
+        FROM Cita c
         WHERE 
-            id_empleado = NEW.id_empleado
-            AND fecha = NEW.fecha
-            AND id_cita IS DISTINCT FROM NEW.id_cita -- Excluir la cita actual en caso de UPDATE
-            AND estado IN ('Pendiente', 'Confirmada')
-            -- Intervalo de tiempo: [hora, hora_fin)
-            AND NEW.hora < hora_fin 
-            AND NEW.hora_fin > hora 
+            c.id_empleado = NEW.id_empleado
+            AND c.fecha = NEW.fecha
+            AND c.id_cita IS DISTINCT FROM NEW.id_cita 
+            AND c.estado IN ('Pendiente', 'Confirmada')
+            -- FIX: Calculamos c.hora_fin sobre la marcha si es NULL, usando la duración del servicio.
+            AND NEW.hora < COALESCE(c.hora_fin, c.hora + (
+                SELECT ts.duracion_horas * INTERVAL '1 hour'
+                FROM Tipo_Servicio ts WHERE ts.id_servicio = c.id_servicio
+            ))
+            AND NEW.hora_fin > c.hora 
     ) INTO solapamiento_existe;
+    
     IF solapamiento_existe THEN
-        RAISE EXCEPTION 'El empleado ya tiene una cita confirmada que se solapa con el periodo de % a % en esta fecha.', NEW.hora, NEW.hora_fin;
-    END IF;
-
-    -- 6. Validación de disponibilidad del empleado (Horas restantes)
-    -- Se chequea la disponibilidad global del día
-    SELECT COALESCE(horas_disponibles_restantes, 0.00) INTO horas_restantes
-    FROM Disponibilidad_Diaria_Empleado
-    WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
-
-    -- Si se inserta una nueva cita confirmada o si se actualiza a confirmada/pendiente
-    IF NEW.estado IN ('Confirmada', 'Pendiente') THEN
-        -- Si es un UPDATE y se mantiene el estado, no necesitamos chequear disponibilidad, ya está reservada.
-        IF TG_OP = 'UPDATE' AND OLD.estado IN ('Confirmada', 'Pendiente') THEN
-            RETURN NEW;
-        END IF;
-
-        IF horas_restantes < duracion THEN
-            RAISE EXCEPTION 'El empleado % no tiene suficiente tiempo. Restantes: %. Necesarias: %', NEW.id_empleado, horas_restantes, duracion;
-        END IF;
+        -- CORRECCIÓN APLICADA: Se incluye NEW.id_empleado en la lista de variables de la excepción.
+        RAISE EXCEPTION 'El empleado con ID % ya tiene una cita confirmada que se solapa con el periodo de % a % en esta fecha.', NEW.id_empleado, NEW.hora, NEW.hora_fin;
     END IF;
 
     RETURN NEW;
@@ -233,9 +270,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tr_cita_before_insert
-BEFORE INSERT ON Cita
+BEFORE INSERT OR UPDATE ON Cita
 FOR EACH ROW EXECUTE FUNCTION tr_cita_before_insert_func();
 
+-- Control de Servicios por Administradores
 
 -- Función de Trigger BEFORE INSERT/UPDATE en Empleado_Servicio (Bloquea Administradores)
 CREATE OR REPLACE FUNCTION tr_empleado_servicio_admin_check_func()
@@ -243,12 +281,10 @@ RETURNS TRIGGER AS $$
 DECLARE
     empleado_rol rol_empleado_enum;
 BEGIN
-    -- 1. Obtener el rol del empleado que se intenta asignar
     SELECT rol INTO empleado_rol
     FROM Empleado
     WHERE id_empleado = NEW.id_empleado;
 
-    -- 2. Verificar si es un Administrador
     IF empleado_rol = 'Administrador' THEN
         RAISE EXCEPTION 'Un empleado con rol "Administrador" no puede ser asignado a servicios (id: %).', NEW.id_empleado
         USING HINT = 'Asigne solo el rol "Trabajador" a los empleados que ofrecen servicios.';
@@ -258,128 +294,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger para ejecutar la función antes de insertar o actualizar en Empleado_Servicio
 CREATE TRIGGER tr_empleado_servicio_admin_check
 BEFORE INSERT OR UPDATE ON Empleado_Servicio
 FOR EACH ROW
 EXECUTE FUNCTION tr_empleado_servicio_admin_check_func();
 
--- Función de Trigger AFTER INSERT en Cita (Actualiza Disponibilidad Diaria)
-CREATE OR REPLACE FUNCTION tr_cita_after_insert_func() RETURNS TRIGGER AS $$
-DECLARE
-    duracion DECIMAL(6,2);
-    emp_entrada TIME;
-    emp_salida TIME;
-    horas_totales_emp DECIMAL(6,2);
-    dia_actual_texto TEXT;
-    dia_enum dia_semana_enum;
-BEGIN
-    -- Asegurar que exista una entrada para el día en Dia_Salon_Estado (usando los defaults si es necesario)
-    INSERT INTO Dia_Salon_Estado (fecha) VALUES (NEW.fecha) ON CONFLICT (fecha) DO NOTHING;
 
-    IF NEW.estado IN ('Confirmada', 'Pendiente') THEN
-        SELECT duracion_horas INTO duracion 
-        FROM Tipo_Servicio 
-        WHERE id_servicio = NEW.id_servicio;
-
-        -- 1. Determinar el día de la semana en español para buscar en Horario_Semanal_Empleado
-        SELECT TRIM(TO_CHAR(NEW.fecha, 'Day')) INTO dia_actual_texto;
-        CASE dia_actual_texto
-            WHEN 'Monday' THEN dia_enum := 'Lunes';
-            WHEN 'Tuesday' THEN dia_enum := 'Martes';
-            WHEN 'Wednesday' THEN dia_enum := 'Miércoles';
-            WHEN 'Thursday' THEN dia_enum := 'Jueves';
-            WHEN 'Friday' THEN dia_enum := 'Viernes';
-            WHEN 'Saturday' THEN dia_enum := 'Sábado';
-            WHEN 'Sunday' THEN dia_enum := 'Domingo';
-            ELSE dia_enum := dia_actual_texto::dia_semana_enum;
-        END CASE;
-        
-        -- 2. Obtener el horario semanal del empleado
-        SELECT hora_apertura, hora_cierre INTO emp_entrada, emp_salida
-        FROM Horario_Semanal_Empleado
-        WHERE id_empleado = NEW.id_empleado AND dia = dia_enum;
-        
-        -- 3. Calcular horas totales y actualizar/insertar Disponibilidad_Diaria_Empleado
-        IF NOT FOUND THEN
-            -- Si no tiene horario semanal definido para ese día, se asume un default (0 para ser seguro)
-            horas_totales_emp := 0.00;
-        ELSE
-            -- Calcular las horas totales que el empleado trabaja ese día
-            horas_totales_emp := EXTRACT(EPOCH FROM (emp_salida - emp_entrada)) / 3600.0;
-        END IF;
-
-        -- Intentar insertar la disponibilidad inicial si no existe (horas_totales_emp - duracion)
-        -- Si ya existe, se actualiza restando la duración de la cita.
-        INSERT INTO Disponibilidad_Diaria_Empleado (id_empleado, fecha, horas_disponibles_restantes)
-        VALUES (NEW.id_empleado, NEW.fecha, horas_totales_emp - duracion)
-        ON CONFLICT (id_empleado, fecha)
-        DO UPDATE SET horas_disponibles_restantes = Disponibilidad_Diaria_Empleado.horas_disponibles_restantes - duracion;
-
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tr_cita_after_insert
-AFTER INSERT ON Cita
-FOR EACH ROW EXECUTE FUNCTION tr_cita_after_insert_func();
-
-
--- Función de Trigger AFTER UPDATE en Cita (Recalcula Disponibilidad en caso de cancelación o cambio de estado)
-CREATE OR REPLACE FUNCTION tr_cita_after_update_func() RETURNS TRIGGER AS $$
-DECLARE
-    duracion DECIMAL(6,2);
-BEGIN
-    -- Si el estado y el empleado no cambian, y el estado antiguo y nuevo son liberadores de tiempo (Completada/Cancelada), no hacemos nada.
-    IF NEW.estado = OLD.estado AND NEW.id_empleado = OLD.id_empleado THEN
-        RETURN NEW;
-    END IF;
-
-    -- Obtener la duración del servicio
-    SELECT duracion_horas INTO duracion 
-    FROM Tipo_Servicio 
-    WHERE id_servicio = OLD.id_servicio; -- Usamos OLD.id_servicio para el servicio original
-
-    -- 1. Si la cita antigua estaba reservando tiempo (Pendiente/Confirmada) y el nuevo estado lo libera (Cancelada/Completada), liberamos.
-    IF OLD.estado IN ('Pendiente', 'Confirmada') AND NEW.estado IN ('Cancelada', 'Completada') AND OLD.id_empleado = NEW.id_empleado THEN
-        UPDATE Disponibilidad_Diaria_Empleado
-        SET horas_disponibles_restantes = horas_disponibles_restantes + duracion
-        WHERE id_empleado = OLD.id_empleado AND fecha = OLD.fecha;
-
-    -- 2. Si la cita antigua estaba liberada (Cancelada/Completada) y el nuevo estado reserva tiempo (Pendiente/Confirmada), reservamos.
-    ELSIF OLD.estado IN ('Cancelada', 'Completada') AND NEW.estado IN ('Pendiente', 'Confirmada') AND OLD.id_empleado = NEW.id_empleado THEN
-        -- El trigger BEFORE ya validó que haya espacio antes de que esto suceda.
-        UPDATE Disponibilidad_Diaria_Empleado
-        SET horas_disponibles_restantes = horas_disponibles_restantes - duracion
-        WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
-
-    -- 3. Caso de cambio de empleado (requiere liberar del viejo y reservar en el nuevo)
-    ELSIF OLD.id_empleado IS DISTINCT FROM NEW.id_empleado THEN
-        -- Liberar tiempo del empleado ANTIGUO
-        IF OLD.estado IN ('Pendiente', 'Confirmada') THEN
-            UPDATE Disponibilidad_Diaria_Empleado
-            SET horas_disponibles_restantes = horas_disponibles_restantes + duracion
-            WHERE id_empleado = OLD.id_empleado AND fecha = OLD.fecha;
-        END IF;
-
-        -- Reservar tiempo en el empleado NUEVO
-        IF NEW.estado IN ('Pendiente', 'Confirmada') THEN
-            -- El trigger BEFORE ya validó que haya espacio en el nuevo empleado.
-            UPDATE Disponibilidad_Diaria_Empleado
-            SET horas_disponibles_restantes = horas_disponibles_restantes - duracion
-            WHERE id_empleado = NEW.id_empleado AND fecha = NEW.fecha;
-        END IF;
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tr_cita_after_update
-AFTER UPDATE ON Cita
-FOR EACH ROW EXECUTE FUNCTION tr_cita_after_update_func();
-
+-- Función de Consulta de Slots Disponibles
 
 -- Función para obtener los slots de tiempo disponibles para un empleado y servicio en una fecha específica
 CREATE OR REPLACE FUNCTION obtener_slots_disponibles(
@@ -390,63 +311,39 @@ CREATE OR REPLACE FUNCTION obtener_slots_disponibles(
 )
 RETURNS TABLE (hora_inicio TIME) AS $$
 DECLARE
+    -- Horario universal de empleado (OBTENIDO DE LA NUEVA TABLA Horario_Semanal_Empleado)
+    HORA_APERTURA_EMP TIME; 
+    HORA_CIERRE_EMP TIME;
+    
     v_duracion_horas DECIMAL(6,2);
     v_duracion_interval INTERVAL;
-    v_hora_apertura_emp TIME; -- Horario de inicio del empleado
-    v_hora_cierre_emp TIME; -- Horario de cierre del empleado
-    v_salon_apertura TIME; -- Horario de apertura del salón
-    v_salon_cierre TIME; -- Horario de cierre del salón
-    v_start_time TIME; -- Hora de inicio efectiva (el más tarde entre empleado/salón)
-    v_end_time TIME; -- Hora de cierre efectiva (el más temprano entre empleado/salón)
+    v_salon_apertura TIME;
+    v_salon_cierre TIME;
+    v_start_time TIME; 
+    v_end_time TIME; 
     v_dia_semana TEXT;
     v_dia_enum dia_semana_enum;
     v_salon_estado estado_dia_enum;
-    v_disp_restante DECIMAL(6,2);
+    v_empleado_estado estado_empleado_enum;
 BEGIN
     -- 1. Obtener duración del servicio
     SELECT duracion_horas INTO v_duracion_horas
     FROM Tipo_Servicio 
     WHERE id_servicio = p_id_servicio;
 
-    IF NOT FOUND THEN
-        -- Si el servicio no existe, retornar vacío
-        RETURN;
-    END IF;
+    IF NOT FOUND THEN RETURN; END IF;
 
     v_duracion_interval := (v_duracion_horas || ' hours')::INTERVAL;
 
-    -- 2. Validar disponibilidad diaria restante (global)
-    SELECT COALESCE(horas_disponibles_restantes, 0.00) 
-    INTO v_disp_restante
-    FROM Disponibilidad_Diaria_Empleado
-    WHERE id_empleado = p_id_empleado 
-      AND fecha = p_fecha;
+    -- 2. Validar estado del empleado
+    SELECT estado INTO v_empleado_estado
+    FROM Empleado
+    WHERE id_empleado = p_id_empleado;
 
-    -- Si el tiempo restante no es suficiente para la duración del servicio
-    IF v_disp_restante < v_duracion_horas THEN
-        RETURN;
-    END IF;
+    IF v_empleado_estado = 'Vacacionando' THEN RETURN; END IF;
 
-    -- 3. Validar y obtener horario del salón
-    SELECT 
-        COALESCE(estado_dia, 'Cerrado'::estado_dia_enum),
-        COALESCE(hora_apertura, '09:00:00'::TIME),
-        COALESCE(hora_cierre, '19:00:00'::TIME)
-    INTO v_salon_estado, v_salon_apertura, v_salon_cierre
-    FROM Dia_Salon_Estado
-    WHERE fecha = p_fecha
-    LIMIT 1;  -- asegura que solo traiga un registro
-
-    -- Si no hay registro para la fecha, COALESCE aplica los valores por defecto
-    IF v_salon_estado = 'Cerrado' THEN
-        RETURN;
-    END IF;
-
-
-    -- 4. Determinar horario semanal del empleado
-    SELECT TRIM(TO_CHAR(p_fecha, 'Day')) 
-    INTO v_dia_semana;
-
+    -- 3. Determinar el día de la semana y obtener el horario universal
+    SELECT TRIM(TO_CHAR(p_fecha, 'Day')) INTO v_dia_semana;
     CASE v_dia_semana
         WHEN 'Monday' THEN v_dia_enum := 'Lunes';
         WHEN 'Tuesday' THEN v_dia_enum := 'Martes';
@@ -458,32 +355,38 @@ BEGIN
         ELSE v_dia_enum := v_dia_semana::dia_semana_enum;
     END CASE;
 
-    SELECT hora_apertura, hora_cierre 
-    INTO v_hora_apertura_emp, v_hora_cierre_emp
+    -- Obtener el horario de la tabla Horario_Semanal_Empleado
+    SELECT hora_apertura, hora_cierre INTO HORA_APERTURA_EMP, HORA_CIERRE_EMP
     FROM Horario_Semanal_Empleado
-    WHERE id_empleado = p_id_empleado 
-      AND dia = v_dia_enum;
+    WHERE dia = v_dia_enum;
 
-    IF NOT FOUND THEN
-        -- Si el empleado no trabaja ese día, retornar vacío
-        RETURN;
-    END IF;
+    -- Si el día no está en la tabla, se considera no laborable
+    IF NOT FOUND THEN RETURN; END IF;
+    
+    -- 4. Validar y obtener horario del salón
+    SELECT 
+        COALESCE(estado_dia, 'Abierto'::estado_dia_enum),
+        COALESCE(hora_apertura, HORA_APERTURA_EMP),
+        COALESCE(hora_cierre, HORA_CIERRE_EMP)
+    INTO v_salon_estado, v_salon_apertura, v_salon_cierre
+    FROM Dia_Salon_Estado
+    WHERE fecha = p_fecha
+    LIMIT 1;
+
+    IF v_salon_estado = 'Cerrado' THEN RETURN; END IF;
 
     -- 5. Determinar horario efectivo final (intersección entre empleado y salón)
-    v_start_time := GREATEST(v_hora_apertura_emp, v_salon_apertura);
-    v_end_time := LEAST(v_hora_cierre_emp, v_salon_cierre);
+    v_start_time := GREATEST(HORA_APERTURA_EMP, v_salon_apertura);
+    v_end_time := LEAST(HORA_CIERRE_EMP, v_salon_cierre);
 
-    -- Si el tiempo efectivo de trabajo es menor a la duración del servicio, salir
-    IF (v_end_time - v_start_time)::INTERVAL < v_duracion_interval THEN
-        RETURN;
-    END IF;
+    IF (v_end_time - v_start_time)::INTERVAL < v_duracion_interval THEN RETURN; END IF;
 
-    -- 6. Generar series y filtrar solapamientos
+    -- 6. Generar series y filtrar solapamientos (Uso de COALESCE)
     RETURN QUERY
     SELECT series_tiempo::TIME
     FROM generate_series(
         ('2000-01-01'::DATE + v_start_time)::TIMESTAMP,
-        ('2000-00-00'::DATE + v_end_time - v_duracion_interval)::TIMESTAMP, -- La fecha es irrelevante, usamos 2000-01-01 para la aritmética de tiempo
+        ('2000-00-00'::DATE + v_end_time - v_duracion_interval)::TIMESTAMP,
         p_intervalo_grid
     ) AS series_tiempo
     WHERE series_tiempo::TIME >= v_start_time
@@ -494,43 +397,13 @@ BEGIN
             WHERE c.id_empleado = p_id_empleado
               AND c.fecha = p_fecha
               AND c.estado IN ('Pendiente', 'Confirmada')
-              AND (
-                  -- Check for overlap: [series_tiempo, series_tiempo + v_duracion_interval) vs [c.hora, c.hora_fin)
-                  series_tiempo::TIME < c.hora_fin 
-                  AND (series_tiempo::TIME + v_duracion_interval) > c.hora
-              )
+              -- Asegura que se use la hora de fin correcta para el chequeo
+              AND series_tiempo::TIME < COALESCE(c.hora_fin, c.hora + (
+                    SELECT ts.duracion_horas * INTERVAL '1 hour'
+                    FROM Tipo_Servicio ts WHERE ts.id_servicio = c.id_servicio
+                )) 
+              AND (series_tiempo::TIME + v_duracion_interval) > c.hora
       );
-END;
-$$ LANGUAGE plpgsql;
-
-
--- Función de reporte
-CREATE OR REPLACE FUNCTION fn_reporte_ingreso_diario(
-    p_fecha DATE
-)
-RETURNS TABLE (
-    empleado_id INT,
-    nombre_completo VARCHAR,
-    total_ingreso DECIMAL
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        e.id_empleado,
-        e.nombre || ' ' || e.apellido AS nombre_completo,
-        COALESCE(SUM(ts.precio), 0.00) AS total_ingreso
-    FROM Empleado e
-    LEFT JOIN Cita c 
-        ON e.id_empleado = c.id_empleado 
-       AND c.fecha = p_fecha 
-       AND c.estado = 'Completada' -- Solo citas completadas generan ingreso
-    LEFT JOIN Tipo_Servicio ts 
-        ON c.id_servicio = ts.id_servicio
-    GROUP BY 
-        e.id_empleado, 
-        e.nombre, 
-        e.apellido
-    ORDER BY total_ingreso DESC;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -545,43 +418,43 @@ INSERT INTO Cliente (nombre, apellido, telefono, correo) VALUES
 ('Pedro', 'Morales', '5556660099', 'pedro.morales@mail.com'),
 ('Quetzali', 'Luna', '5551239876', 'quetzali.luna@mail.com'),
 ('Raúl', 'Castillo', '5558882211', 'raul.castillo@mail.com'),
-('Susana', 'Ortiz', '5557005533', 'susana.ortiz@mail.com'),
-('Tomás', 'Nuñez', '5551998822', 'tomas.nunez@mail.com'),
-('Ursula', 'Cervantes', '5554441177', 'ursula.cervantes@mail.com'),
-('Víctor', 'Reyes', '5559090909', 'victor.reyes@mail.com'),
-('Ximena', 'Arias', '5551112233', 'ximena.arias@mail.com'),
-('Yago', 'Blanco', '5552223344', 'yago.blanco@mail.com'),
-('Zoe', 'Díaz', '5553334455', 'zoe.diaz@mail.com'),
-('Adrián', 'Flores', '5554445566', 'adrian.flores@mail.com'),
-('Beatriz', 'Gómez', '5555556677', 'beatriz.gomez@mail.com'),
-('César', 'Ibáñez', '5556667788', 'cesar.ibanez@mail.com'),
-('Diana', 'Jiménez', '5557778899', 'diana.jimenez@mail.com'),
-('Elías', 'López', '5558889900', 'elias.lopez@mail.com'),
-('Fátima', 'Molina', '5559990011', 'fatima.molina@mail.com'),
-('Guillermo', 'Pérez', '5550001122', 'guillermo.perez@mail.com');
+('Susana', 'Ortiz', '5557005533', 'susana.ortiz@solon.com'),
+('Tomás', 'Nuñez', '5551998822', 'tomas.nunez@solon.com'),
+('Ursula', 'Cervantes', '5554441177', 'ursula.cervantes@solon.com'),
+('Víctor', 'Reyes', '5559090909', 'victor.reyes@solon.com'),
+('Ximena', 'Arias', '5551112233', 'ximena.arias@solon.com'),
+('Yago', 'Blanco', '5552223344', 'yago.blanco@solon.com'),
+('Zoe', 'Díaz', '5553334455', 'zoe.diaz@solon.com'),
+('Adrián', 'Flores', '5554445566', 'adrian.flores@solon.com'),
+('Beatriz', 'Gómez', '5555556677', 'beatriz.gomez@solon.com'),
+('César', 'Ibáñez', '5556667788', 'cesar.ibanez@solon.com'),
+('Diana', 'Jiménez', '5557778899', 'diana.jimenez@solon.com'),
+('Elías', 'López', '5558889900', 'elias.lopez@solon.com'),
+('Fátima', 'Molina', '5559990011', 'fatima.molina@solon.com'),
+('Guillermo', 'Pérez', '5550001122', 'guillermo.perez@solon.com');
 
 -- Empleados (20 Empleados)
 INSERT INTO Empleado (nombre, apellido, rol, telefono, correo, estado, contraseña) VALUES
-    ('Laura', 'Vargas', 'Administrador', '5551000001', 'laura.vargas@salon.com', 'Disponible', ENCODE(DIGEST('contraseña1', 'sha256'), 'hex')),
-    ('Alejandra', 'Méndez', 'Trabajador', '5551000011', 'alejandra.mendez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña11', 'sha256'), 'hex')),
-    ('Roberto', 'Soto', 'Trabajador', '5551000012', 'roberto.soto@salon.com', 'Disponible', ENCODE(DIGEST('contraseña12', 'sha256'), 'hex')),
-    ('Karina', 'Gil', 'Trabajador', '5551000013', 'karina.gil@salon.com', 'Disponible', ENCODE(DIGEST('contraseña13', 'sha256'), 'hex')),
-    ('Esteban', 'Pinto', 'Trabajador', '5551000014', 'esteban.pinto@salon.com', 'Disponible', ENCODE(DIGEST('contraseña14', 'sha256'), 'hex')),
-    ('Gabriela', 'Lagos', 'Trabajador', '5551000015', 'gabriela.lagos@salon.com', 'Disponible', ENCODE(DIGEST('contraseña15', 'sha256'), 'hex')),
-    ('Humberto', 'Vidal', 'Trabajador', '5551000016', 'humberto.vidal@salon.com', 'Vacacionando', ENCODE(DIGEST('contraseña16', 'sha256'), 'hex')),
-    ('Isabel', 'Zurita', 'Trabajador', '5551000017', 'isabel.zurita@salon.com', 'Disponible', ENCODE(DIGEST('contraseña17', 'sha256'), 'hex')),
-    ('Juan', 'Gálvez', 'Trabajador', '5551000018', 'juan.galvez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña18', 'sha256'), 'hex')),
-    ('Kelly', 'Herrera', 'Trabajador', '5551000019', 'kelly.herrera@salon.com', 'Disponible', ENCODE(DIGEST('contraseña19', 'sha256'), 'hex')),
-    ('Leo', 'Zúñiga', 'Administrador', '5551000020', 'leo.zuniga@salon.com', 'Disponible', ENCODE(DIGEST('contraseña20', 'sha256'), 'hex')),
-    ('Mónica', 'Ríos', 'Trabajador', '5551000021', 'monica.rios@salon.com', 'Disponible', ENCODE(DIGEST('contraseña21', 'sha256'), 'hex')),
-    ('Noé', 'Sánchez', 'Trabajador', '5551000022', 'noe.sanchez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña22', 'sha256'), 'hex')),
-    ('Ofelia', 'Tapia', 'Trabajador', '5551000023', 'ofelia.tapia@salon.com', 'Disponible', ENCODE(DIGEST('contraseña23', 'sha256'), 'hex')),
-    ('Pablo', 'Ulloa', 'Trabajador', '5551000024', 'pablo.ulloa@salon.com', 'Vacacionando', ENCODE(DIGEST('contraseña24', 'sha256'), 'hex')),
-    ('Rebeca', 'Vega', 'Trabajador', '5551000025', 'rebeca.vega@salon.com', 'Disponible', ENCODE(DIGEST('contraseña25', 'sha256'), 'hex')),
-    ('Samuel', 'Weiss', 'Trabajador', '5551000026', 'samuel.weiss@salon.com', 'Disponible', ENCODE(DIGEST('contraseña26', 'sha256'), 'hex')),
-    ('Tania', 'Xavier', 'Trabajador', '5551000027', 'tania.xavier@salon.com', 'Disponible', ENCODE(DIGEST('contraseña27', 'sha256'), 'hex')),
-    ('Ulises', 'Yáñez', 'Trabajador', '5551000028', 'ulises.yanez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña28', 'sha256'), 'hex')),
-    ('Vanesa', 'Zavala', 'Trabajador', '5551000029', 'vanesa.zavala@salon.com', 'Disponible', ENCODE(DIGEST('contraseña29', 'sha256'), 'hex'));
+    ('Laura', 'Vargas', 'Administrador', '5551000001', 'laura.vargas@salon.com', 'Disponible', ENCODE(DIGEST('contraseña1', 'sha256'), 'hex')), -- 21
+    ('Alejandra', 'Méndez', 'Trabajador', '5551000011', 'alejandra.mendez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña11', 'sha256'), 'hex')), -- 22
+    ('Roberto', 'Soto', 'Trabajador', '5551000012', 'roberto.soto@salon.com', 'Disponible', ENCODE(DIGEST('contraseña12', 'sha256'), 'hex')), -- 23
+    ('Karina', 'Gil', 'Trabajador', '5551000013', 'karina.gil@salon.com', 'Disponible', ENCODE(DIGEST('contraseña13', 'sha256'), 'hex')), -- 24
+    ('Esteban', 'Pinto', 'Trabajador', '5551000014', 'esteban.pinto@salon.com', 'Disponible', ENCODE(DIGEST('contraseña14', 'sha256'), 'hex')), -- 25
+    ('Gabriela', 'Lagos', 'Trabajador', '5551000015', 'gabriela.lagos@salon.com', 'Disponible', ENCODE(DIGEST('contraseña15', 'sha256'), 'hex')), -- 26
+    ('Humberto', 'Vidal', 'Trabajador', '5551000016', 'humberto.vidal@salon.com', 'Vacacionando', ENCODE(DIGEST('contraseña16', 'sha256'), 'hex')), -- 27
+    ('Isabel', 'Zurita', 'Trabajador', '5551000017', 'isabel.zurita@salon.com', 'Disponible', ENCODE(DIGEST('contraseña17', 'sha256'), 'hex')), -- 28
+    ('Juan', 'Gálvez', 'Trabajador', '5551000018', 'juan.galvez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña18', 'sha256'), 'hex')), -- 29
+    ('Kelly', 'Herrera', 'Trabajador', '5551000019', 'kelly.herrera@salon.com', 'Disponible', ENCODE(DIGEST('contraseña19', 'sha256'), 'hex')), -- 30
+    ('Leo', 'Zúñiga', 'Administrador', '5551000020', 'leo.zuniga@salon.com', 'Disponible', ENCODE(DIGEST('contraseña20', 'sha256'), 'hex')), -- 31
+    ('Mónica', 'Ríos', 'Trabajador', '5551000021', 'monica.rios@salon.com', 'Disponible', ENCODE(DIGEST('contraseña21', 'sha256'), 'hex')), -- 32
+    ('Noé', 'Sánchez', 'Trabajador', '5551000022', 'noe.sanchez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña22', 'sha256'), 'hex')), -- 33
+    ('Ofelia', 'Tapia', 'Trabajador', '5551000023', 'ofelia.tapia@salon.com', 'Disponible', ENCODE(DIGEST('contraseña23', 'sha256'), 'hex')), -- 34
+    ('Pablo', 'Ulloa', 'Trabajador', '5551000024', 'pablo.ulloa@salon.com', 'Vacacionando', ENCODE(DIGEST('contraseña24', 'sha256'), 'hex')), -- 35
+    ('Rebeca', 'Vega', 'Trabajador', '5551000025', 'rebeca.vega@salon.com', 'Disponible', ENCODE(DIGEST('contraseña25', 'sha256'), 'hex')), -- 36
+    ('Samuel', 'Weiss', 'Trabajador', '5551000026', 'samuel.weiss@salon.com', 'Disponible', ENCODE(DIGEST('contraseña26', 'sha256'), 'hex')), -- 37
+    ('Tania', 'Xavier', 'Trabajador', '5551000027', 'tania.xavier@salon.com', 'Disponible', ENCODE(DIGEST('contraseña27', 'sha256'), 'hex')), -- 38
+    ('Ulises', 'Yáñez', 'Trabajador', '5551000028', 'ulises.yanez@salon.com', 'Disponible', ENCODE(DIGEST('contraseña28', 'sha256'), 'hex')), -- 39
+    ('Vanesa', 'Zavala', 'Trabajador', '5551000029', 'vanesa.zavala@salon.com', 'Disponible', ENCODE(DIGEST('contraseña29', 'sha256'), 'hex')); -- 40
 
 -- Tipos de Servicio (12 Servicios)
 INSERT INTO Tipo_Servicio (nombre_servicio, duracion_horas, precio, estado) VALUES
@@ -598,87 +471,19 @@ INSERT INTO Tipo_Servicio (nombre_servicio, duracion_horas, precio, estado) VALU
     ('Depilación de Cejas con Gillete', 0.50, 15.00, 'Activo'), -- 41
     ('Depilación de Cejas con Hilo', 0.75, 25.00, 'Activo'); -- 42
 
--- Horario Semanal de Empleados (Ajustado a 9:00 - 19:00)
--- Nota: Los id_empleado comienzan en 21
-INSERT INTO Horario_Semanal_Empleado (id_empleado, dia, hora_apertura, hora_cierre) VALUES
-    -- Laura (21)
-    (21, 'Lunes', '09:00', '17:00'), (21, 'Martes', '09:00', '17:00'),
-    (21, 'Miércoles', '09:00', '17:00'), (21, 'Jueves', '09:00', '17:00'),
-    (21, 'Viernes', '09:00', '17:00'),
+-- Horario_Semanal_Empleado (Inserción de datos solicitados)
+INSERT INTO Horario_Semanal_Empleado (dia, hora_apertura, hora_cierre) VALUES
+    ('Lunes', '09:00:00', '19:00:00'),
+    ('Martes', '09:00:00', '19:00:00'),
+    ('Miércoles', '09:00:00', '19:00:00'),
+    ('Jueves', '09:00:00', '19:00:00'),
+    ('Viernes', '09:00:00', '19:00:00'),
+    ('Sábado', '09:00:00', '19:00:00'),
+    ('Domingo', '00:00:00', '00:00:01'); -- Domingo se registra como cerrado/no laborable
 
-    -- Alejandra (22)
-    (22, 'Martes', '10:00', '19:00'), (22, 'Miércoles', '10:00', '19:00'),
-    (22, 'Jueves', '10:00', '19:00'), (22, 'Viernes', '10:00', '19:00'),
-    (22, 'Sábado', '09:00', '14:00'),
 
-    -- Roberto (23)
-    (23, 'Lunes', '09:00', '14:00'), (23, 'Martes', '09:00', '14:00'),
-    (23, 'Miércoles', '09:00', '14:00'), (23, 'Jueves', '09:00', '14:00'),
-    (23, 'Viernes', '09:00', '14:00'), (23, 'Sábado', '09:00', '13:00'),
-
-    -- Karina (24)
-    (24, 'Lunes', '11:00', '19:00'), (24, 'Miércoles', '11:00', '19:00'),
-    (24, 'Viernes', '11:00', '19:00'),
-
-    -- Esteban (25)
-    (25, 'Lunes', '12:00', '19:00'), (25, 'Martes', '12:00', '19:00'),
-    (25, 'Miércoles', '12:00', '19:00'), (25, 'Jueves', '12:00', '19:00'),
-    (25, 'Viernes', '12:00', '19:00'),
-
-    -- Gabriela (26)
-    (26, 'Martes', '10:00', '18:00'), (26, 'Sábado', '10:00', '16:00'),
-
-    -- Humberto (27) - Vacacionando
-    (27, 'Jueves', '12:00', '19:00'), (27, 'Viernes', '12:00', '19:00'),
-    (27, 'Sábado', '12:00', '18:00'),
-
-    -- Isabel (28)
-    (28, 'Miércoles', '09:00', '17:00'), (28, 'Jueves', '09:00', '17:00'),
-    (28, 'Viernes', '09:00', '17:00'),
-
-    -- Juan (29)
-    (29, 'Martes', '10:00', '19:00'), (29, 'Sábado', '10:00', '14:00'),
-
-    -- Kelly (30)
-    (30, 'Lunes', '09:00', '17:00'), (30, 'Martes', '09:00', '17:00'),
-    (30, 'Miércoles', '09:00', '17:00'),
-
-    -- Mónica (31)
-    (31, 'Miércoles', '10:00', '18:00'), (31, 'Jueves', '10:00', '18:00'),
-    (31, 'Viernes', '10:00', '18:00'),
-
-    -- Noé (32)
-    (32, 'Jueves', '14:00', '19:00'), (32, 'Viernes', '14:00', '19:00'),
-    (32, 'Sábado', '14:00', '19:00'), (32, 'Domingo', '14:00', '19:00'),
-
-    -- Ofelia (33)
-    (33, 'Lunes', '10:00', '16:00'), (33, 'Martes', '10:00', '16:00'),
-    (33, 'Miércoles', '10:00', '16:00'), (33, 'Jueves', '10:00', '16:00'),
-    (33, 'Viernes', '10:00', '16:00'),
-
-    -- Rebeca (35)
-    (35, 'Martes', '09:00', '13:00'), (35, 'Jueves', '09:00', '13:00'),
-    (35, 'Sábado', '09:00', '13:00'),
-
-    -- Samuel (36)
-    (36, 'Lunes', '09:00', '18:00'), (36, 'Miércoles', '09:00', '18:00'),
-    (36, 'Viernes', '09:00', '18:00'),
-
-    -- Tania (37)
-    (37, 'Lunes', '10:00', '19:00'), (37, 'Martes', '10:00', '19:00'),
-    (37, 'Miércoles', '10:00', '19:00'), (37, 'Jueves', '10:00', '19:00'),
-    (37, 'Viernes', '10:00', '19:00'),
-
-    -- Ulises (38)
-    (38, 'Sábado', '11:00', '18:00'), (38, 'Domingo', '11:00', '18:00'),
-
-    -- Vanesa (39)
-    (39, 'Martes', '11:00', '17:00'), (39, 'Jueves', '11:00', '17:00'),
-    (39, 'Sábado', '11:00', '17:00');
-
--- Empleado_Servicio (id_empleado y id_servicio)
+-- Empleado_Servicio (Asignación de servicios a trabajadores)
 INSERT INTO Empleado_Servicio (id_empleado, id_servicio) VALUES
-    -- Laura (Admin)
     (22, 33), (22, 34), (22, 35),
     (23, 31), (23, 32), (23, 35), (23, 37), (23, 38), (23, 39),
     (24, 33), (24, 34), (24, 40), (24, 41), (24, 42),
@@ -688,7 +493,6 @@ INSERT INTO Empleado_Servicio (id_empleado, id_servicio) VALUES
     (28, 37), (28, 38), (28, 36),
     (29, 31), (29, 33), (29, 36), (29, 37), (29, 40),
     (30, 33), (30, 34), (30, 40), (30, 41), (30, 42),
-    -- (31, ...) Eliminado porque es Admin
     (32, 33), (32, 34),
     (33, 31), (33, 37), (33, 38), (33, 39),
     (34, 33), (34, 34),
@@ -699,42 +503,34 @@ INSERT INTO Empleado_Servicio (id_empleado, id_servicio) VALUES
     (39, 33), (39, 34),
     (40, 33), (40, 34), (40, 35);
 
--- Dia_Salon_Estado (Establece el horario del salón para algunas fechas)
+-- Dia_Salon_Estado (Solo inserciones con estado 'Cerrado' para fechas específicas)
 INSERT INTO Dia_Salon_Estado (fecha, hora_apertura, hora_cierre, estado_dia) VALUES
-    ('2025-12-10', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-11', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-12', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-13', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-14', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-15', '09:00:00', '15:00:00', 'Cerrado'), -- Cerrado a las 3 PM, aunque el estado sea "Cerrado"
-    ('2025-12-16', '09:00:00', '19:00:00', 'Abierto'),
-    ('2025-12-17', '09:00:00', '19:00:00', 'Abierto');
+    ('2025-12-15', '09:00:00', '15:00:00', 'Cerrado'), -- Lunes cerrado temprano
+    ('2025-12-25', '00:00:00', '00:00:01', 'Cerrado'); -- Navidad (día totalmente cerrado)
 
--- Citas (Ajustadas)
--- Nota: id_cliente comienza en 11, id_empleado en 21, id_servicio en 31
+-- Citas (Datos de ejemplo)
 INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado) VALUES
-    -- Martes 10
-    (11, 31, 21, '2025-12-10', '09:00:00', 'Confirmada'), -- Laura (1.5h) -> Fin 10:30
-    (14, 34, 24, '2025-12-10', '11:00:00', 'Confirmada'), -- Karina (1.5h) -> Fin 12:30
-    (13, 35, 30, '2025-12-10', '11:00:00', 'Confirmada'), -- Kelly (1.5h) -> Fin 12:30
-    (15, 33, 21, '2025-12-10', '10:30:00', 'Confirmada'), -- Laura (1.0h) -> Fin 11:30 (Sigue a la anterior)
-    (16, 40, 29, '2025-12-10', '17:30:00', 'Confirmada'), -- Juan (0.5h) -> Fin 18:00
+    -- Martes 10 (Horario universal 09:00-19:00)
+    (11, 31, 22, '2025-12-10', '09:00:00', 'Confirmada'), -- Alejandra (1.5h) -> Fin 10:30
+    (14, 34, 24, '2025-12-10', '11:00:00', 'Confirmada'), 
+    (13, 35, 30, '2025-12-10', '11:00:00', 'Confirmada'), 
+    (15, 33, 22, '2025-12-10', '10:30:00', 'Confirmada'), -- Alejandra (1.0h) -> Fin 11:30 (No solapa, solo se toca)
+    (16, 40, 29, '2025-12-10', '17:30:00', 'Confirmada'), 
 
     -- Miércoles 11
-    (12, 33, 22, '2025-12-11', '10:00:00', 'Confirmada'), -- Alejandra (1.0h) -> Fin 11:00
-    (17, 31, 21, '2025-12-11', '10:30:00', 'Confirmada'), -- Laura (1.5h) -> Fin 12:00
-    (19, 32, 23, '2025-12-11', '09:00:00', 'Confirmada'), -- Roberto (2.5h) -> Fin 11:30
-    (20, 33, 22, '2025-12-11', '16:00:00', 'Confirmada'), -- Alejandra (1.0h) -> Fin 17:00
-    (11, 35, 36, '2025-12-11', '15:00:00', 'Confirmada'), -- Samuel (1.5h) -> Fin 16:30
+    (12, 33, 22, '2025-12-11', '10:00:00', 'Confirmada'), 
+    (17, 31, 23, '2025-12-11', '10:30:00', 'Confirmada'),  
+    (20, 33, 22, '2025-12-11', '16:00:00', 'Confirmada'), 
+    (11, 35, 26, '2025-12-11', '15:00:00', 'Confirmada'), 
 
     -- Jueves 12
-    (18, 36, 30, '2025-12-12', '09:00:00', 'Confirmada'), -- Kelly (1.0h) -> Fin 10:00
-    (11, 39, 23, '2025-12-12', '12:00:00', 'Confirmada'), -- Roberto (2.0h) -> Fin 14:00 (Fin de su turno)
+    (18, 36, 30, '2025-12-12', '09:00:00', 'Confirmada'), 
+    (11, 39, 23, '2025-12-12', '16:00:00', 'Confirmada'), 
 
     -- Viernes 13
-    (12, 34, 24, '2025-12-13', '14:00:00', 'Confirmada'), -- Karina (1.5h) -> Fin 15:30
-    (14, 40, 24, '2025-12-13', '16:00:00', 'Confirmada'), -- Karina (0.5h) -> Fin 16:30
-    (16, 38, 21, '2025-12-13', '14:00:00', 'Completada'), -- Laura (1.0h) -> Fin 15:00 (Ingreso)
+    (12, 34, 24, '2025-12-13', '14:00:00', 'Confirmada'), 
+    (14, 40, 24, '2025-12-13', '16:00:00', 'Confirmada'), 
+    (16, 38, 26, '2025-12-13', '14:00:00', 'Completada'), 
 
-    -- Lunes 16
-    (20, 37, 37, '2025-12-16', '16:00:00', 'Confirmada'); -- Tania (0.75h) -> Fin 16:45
+    -- Lunes 16 
+    (20, 37, 37, '2025-12-16', '16:00:00', 'Confirmada');

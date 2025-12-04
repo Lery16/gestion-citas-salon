@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const LOGIN_PAGE = 'inicia_sesion.html'; // Página de login
+
+    // Verificar token y rol
+    const userToken = localStorage.getItem('user_token');
+    const userRol = localStorage.getItem('user_rol');
+
+    if (!userToken || userRol !== 'Administrador') {
+        window.location.href = LOGIN_PAGE; // Redirige si no es admin
+        return;
+    }
+    
     // Selecciona el div del menú (se mantiene para el manejo de la clase 'active')
     const menu = document.querySelector('.menu-opciones'); 
 

@@ -1,4 +1,3 @@
-const LOGIN_PAGE = 'inicia_sesion.html';
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const DIAS_SEMANA_LETRAS = ["D", "L", "M", "W", "J", "V", "S"];
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Verificación de Autenticación
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
-    if (!userToken || userRol !== 'admin') {
+    if (!userToken || userRol !== 'Administrador') {
         window.location.href = LOGIN_PAGE;
         return;
     }

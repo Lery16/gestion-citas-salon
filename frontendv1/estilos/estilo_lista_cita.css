@@ -228,8 +228,11 @@ h1 {
 .table-header-wrapper thead th:nth-child(1), 
 .table-scroll-container tbody td:nth-child(1) { width: 8%; } /* # */
 
-.table-header-wrapper thead th:nth-child(6), 
-.table-scroll-container tbody td:nth-child(6) { width: 10%; } /* # */
+.table-header-wrapper thead th:nth-child(2), 
+.table-scroll-container tbody td:nth-child(2) { width: 20%; } /* # */
+
+.table-header-wrapper thead th:nth-child(4), 
+.table-scroll-container tbody td:nth-child(4) { width: 20%; } /* # */
 
 /* Contenedor de scroll para el cuerpo */
 .table-scroll-container {

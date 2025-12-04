@@ -81,6 +81,17 @@ body {
     min-width: unset; /* Reiniciar el min-width */
 }
 
+.ayuda-input {
+    top: 80%;
+    transform: translateY(-50%);
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.5vh; /* Tamaño de etiqueta reducido */
+    font-weight: 500; 
+    color: black; 
+    display: block; 
+    z-index: 12;
+}
+
 input[type="email"],
 input[type="password"],
 input[type="text"],
@@ -106,7 +117,6 @@ input[type="tel"]{
     left: 10px; /* Posición ajustada */
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none; 
     transition: opacity 0.3s ease; 
     background: transparent;
     font-family: 'Courier Prime', monospace;
@@ -440,7 +450,6 @@ input:-webkit-autofill:active {
         left: 20px;
         top: 50%;
         transform: translateY(-50%);
-        pointer-events: none; 
         transition: opacity 0.3s ease; 
         
         font-family: 'Courier Prime', monospace;
@@ -495,5 +504,16 @@ input:-webkit-autofill:active {
     .boton-eliminar-servicio {
         right: 15px; /* Ajustar posición de la 'X' */
         font-size: 3rem; /* Hacer la 'X' más grande */
+    }
+
+    .ayuda-input {
+        top: 80%;
+        transform: translateY(-50%);
+        font-family: 'Courier Prime', monospace;
+        font-size: 2vh; /* Tamaño de etiqueta reducido */
+        font-weight: 500; 
+        color: black; 
+        display: block; 
+        z-index: 12;
     }
 }

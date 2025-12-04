@@ -1,76 +1,81 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1️⃣ Cargar nombre del trabajador (MANTENER)
-    const usuarioJSON = localStorage.getItem("usuario");
-    if (usuarioJSON) {
-        const trabajador = JSON.parse(usuarioJSON);
-        document.querySelector(".nombre-trabajador").textContent = trabajador.nombre || "Trabajador";
+    // 1️⃣ Cargar datos del trabajador
+    const LOGIN_PAGE = 'inicia_sesion.html'; // Página de login
+
+    // Verificar token y rol
+    const userToken = localStorage.getItem('user_token');
+    const userRol = localStorage.getItem('user_rol');
+    const userId = localStorage.getItem('user_id'); 
+
+    if (!userToken || userRol !== 'Trabajador') {
+        window.location.href = LOGIN_PAGE; // Redirige si no es trabajador
+        return;
     }
 
     const hoy = new Date();
-    // 5 años en el futuro. Usamos el objeto Date para calcularlo
     const fechaMax = new Date();
     fechaMax.setFullYear(hoy.getFullYear() + 5); 
-    // Aseguramos que el límite máximo sea hasta el día de hoy + 5 años
 
-    // 2️⃣ Inicializar Flatpickr (MODIFICADO)
+    // Referencias a elementos del DOM
+    const inputFecha = document.querySelector("input[name='fecha']");
+    const tablaBody = document.querySelector(".table-scroll-container tbody");
+    const botonBuscar = document.querySelector(".btn-buscar");
+
+    // Función principal para obtener y mostrar las citas
+    const cargarCitas = async (fechaSeleccionada, userId) => {
+        try {
+            // URL con los parámetros fecha y userId
+            const consultaURL = `http://localhost:3000/api/citas/listado?fecha=${encodeURIComponent(fechaSeleccionada)}&userId=${encodeURIComponent(userId)}`;
+            
+            const respuesta = await fetch(consultaURL);
+
+            if (!respuesta.ok) throw new Error("Error al obtener los datos del servidor.");
+
+            const datos = await respuesta.json();
+
+            if (Array.isArray(datos) && datos.length === 0) { 
+                tablaBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No hay registros para esta fecha</td></tr>`;
+                return;
+            }
+
+            tablaBody.innerHTML = "";
+            
+            datos.forEach((fila, index) => {
+                const tr = document.createElement("tr");
+                tr.classList.add("data-row");
+                const horaAMPM = new Date(`1970-01-01T${fila.hora}`).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true });
+                tr.innerHTML = `<td>${index + 1}</td><td>${fila.nombre}</td><td>${fila.dia}</td><td>${fila.servicio}</td><td>${horaAMPM}</td><td>${fila.precio}</td><td>${fila.estado}</td>`;
+                tablaBody.appendChild(tr);
+            });
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al conectar con el servidor o cargar los datos.");
+        }
+    };
+
+    // 2️⃣ Inicializar Flatpickr
     flatpickr.localize(flatpickr.l10ns.es);
     flatpickr("input[name='fecha']", {
         dateFormat: "d/m/Y",
         locale: "es",
         allowInput: false,
-        
-        // 🚨 CAMBIO 1: Establecer la fecha predeterminada en HOY
         defaultDate: hoy,
-
-        // 🚨 CAMBIO 2: Limitar el calendario
         minDate: "today", 
-        // Permite seleccionar desde hoy.
-
         maxDate: fechaMax 
-        // Permite seleccionar hasta la fecha que calculamos (hoy + 5 años)
     });
+    
+    // 4️⃣ Cargar Citas Iniciales
+    const fechaHoyFormato = hoy.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '/');
+    cargarCitas(fechaHoyFormato, userId);
 
-    // 3️⃣ Escuchar botón Buscar (MANTENER)
-    const botonBuscar = document.querySelector(".btn-buscar");
-    const inputFecha = document.querySelector("input[name='fecha']");
-    const tablaBody = document.querySelector(".table-scroll-container tbody");
-
+    // 3️⃣ Escuchar botón Buscar
     botonBuscar.addEventListener("click", async () => {
         const fechaSeleccionada = inputFecha.value;
         if (!fechaSeleccionada) {
-            // El defaultDate previene esto, pero lo mantenemos por seguridad
             alert("Por favor selecciona una fecha.");
             return;
         }
-
-        try {
-            const respuesta = await fetch(`http://localhost:3000/api/historial?fecha=${encodeURIComponent(fechaSeleccionada)}`);
-            if (!respuesta.ok) throw new Error("Error al obtener los datos del servidor.");
-            
-            const datos = await respuesta.json();
-            tablaBody.innerHTML = "";
-
-            if (datos.length === 0) {
-                tablaBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No hay registros para esta fecha</td></tr>`;
-                return;
-            }
-
-            datos.forEach((fila, index) => {
-                const tr = document.createElement("tr");
-                tr.classList.add("data-row");
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${fila.nombre}</td>
-                    <td>${fila.dia}</td>
-                    <td>${fila.servicio}</td>
-                    <td>${fila.horario}</td>
-                    <td>${fila.precio}</td>
-                `;
-                tablaBody.appendChild(tr);
-            });
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Error al conectar con el servidor o cargar los datos.");
-        }
+        cargarCitas(fechaSeleccionada, userId);
     });
 });

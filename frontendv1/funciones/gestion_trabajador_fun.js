@@ -7,6 +7,14 @@ let filasEliminadas = new Set(); // IDs de empleados a eliminar
 let filasModificadas = new Map(); // IDs y datos de empleados modificados
 let cambiosPendientes = false; // Bandera para activar el botón de guardar
 
+const userToken = localStorage.getItem('user_token');
+const userRol = localStorage.getItem('user_rol');
+    
+    if (!userToken || userRol !== 'Administrador') {
+        window.location.href = LOGIN_PAGE; // Redirige si no es administrador
+        return;
+    }
+    
 document.addEventListener('DOMContentLoaded', () => {
     cargarEmpleados(); // Carga inicial (trae todos)
     inicializarEventos();
