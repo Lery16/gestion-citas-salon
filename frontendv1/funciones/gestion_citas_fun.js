@@ -17,14 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectAllCheckbox = document.getElementById('selectAll');
     const bulkCancelButton = document.getElementById('bulkCancel');
     
-    // Usar ID 'aplicar-filtros-btn'
+    // 🚩 CORRECCIÓN: Usar ID 'aplicar-filtros-btn'
     const aplicarFiltrosBtn = document.getElementById('aplicar-filtros-btn'); 
     
     const deshacerAccionBtn = document.getElementById('deshacerAccion');
     
-    // Usar ID 'Guardar'
+    // 🚩 CORRECCIÓN: Usar ID 'Guardar'
     const guardarBtn = document.getElementById('Guardar'); 
-    const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
+
+    const API_BASE_URL = 'https://gestion-citas-salon.onrender.com/api';
     
     // Inputs de Filtros
     const buscarNombreInput = document.getElementById('buscarNombre');
@@ -39,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let citasVisuales = [];   // Datos actuales con cambios locales
     let cambiosPendientes = new Map(); // Cambios a enviar: Map<id, nuevoEstado>
 
-    // --- 1. UTILIDADES
+    // --- 1. UTILIDADES (Movidas aquí ya que dependen de 'inputFecha' en su lógica) ---
+    
     // Convierte fecha input (DD/MM/YYYY) a ISO (YYYY-MM-DD)
     function parseDateToISO(value) {
         if(!value) return null;
@@ -316,8 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         try {
-            // Se asume que el backend espera un PUT a /citas y el body tiene { cambios: [] }
-            const response = await fetch(`${API_BASE_URL}/citas`, { 
+            // ⭐ ÚNICA CORRECCIÓN: Se actualiza la ruta del endpoint a '/citas/actualizar-lote'
+            const response = await fetch(`${API_BASE_URL}/citas/actualizar-lote`, { 
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cambios: cambiosArray })
@@ -337,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     });
-
 
     // --- 6. ACCIONES MASIVAS (BULK) ---
 
