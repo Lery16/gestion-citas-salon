@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURACIÓN ---
-    const API_URL = 'http://localhost:3000/api/horarios';
+    //const API_URL = 'http://localhost:3000/api/horarios';
+    const API_URL ='https://gestion-citas-salon.onrender.com/api/horarios';
 
     // --- ESTADO ---
     let fechaActual = new Date();
