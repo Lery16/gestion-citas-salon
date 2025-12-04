@@ -1,5 +1,6 @@
 // URL base de tu API (Cámbiala por la real cuando conectes el backend)
-const API_BASE_URL = 'http://localhost:3000/api'; 
+//const API_BASE_URL = 'http://localhost:3000/api'; 
+const API_BASE_URL ='https://gestion-citas-salon.onrender.com/api';
 
 // Variables de estado
 let listaEmpleados = []; // Almacena los datos traídos del backend
