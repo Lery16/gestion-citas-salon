@@ -19,25 +19,24 @@ export const login = async (req, res) => {
 
     const user = result.rows[0];
 
-    // Hash de la contraseña (igual que antes)
+    // Hash de la contraseña con sha256
     const hashPassword = crypto.createHash("sha256").update(password).digest("hex");
 
     if (hashPassword !== user.contraseña)
       return res.status(401).json({ error: "Contraseña incorrecta" });
 
-    // Generar token
+    // Token con id y rol del empleado
     const token = jwt.sign(
       { id: user.id_empleado, rol: user.rol },
       JWT_SECRET,
       { expiresIn: "0.25h" }
     );
 
-    // 🚨 CAMBIO AQUÍ: Se añade user.id_empleado a la respuesta
     res.json({
       mensaje: "Inicio de sesión exitoso",
       token,
       rol: user.rol,
-      id_usuario: user.id_empleado, // <--- CAMBIO CLAVE
+      id_usuario: user.id_empleado,
     });
 
   } catch (err) {

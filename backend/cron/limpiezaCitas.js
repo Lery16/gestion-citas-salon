@@ -5,7 +5,7 @@ export const ejecutarLimpieza = async () => {
   try {
     console.log('Iniciando limpieza de citas antiguas y clientes inactivos...');
     
-    // Utilizamos una CTE (WITH) para hacerlo en una sola transacción segura
+    // CTE para eliminar citas viejas y sus clientes sin citas restantes
     const query = `
       WITH citas_borradas AS (
           DELETE FROM Cita 
@@ -15,7 +15,7 @@ export const ejecutarLimpieza = async () => {
       DELETE FROM Cliente
       WHERE id_cliente IN (SELECT id_cliente FROM citas_borradas)
       AND NOT EXISTS (
-          -- Solo borramos al cliente si NO le quedan otras citas (futuras o recientes)
+          -- Verifica si el cliente aún tiene otras citas
           SELECT 1 FROM Cita c_restante 
           WHERE c_restante.id_cliente = Cliente.id_cliente
       );
@@ -23,16 +23,16 @@ export const ejecutarLimpieza = async () => {
 
     const result = await db.query(query);
     
-    // result.rowCount nos dirá cuántos CLIENTES fueron eliminados
-    console.log(`✅ Limpieza completada. Clientes eliminados definitivamente: ${result.rowCount}`);
+    // Cantidad de clientes eliminados
+    console.log(`Limpieza completada. Clientes eliminados definitivamente: ${result.rowCount}`);
 
   } catch (error) {
-    console.error('❌ Error en la limpieza:', error);
+    console.error('Error en la limpieza:', error);
   }
 };
 
-// Ejecutar inmediatamente al arrancar el script
+// Ejecutar al iniciar el script
 await ejecutarLimpieza();
 
-// Programar para ejecutarse cada medianoche
+// Ejecutar cada medianoche
 cron.schedule('0 0 * * *', ejecutarLimpieza);
