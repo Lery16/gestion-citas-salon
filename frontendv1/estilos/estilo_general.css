@@ -27,6 +27,7 @@ header .menu_hamburguesa {
 header .logo img { 
     display: flex; 
     height: 7vh; 
+    align-items: left;
 } 
 
 header .menu-opciones { 
@@ -276,7 +277,7 @@ header .header-buttons button.fx-neon:hover {
 
 /*RESPONSIVE HEADER*/
 @media (max-width: 912px) {
-    header { 
+    header {
         padding-left: 1vh;
         padding-right: 2vh;
     }
@@ -286,56 +287,66 @@ header .header-buttons button.fx-neon:hover {
         font-size: 5vh;
         cursor: pointer;
         position: relative;
-        top: 0.1vh;
-        left: 0vh;
         z-index: 101;
         color: black;
         padding-right: 1vh;
     }
 
-    header .menu-opciones nav ul {
-        display: none; /* oculto por defecto en móvil */
+    /* Menú oculto por defecto */
+    header .menu-opciones {
+        display: none;
         flex-direction: column;
-        gap: 2vh;
-        background: #FCB3AD;
-        padding: 2vh;
         position: absolute;
-        top: 10vh;
-        left: 2vh;
-        box-shadow: 0 2vh 5vh rgba(0,0,0,0.1);
-        border-radius: 2vh;
-        z-index: 100;
+        top: 10.55vh;
+        right: 0;
+        width: 100%;
+        background-color: #FCB3AD;
+        padding: 2vh 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 99;
+        box-sizing: border-box;
+        gap: 3vh;
     }
 
-    /* Mostrar cuando se haga click */
-    header .menu-opciones nav ul.active {
+    /* Menú visible al activar */
+    header .menu-opciones.active {
         display: flex;
     }
 
-    .header-buttons {
-        width: auto;
+    /* Ajustar navegación */
+    header nav {
+        width: 100%;
     }
 
-    .header-buttons button {
-        padding: 0.5rem 0.5rem;
-        border-radius: 2vh;
-        cursor: pointer;
-        font-family: sans-serif;
-        font-size: 2.2vh;
-        transition: all 0.3s ease; /* transición suave al pasar el mouse */
+    header nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 2vh;
     }
 
-    /* Botones específicos */
-    .header-buttons .signin {
-        background-color: #fff;
-        border: 0.4vh solid #c2c2c2;
-        color: #333;
+    header nav a {
+        padding: 1vh 0;
     }
 
-    .header-buttons .register {
-        background-color: #333;
-        border: 0.4vh solid #0f0f0f;
-        color: #fff;
+    /* Botones */
+    header .header-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5vh;
+        width: 100%;
+        padding: 0 5vh 2vh 5vh;
+        box-sizing: border-box;
+    }
+
+    header .header-buttons button {
+        width: 80%;
+        text-align: center;
+        font-size: 2.5vh;
+    }
+
+    /* Quitar subrayado animado en móvil */
+    header nav a::after {
+        display: none;
     }
 }
 
