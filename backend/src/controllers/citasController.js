@@ -243,3 +243,99 @@ export const actualizarCitasLote = async (req, res) => {
         client.release(); // Liberar el cliente de la base de datos
     }
 };
+
+export const getSlotsDisponibles = async (req, res) => {
+    const { fecha, id_empleado, id_servicio } = req.query;
+
+    if (!fecha || !id_empleado || !id_servicio) {
+        return res.status(400).json({ error: "Faltan parámetros (fecha, id_empleado, id_servicio)" });
+    }
+
+    try {
+        // Llamamos a la función almacenada de PostgreSQL
+        const sql = `SELECT * FROM obtener_slots_disponibles($1, $2, $3, '30 minutes')`;
+        const result = await db.query(sql, [id_empleado, fecha, id_servicio]);
+
+        // La función devuelve una tabla con columna 'hora_inicio'
+        const slots = result.rows.map(row => row.hora_inicio);
+        
+        res.json(slots);
+    } catch (err) {
+        console.error("Error obteniendo slots:", err);
+        res.status(500).json({ error: "Error al calcular horarios disponibles" });
+    }
+};
+
+export const getCitasOcupadas = async (req, res) => {
+    const { fecha, id_empleado } = req.query;
+
+    if (!fecha || !id_empleado) {
+        return res.status(400).json({ error: "Faltan parámetros" });
+    }
+
+    try {
+        const sql = `
+            SELECT 
+                c.hora AS hora_inicio,
+                c.hora_fin,
+                cl.nombre || ' ' || cl.apellido as nombre_cliente,
+                ts.nombre_servicio
+            FROM Cita c
+            JOIN Cliente cl ON c.id_cliente = cl.id_cliente
+            JOIN Tipo_Servicio ts ON c.id_servicio = ts.id_servicio
+            WHERE c.fecha = $1 
+              AND c.id_empleado = $2
+              AND c.estado IN ('Pendiente', 'Confirmada')
+            ORDER BY c.hora ASC
+        `;
+        const result = await db.query(sql, [fecha, id_empleado]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error obteniendo citas ocupadas:", err);
+        res.status(500).json({ error: "Error al obtener ocupación" });
+    }
+};
+
+export const agendarCita = async (req, res) => {
+    const { id_cliente, id_servicio, id_empleado, fecha, hora } = req.body;
+
+    // Validación básica
+    if (!id_cliente || !id_servicio || !id_empleado || !fecha || !hora) {
+        return res.status(400).json({ message: "Todos los campos son obligatorios." });
+    }
+
+    try {
+        // Insertamos la cita. 
+        // IMPORTANTE: Los Triggers de la BD (tr_cita_before_insert) harán todas las validaciones complejas
+        // (Solapamiento, Horario cerrado, Vacaciones, etc.)
+        
+        const sql = `
+            INSERT INTO Cita (id_cliente, id_servicio, id_empleado, fecha, hora, estado)
+            VALUES ($1, $2, $3, $4, $5, 'Pendiente')
+            RETURNING id_cita
+        `;
+
+        const result = await db.query(sql, [id_cliente, id_servicio, id_empleado, fecha, hora]);
+        
+        res.status(201).json({ 
+            message: "Cita agendada con éxito", 
+            id_cita: result.rows[0].id_cita 
+        });
+
+    } catch (err) {
+        console.error("Error al agendar cita:", err.message);
+        
+        // Manejo de errores que vienen de los TRIGGER de PostgreSQL
+        if (err.message.includes('El salón está CERRADO')) {
+            return res.status(400).json({ message: "El salón está cerrado en esa fecha." });
+        }
+        if (err.message.includes('solapa')) {
+            return res.status(409).json({ message: "El estilista ya tiene una cita en ese horario." });
+        }
+        if (err.message.includes('excede el horario')) {
+            return res.status(400).json({ message: "La duración del servicio excede el horario de cierre." });
+        }
+
+        res.status(500).json({ message: "Error interno del servidor: " + err.message });
+    }
+};

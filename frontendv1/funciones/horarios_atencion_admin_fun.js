@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Pintar excepciones (Solo rojos/cerrados vienen de la BD según tu lógica)
             if (excepciones[fechaISO]) {
-                if (excepciones[fechaISO].estado === 'cerrado') {
+                if (excepciones[fechaISO].estado === 'Cerrado') {
                     diaEl.classList.add('excepcion-cerrado');
                 }
             }
@@ -241,8 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Aplicar Excepciones (Solo cerrados)
             excepciones = {};
             data.excepciones.forEach(ex => {
-                if (ex.estado_dia.toLowerCase() === 'cerrado') {
-                    excepciones[ex.fecha] = { estado: 'cerrado' };
+                if (ex.estado_dia.toLowerCase() === 'Cerrado') {
+                    excepciones[ex.fecha] = { estado: 'Cerrado' };
                 }
             });
 
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Error al guardar');
             
             // Actualizar localmente
-            lista.forEach(item => excepciones[item.fecha] = { estado: 'cerrado' });
+            lista.forEach(item => excepciones[item.fecha] = { estado: 'Cerrado' });
             renderizarCalendario();
             limpiarSeleccion();
             mostrarNotificacion('Días marcados como cerrados.', 'exito');
@@ -338,8 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const cierreInput = controlesHora ? controlesHora.querySelector('.grupo-input:nth-of-type(2) input') : null;
 
             // Valores a enviar
-            let apertura = '00:00';
-            let cierre = '00:01';
+            let apertura = '00:00:00';
+            let cierre = '00:00:01';
 
             if (estaAbierto && aperturaInput && cierreInput) {
                 apertura = aperturaInput.value;

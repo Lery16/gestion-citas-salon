@@ -1,56 +1,73 @@
+const API_BASE_URL = 'http://localhost:3000/api'; 
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registroForm');
-    
-    // Función para manejar la navegación hacia atrás
     const backArrow = document.querySelector('.back-arrow');
+
     if (backArrow) {
         backArrow.addEventListener('click', (e) => {
             e.preventDefault();
-            history.back(); // Navega a la página anterior
+            history.back();
         });
     }
 
-    form.addEventListener('submit', (evento) => {
-        evento.preventDefault(); // Evita que se recargue la página
+    form.addEventListener('submit', async (evento) => { // Agrega 'async'
+        evento.preventDefault();
 
-        // Captura los datos del formulario
         const formData = new FormData(form);
-        
-        // Obtiene el valor seleccionado del <select> y su texto
-        const servicioSeleccionadoId = formData.get('servicios');
-        const selectElement = document.getElementById('servicios');
-        const servicioSeleccionadoText = selectElement.options[selectElement.selectedIndex].textContent;
+        const servicioSeleccionadoText = form.querySelector('#servicios').options[form.querySelector('#servicios').selectedIndex].textContent;
 
-        const datosPersonales = {
+        const datosEnvio = {
             email: formData.get('email'),
-            celular: formData.get('celular'),
+            celular: formData.get('celular'), // Mapea al campo 'telefono' en la BD
             nombre: formData.get('nombre'),
             apellido: formData.get('apellido'),
-            // AGREGADO: ID del servicio (ej. 'corte-peinado')
-            servicioId: servicioSeleccionadoId, 
-            // AGREGADO: Nombre del servicio (ej. 'Corte y Peinado')
-            servicioNombre: servicioSeleccionadoText
+            servicioNombre: servicioSeleccionadoText // Usamos el texto para buscar el ID en el backend
         };
-        
-        // Validación de campos incluyendo el servicio
-        if (!datosPersonales.nombre || !datosPersonales.email || !datosPersonales.servicioId) {
-            alert('Por favor, complete su Nombre, Email y seleccione un Servicio.');
-            return;
+
+        // ⚠️ Validación mejorada para el frontend
+        if (!datosEnvio.nombre || !datosEnvio.email || !datosEnvio.servicioNombre || datosEnvio.servicioNombre === "") {
+             alert('Por favor, complete su Nombre, Email y seleccione un Servicio.');
+             return;
         }
 
         try {
-            // 1. **GUARDAR DATOS EN LOCALSTORAGE**
-            // datosPersonales ahora incluye servicioId y servicioNombre
-            localStorage.setItem('datosCliente', JSON.stringify(datosPersonales));
+            // 1. Llamada a la API para registrar al cliente y obtener IDs
+            const response = await fetch(`${API_BASE_URL}/cliente`, { // ¡Asegúrate que la URL sea correcta!
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datosEnvio),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Manejar errores de la API (400, 404, 500, etc.)
+                alert(`🚨 Error al agendar: ${data.message || 'Error desconocido del servidor.'}`);
+                console.error('🚨 Error del servidor:', data);
+                return;
+            }
+
+            // 2. Extraer IDs de la respuesta del servidor
+            const id_cliente = data.id_cliente;
+            const id_servicio = data.id_servicio;
+
+            // 3. Guardar IDs en localStorage para el siguiente paso
+            localStorage.setItem('datosCita', JSON.stringify({
+                id_cliente: id_cliente,
+                id_servicio: id_servicio
+            }));
             
-            console.log('✅ Datos personales y servicio guardados en localStorage:', datosPersonales);
-            
-            // 2. **REDIRECCIONAR** a la página de selección de fecha y hora
-            window.location.href = 'fecha_hora.html'; 
+            console.log('✅ IDs de Cliente y Servicio guardados en localStorage:', {id_cliente, id_servicio});
+
+            // 4. Redirigir a la siguiente página
+            window.location.href = 'fecha_hora.html';
 
         } catch (error) {
-            console.error('🚨 Error al guardar o redirigir:', error);
-            alert('🚨 Hubo un problema al avanzar al siguiente paso. Intenta de nuevo.');
+            console.error('🚨 Error de conexión o proceso de agendamiento:', error);
+            alert('🚨 Hubo un problema al conectar con el servidor. Intenta de nuevo.');
         }
     });
 });

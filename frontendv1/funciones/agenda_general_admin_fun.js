@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userToken = localStorage.getItem('user_token');
     const userRol = localStorage.getItem('user_rol');
     if (!userToken || userRol !== 'Administrador') {
-        window.location.href = LOGIN_PAGE;
+        window.location.href = 'inicia_sesion.html';
         return;
     }
 
@@ -31,17 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (urlDestino) window.location.href = urlDestino;
         });
     });
-
-    // 3. Botón Cerrar Sesión
-    const cerrarSesionBtn = document.getElementById('cerrarSesion');
-    if (cerrarSesionBtn) {
-        cerrarSesionBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('user_token');
-            localStorage.removeItem('user_rol');
-            window.location.href = LOGIN_PAGE;
-        });
-    }
 
     // 4. Asignación de Elementos del DOM
     botonCalendario = document.querySelector('.boton-calendario');

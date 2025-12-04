@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Cita</title>
-    
     <link rel="stylesheet" href="estilos/estilo_general.css">
     <link rel="stylesheet" href="estilos/estilo_agendar_cita.css">
     <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Courier+Prime&family=Great+Vibes&family=Instrument+Serif&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <script src="funciones/header_fun.js"></script>
+    <script src="funciones/agendar_cita_fun.js"></script>
 </head>
 <header>
     <div class="menu_hamburguesa">☰</div>
@@ -27,9 +28,6 @@
     </div>
 </header>
 <body>
-    <script src="funciones/header_fun.js"></script>
-    <script src="funciones/agendar_cita_fun.js"></script>
-
     <div class="registro-contenedor">
         
         <div class="flecha">
@@ -40,7 +38,7 @@
             <div class="titulo">Agendar Cita</div>
             <div class="subtitulo">Solo Clientes</div>
             
-            <form id="registroForm" action="#" method="POST">
+            <form id="registroForm" method="POST">
                 
                 <div class="campo">
                     <input type="email" id="email" name="email" required placeholder=" ">
@@ -64,21 +62,19 @@
 
                 <div class="campo">
                     <select id="servicios" name="servicios" required>
-                        <option value="" disabled selected data-default-option></option>
-                        <option value="corte-peinado">Corte y Peinado</option>
-                        <option value="coloracion-mechas">Coloración y Mechas</option>
-                        <option value="manicure-spa">Manicure Spa</option>
-                        <option value="pedicure-spa">Pedicure Spa</option>
-                        <option value="maquillaje-profesional">Maquillaje Profesional</option>
-                        <option value="tratamientos-capilares">Tratamientos Capilares</option>
-                        <option value="corte">Corte</option>
-                        <option value="peinado">Peinado</option>
-                        <option value="coloracion-cabello">Coloración de Cabello</option>
-                        <option value="mechas">Mechas</option>
-                        <option value="corte-caballero">Corte de Caballero</option>
-                        <option value="depilacion-cejas">Depilación de Cejas</option>
+                        <option value="" disabled selected data-default-option>Servicio</option>
+                        <option value="Corte y Peinado">Corte y Peinado</option>
+                        <option value="Coloración y Mechas">Coloración y Mechas</option>
+                        <option value="Manicure Spa">Manicure Spa</option>
+                        <option value="Pedicure Spa">Pedicure Spa</option>
+                        <option value="Maquillaje Profesional">Maquillaje Profesional</option>
+                        <option value="Tratamientos Capilares">Tratamientos Capilares</option>
+                        <option value="Corte de Cabello">Corte de Cabello</option>
+                        <option value="Peinado">Peinado</option>
+                        <option value="Coloración de Cabello">Coloración de Cabello</option> <option value="Depilación de Cejas con Cera">Depilación de Cejas con Cera</option>
+                        <option value="Depilación de Cejas con Gillete">Depilación de Cejas con Gillete</option>
+                        <option value="Depilación de Cejas con Hilo">Depilación de Cejas con Hilo</option>
                     </select>
-                    <label for="servicios" class="etiqueta">Servicio</label>
                 </div>
 
                 <div class="boton-contenedor">

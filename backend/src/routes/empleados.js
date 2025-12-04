@@ -1,5 +1,5 @@
 import express from 'express'; // Importación con desestructuración y consistencia ESM
-import * as empleadosController from '../controllers/empleadosController.js';  // Importar todo como un objeto
+import * as empleadosController from '../controllers/empleadosController.js';
 
 const router = express.Router(); // Iniciar el enrutador
 
@@ -20,5 +20,7 @@ router.get('/horario', empleadosController.getHorarioSemanal);
 
 // Ruta: /api/empleados/:id/servicios
 router.get('/:id/servicios', empleadosController.getServiciosEmpleado);
+
+router.get('/por-servicio/:id_servicio', empleadosController.getEmpleadosPorServicio);
 
 export default router;

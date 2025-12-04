@@ -5,10 +5,11 @@ import cors from "cors";
 // Rutas
 import authRoutes from "./src/routes/auth.js";
 import serviciosRoutes from "./src/routes/servicios.js";
-import usuariosRoutes from "./src/routes/usuarios.js";
 import citasRoutes from "./src/routes/citas.js";
 import empleadoRoutes from "./src/routes/empleados.js";
 import horarioRoutes from "./src/routes/admin_horarios.js";
+import clienteRoutes from "./src/routes/cliente.js";
+import calendarioRoutes from "./src/routes/calendario.js";
 
 // Cron Jobs
 import "./cron/limpiezaCitas.js"; 
@@ -36,10 +37,11 @@ try {
 // Definición de Rutas API
 app.use("/api/auth", authRoutes);
 app.use("/api/servicios", serviciosRoutes);
-app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/citas", citasRoutes);
 app.use("/api/empleados", empleadoRoutes);
 app.use("/api/horarios", horarioRoutes);
+app.use("/api/cliente", clienteRoutes);
+app.use("/api/calendario", calendarioRoutes);
 
 // Ruta base de prueba
 app.get("/", (req, res) => {

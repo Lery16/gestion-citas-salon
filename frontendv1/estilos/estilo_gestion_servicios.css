@@ -213,6 +213,25 @@ body {
     color: #fff;
 }
 
+.input-tabla, .select-tabla {
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+	background-color: transparent;
+    color: white;
+    font-size: 1rem;
+}
+
+.input-tabla::placeholder {
+    color: rgb(53, 53, 53);
+    font-size: 1rem;
+}
+
+.select-tabla:hover {
+	background-color: var(--color-acento);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .contenedor {

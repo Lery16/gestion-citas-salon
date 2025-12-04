@@ -1,6 +1,5 @@
 -- SISTEMA DE GESTIÓN DE CITAS PARA SALÓN DE BELLEZA
 -- CÓDIGO NORMALIZADO (3FN) - Horario Universal (9:00 - 19:00, L-S)
--- CORREGIDO: Inclusión de NEW.id_empleado en el mensaje de error de solapamiento.
 
 -- Establece la extensión pgcrypto para el hash de contraseñas (MANDATORY).
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -119,7 +118,6 @@ CREATE TABLE Cita (
     hora TIME NOT NULL,
     hora_fin TIME NULL, -- Se calcula automáticamente por el trigger antes de insertar
     estado estado_cita_enum NOT NULL DEFAULT 'Pendiente',
-    fecha_creacion TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_cliente_c FOREIGN KEY (id_cliente) REFERENCES Cliente (id_cliente) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_servicio_c FOREIGN KEY (id_servicio) REFERENCES Tipo_Servicio (id_servicio) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_empleado_c FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado) ON DELETE RESTRICT ON UPDATE CASCADE,

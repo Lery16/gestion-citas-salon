@@ -268,3 +268,26 @@ export const getServiciosEmpleado = async (req, res) => {
         res.status(500).json({ error: "Error interno al obtener los servicios." });
     }
 };
+
+// Esta función busca empleados habilitados para un servicio específico
+export const getEmpleadosPorServicio = async (req, res) => {
+    const { id_servicio } = req.params;
+
+    if (!id_servicio) return res.status(400).json({ error: "ID servicio requerido" });
+
+    try {
+        const sql = `
+            SELECT e.id_empleado, e.nombre, e.apellido 
+            FROM Empleado e
+            JOIN Empleado_Servicio es ON e.id_empleado = es.id_empleado
+            WHERE es.id_servicio = $1 
+              AND e.estado = 'Disponible' 
+              AND e.rol = 'Trabajador'
+        `;
+        const result = await db.query(sql, [id_servicio]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error buscando empleados por servicio:", err);
+        res.status(500).json({ error: "Error en servidor" });
+    }
+};

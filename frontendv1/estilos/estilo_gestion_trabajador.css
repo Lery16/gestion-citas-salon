@@ -71,6 +71,15 @@ body {
     color: white;
 }
 
+.input-tabla, .select-tabla {
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+	background-color: transparent;
+    color: white;
+}
+
 .select-tabla:focus {
     color: white;
 	background-color: #f86d7b;
